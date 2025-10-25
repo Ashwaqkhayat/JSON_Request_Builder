@@ -1,0 +1,64 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+/* Navbar items */
+
+.body-container {
+    height: calc(100vh - 56px); /* subtract navbar height */
+    display: flex;
+    padding: 0;
+}
+
+/* Grid */
+.col {
+    height: 100%;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+.fixed-col {
+    flex: 0 0 40%;
+    padding: 1rem;
+}
+
+.scrollable-col-1, .scrollable-col-2 {
+    flex: 1;
+    padding: 0.5rem;
+}
+
+.card-props {
+    height: 100%;
+}
+
+#request-body-text, #response-body-text {
+    font-family: consolas;
+    white-space: nowrap; /* prevent text wrapping */
+    overflow-x: auto;    /* enable horizontal scrolling */
+    font-size: 14px;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.copy-trans {
+    transition: opacity 0.3s ease;
+}
+
+.grow-shrink-50 {
+    flex: 1 1 50%;
+}
+.grow-shrink-33 {
+    flex: 1 1 33.3%;
+}
+
+/* Colors */
+.bg-primary-color {
+    background-color: #34333d !important;
+}
+
