@@ -75,142 +75,193 @@
                 </button>
             </div>
 
-            <div class="d-flex flex-row gap-2 w-100">
+            <form id="requestForm" class="needs-validation card-body d-flex flex-column gap-3" novalidate>
+                <div class="d-flex flex-row gap-2 w-100">
 
-                <div class="card card-props overflow-hidden grow-shrink-50">
-                    <p class="card-header">Request Information</p>
+                    <div class="card card-props overflow-hidden grow-shrink-50">
+                        <p class="card-header">Request Information</p>
 
-                    <form id="requestForm" class="needs-validation card-body d-flex flex-column gap-3" novalidate>
+                        <div class="card-body d-flex flex-column gap-3">
 
-                        <div class="d-flex gap-2 w-100">
-                            <div class="grow-shrink-50">
-                                <label for="OrgNumber" class="form-label">Organization</label>
-                                <input disabled type="text" class="form-control" id="OrgNumber" value="7001571327"
+                            <div class="d-flex gap-2 w-100">
+                                <div class="grow-shrink-50">
+                                    <label for="OrgNumber" class="form-label">Organization</label>
+                                    <input disabled type="text" class="form-control" id="OrgNumber" value="7001571327"
+                                        required>
+                                </div>
+                                <div class="grow-shrink-50">
+                                    <label for="Timestamp" class="form-label">Timestamp</label>
+                                    <input disabled type="text" class="form-control" id="Timestamp"
+                                        value="2025-10-25T01:32:49.106Z" required>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="Provider" class="form-label">Provider</label>
+                                <select id="Provider" class="form-control form-select" aria-label="Select provider"
                                     required>
+                                    <option value="" selected disabled>Choose provider...</option>
+                                    <option value="nahdi">Al Nahdi Medical Company</option>
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                    <option class="bg-body-secondary" value="addProvider">+ Add Provider</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Please select a provider.
+                                </div>
                             </div>
-                            <div class="grow-shrink-50">
-                                <label for="Timestamp" class="form-label">Timestamp</label>
-                                <input disabled type="text" class="form-control" id="Timestamp"
-                                    value="2025-10-25T01:32:49.106Z" required>
-                            </div>
-                        </div>
 
-                        <div>
-                            <label for="Provider" class="form-label">Provider</label>
-                            <select id="Provider" class="form-control form-select" aria-label="Select provider"
-                                required>
-                                <option value="" selected disabled>Choose provider...</option>
-                                <option value="nahdi">Al Nahdi Medical Company</option>
-                                <option value="1">One</option>
-                                <option value="2">Two</option>
-                                <option value="3">Three</option>
-                                <option class="bg-body-secondary" value="addProvider">+ Add Provider</option>
-                            </select>
-                            <div class="invalid-feedback">
-                                Please select a provider.
-                            </div>
-                        </div>
-
-                        <!-- New Provider Modal -->
-                        <div class="modal fade" id="newProviderModal" data-bs-backdrop="static" data-bs-keyboard="false"
-                            tabindex="-1" aria-labelledby="newProviderModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h1 class="modal-title fs-5" id="newProviderModalLabel">Add Provider</h1>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body row row-gap-3">
-                                        <div>
-                                            <label for="NewProviderName" class="form-label">Provider Name</label>
-                                            <input type="text" class="form-control" id="NewProviderName"
-                                                placeholder="E.g., Al Nahdi" required>
+                            <!-- New Provider Modal -->
+                            <div class="modal fade" id="newProviderModal" data-bs-backdrop="static"
+                                data-bs-keyboard="false" tabindex="-1" aria-labelledby="newProviderModalLabel"
+                                aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="newProviderModalLabel">Add Provider</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
                                         </div>
-                                        <div>
-                                            <label for="NewProviderNHIC" class="form-label">NHIC/Nphies Code</label>
-                                            <input type="text" class="form-control" id="NewProviderNHIC" required>
-                                            <div class="invalid-feedback">
-                                                Please enter NHIC code.
+                                        <div class="modal-body row row-gap-3">
+                                            <div>
+                                                <label for="NewProviderName" class="form-label">Provider Name</label>
+                                                <input type="text" class="form-control" id="NewProviderName"
+                                                    placeholder="E.g., Al Nahdi" required>
+                                            </div>
+                                            <div>
+                                                <label for="NewProviderNHIC" class="form-label">NHIC/Nphies Code</label>
+                                                <input type="text" class="form-control" id="NewProviderNHIC" required>
+                                                <div class="invalid-feedback">
+                                                    Please enter NHIC code.
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary"
-                                            data-bs-dismiss="modal">Close</button>
-                                        <button id="SaveProviderBtn" type="button" class="btn btn-primary">Save</button>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Close</button>
+                                            <button id="SaveProviderBtn" type="button"
+                                                class="btn btn-primary">Save</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="d-flex gap-2 w-100">
+                                <div class="grow-shrink-50">
+                                    <label for="RequestType" class="form-label">Request Type</label>
+                                    <select id="RequestType" class="form-control form-select" aria-label="Request Type"
+                                        required>
+                                        <option value="Claim" selected>Claim</option>
+                                        <option value="Preauth">Pre-authorization</option>
+                                    </select>
+                                </div>
+                                <div class="grow-shrink-50">
+                                    <label for="UseType" class="form-label">Use</label>
+                                    <select id="UseType" class="form-control form-select" aria-label="Use" required>
+                                        <option value="new" selected>New</option>
+                                        <option value="prior">Extension</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="RequestID" class="form-label">Request ID</label>
+                                <input type="text" class="form-control" id="RequestID" value="Claim_Test01" required>
+                                <div class="invalid-feedback">
+                                    Please enter request ID.
+                                </div>
+                                <div class="valid-feedback">
+                                    Make sure to change this with each request!
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-2 w-100">
+                                <div class="grow-shrink-33">
+                                    <label for="Type" class="form-label">Type</label>
+                                    <select id="Type" class="form-control form-select" aria-label="Type" required>
+                                        <option value="professional" selected>Professional</option>
+                                        <option value="bla bla">some value</option>
+                                    </select>
+                                </div>
+                                <div class="grow-shrink-33">
+                                    <label for="SubType" class="form-label">Subtype</label>
+                                    <select id="SubType" class="form-control form-select" aria-label="Sub Type"
+                                        required>
+                                        <option value="op" selected>OutPatient</option>
+                                        <option value="ip">InPatient</option>
+                                    </select>
+                                </div>
+                                <div class="grow-shrink-33">
+                                    <label for="Priority" class="form-label">Priority</label>
+                                    <select id="Priority" class="form-control form-select" aria-label="Priority"
+                                        required>
+                                        <option value="normal" selected>Normal</option>
+                                        <option value="mdry">mdry</option>
+                                    </select>
+                                </div>
+                            </div>
+
                         </div>
+                    </div>
 
-                        <div class="d-flex gap-2 w-100">
-                            <div class="grow-shrink-50">
-                                <label for="RequestType" class="form-label">Request Type</label>
-                                <select id="RequestType" class="form-control form-select" aria-label="Request Type"
-                                    required>
-                                    <option value="Claim" selected>Claim</option>
-                                    <option value="Preauth">Pre-authorization</option>
+
+
+
+                    <div class="card card-props overflow-hidden grow-shrink-50">
+                        <p class="card-header text-sm">Patient Information</p>
+                        <div class="card-body d-flex flex-column gap-3">
+
+                            <div>
+                                <label for="MembershipNo" class="form-label">Membership No.</label>
+                                <input type="text" class="form-control" id="MembershipNo" required>
+                                <div class="invalid-feedback">
+                                    Please enter Membership number.
+                                </div>
+                            </div>
+                            <div>
+                                <label for="IDType" class="form-label">ID Type</label>
+                                <select id="IDType" class="form-control form-select" aria-label="ID Type" required>
+                                    <option value="nationalID" selected>National ID</option>
+                                    <option value="iqama">Iqama</option>
                                 </select>
                             </div>
-                            <div class="grow-shrink-50">
-                                <label for="UseType" class="form-label">Use</label>
-                                <select id="UseType" class="form-control form-select" aria-label="Use" required>
-                                    <option value="new" selected>New</option>
-                                    <option value="prior">Extension</option>
-                                </select>
+                            <div>
+                                <label for="IDNumber" class="form-label">ID Number</label>
+                                <input type="text" class="form-control" id="IDNumber" required>
+                                <div class="invalid-feedback">
+                                    Please enter valid National ID/Iqama number.
+                                </div>
                             </div>
+                            <div>
+                                <label for="PatientName" class="form-label">Patient Full Name</label>
+                                <input type="text" class="form-control" id="PatientName" required>
+                                <div class="invalid-feedback">
+                                    Please enter patient's name.
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-2 w-100">
+                                <div class="grow-shrink-50">
+                                    <label for="PatientGender" class="form-label">Gender</label>
+                                    <select id="PatientGender" class="form-control form-select" aria-label="Gender Type"
+                                        required>
+                                        <option value="male" selected>Male</option>
+                                        <option value="female">Female</option>
+                                    </select>
+                                </div>
+                                <div class="grow-shrink-50">
+                                    <label for="Birthdate" class="form-label">Birthdate</label>
+                                    <input type="date" class="form-control" id="Birthdate" placeholder="dd/mm/yyyy"
+                                        required data-bs-toggle="tooltip" data-bs-placement="top"
+                                        data-bs-title="Please enter the date in dd/mm/yyyy format.">
+                                </div>
+                            </div>
+
                         </div>
-
-                        <div>
-                            <label for="RequestID" class="form-label">Request ID</label>
-                            <input type="text" class="form-control" id="RequestID" value="Claim_Test01" required>
-                            <div class="invalid-feedback">
-                                Please enter request ID.
-                            </div>
-                            <div class="valid-feedback">
-                                Make sure to change this with each request!
-                            </div>
-                        </div>
-
-                        <div class="d-flex gap-2 w-100">
-                            <div class="grow-shrink-33">
-                                <label for="Type" class="form-label">Type</label>
-                                <select id="Type" class="form-control form-select" aria-label="Type" required>
-                                    <option value="professional" selected>Professional</option>
-                                    <option value="bla bla">some value</option>
-                                </select>
-                            </div>
-                            <div class="grow-shrink-33">
-                                <label for="SubType" class="form-label">Subtype</label>
-                                <select id="SubType" class="form-control form-select" aria-label="Sub Type" required>
-                                    <option value="op" selected>OutPatient</option>
-                                    <option value="ip">InPatient</option>
-                                </select>
-                            </div>
-                            <div class="grow-shrink-33">
-                                <label for="Priority" class="form-label">Priority</label>
-                                <select id="Priority" class="form-control form-select" aria-label="Priority" required>
-                                    <option value="normal" selected>Normal</option>
-                                    <option value="mdry">mdry</option>
-                                </select>
-                            </div>
-                        </div>
-
-                    </form>
-                </div>
-
-
-
-
-                <div class="card card-props overflow-hidden grow-shrink-50">
-                    <p class="card-header text-sm">Patient Information</p>
-                    <div class="card-body">
-                        empty
                     </div>
                 </div>
-
-            </div>
+            </form>
 
 
         </div>
