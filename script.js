@@ -1,13 +1,42 @@
-const btn = document.getElementById("switchTheme");
+const ENVIRONMENTS = {
+    "uat": {
+        "label": "UAT",
+        "URL": "www.uatENV.com",
+        "userID": "wfjskfjsefsefsef",
+        "secretID": "sfsokfopsjefpsef"
+    },
+    "pp": {
+        "label": "PreProd",
+        "URL": "www.pp.com",
+        "userID": "sdfsegsegse",
+        "secretID": "rthshtrtjtjrtj"
+    }
+}
+
+const el = val => document.getElementById(val);
+const themeSwitchBtn = document.getElementById("switchTheme");
 const body = document.body;
 
-btn.addEventListener("click", () => {
+themeSwitchBtn.addEventListener("click", () => {
     const currentTheme = body.getAttribute("data-bs-theme");
     const newTheme = currentTheme == "dark" ? "light" : "dark";
     body.setAttribute("data-bs-theme", newTheme);
 
-    btn.setAttribute("class", newTheme == "dark" ? "ph ph-sun" : "ph ph-moon")
+    themeSwitchBtn.setAttribute("class", newTheme == "dark" ? "ph ph-sun" : "ph ph-moon")
 });
+
+// Select ENV =======================================================
+const selectEnv = el("selectEnv");
+const displayedEnvURL = el("endpointUrl");
+selectEnv.addEventListener('change', (e) => {
+    console.log(e.target.value);
+    if(e.target.value==="uat") {
+        displayedEnvURL.value = ENVIRONMENTS.uat.URL;
+    } else {
+        displayedEnvURL.value = ENVIRONMENTS.pp.URL;
+    }
+});
+
 
 // Refresh bundle button ============================================
 function generateRandomAlphanumeric() {

@@ -39,8 +39,11 @@
 
                 <div class="input-group w-25 input-group-sm me-3">
                     <span class="input-group-text" id="inputGroup-sizing-sm">Endpoint</span>
-                    <input type="text" class="form-control" aria-label="Sizing example input"
-                        aria-describedby="inputGroup-sizing-sm" value="https://www.google.com/">
+                    <select id="selectEnv" class="form-select" aria-label="Default select example">
+                        <option selected value="uat">UAT</option>
+                        <option value="pp">PP</option>
+                    </select>
+                    <input disabled type="text" class="form-control w-50" id="endpointUrl" value="www.uat.com" required>
                 </div>
 
                 <button id="themeToggleBtn" class="btn btn-sm btn-secondary me-2">
@@ -57,6 +60,7 @@
 
     <!-- Body -->
     <div class="container-fluid body-container">
+        <!-- Request Builder -->
         <div class="col fixed-col d-flex flex-column gap-3">
 
             <div class="input-group w-auto input-group-sm">
@@ -211,7 +215,7 @@
 
         </div>
 
-
+        <!-- Request Body -->
         <div class="col scrollable-col-1">
             <div class="card card-props">
                 <div class="card-header">
@@ -224,7 +228,7 @@
             </div>
         </div>
 
-
+        <!-- Response Body -->
         <div class="col scrollable-col-2">
             <div class="card card-props">
                 <div class="card-header">
