@@ -4,8 +4,28 @@ body, html {
     box-sizing: border-box;
 }
 
-/* Navbar items */
+/* Smooth theme switch */
+*,
+*::before,
+*::after {
+    transition: 
+        background-color 0.5s ease-in-out, 
+        color 0.4s ease-in-out;
+        border-color 0.5s ease;
+        box-shadow 0.4s ease,
+        fill 0.4s ease,
+        stroke 0.4s ease;
+}
 
+/* Dropdowns and pickers */
+.dropdown-menu,
+.dropdown-item {
+    transition:
+        background-color 0.4s ease,
+        color 0.4s ease !important;
+}
+
+/* Navbar items */
 .body-container {
     height: calc(100vh - 56px); /* subtract navbar height */
     display: flex;

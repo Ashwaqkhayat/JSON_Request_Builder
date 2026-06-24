@@ -13,16 +13,58 @@ const ENVIRONMENTS = {
     }
 }
 
+const THEMES = { 
+    DARK: "dark", 
+    LIGHT: "light" 
+};
+
+const ICONS  = { 
+    dark: "ph ph-sun", 
+    light: "ph ph-moon" 
+};
+
+// Get Elements
 const el = val => document.getElementById(val);
-const themeSwitchBtn = document.getElementById("switchTheme");
+const bundleIDField = el('bundleid-input');
+const refreshBundleIDBtn = el('refresh-bundleid');
+const timestampField = el('timestampField');
+
+
+// INIT ============================================================
+function init() {
+    console.log("App initialized!");
+    bundleIDField.value = generateRandomAlphanumeric(); 
+    updateTimestamp();
+}
+
+init();
+
+// Refresh timestamp ===============================================
+function updateTimestamp() {
+    const now = new Date(); // Get current date and time
+    const newTimestamp = now.toISOString(); // Get Unix timestamp (milliseconds since 1970)
+    timestampField.value = newTimestamp;
+}
+
+// Update theme ====================================================
+const themeSwitchBtn = el("switchTheme");
 const body = document.body;
 
-themeSwitchBtn.addEventListener("click", () => {
-    const currentTheme = body.getAttribute("data-bs-theme");
-    const newTheme = currentTheme == "dark" ? "light" : "dark";
-    body.setAttribute("data-bs-theme", newTheme);
+const applyTheme = (theme) => {
+    body.setAttribute("data-bs-theme", theme);
+    themeSwitchBtn.setAttribute("class", ICONS[theme]);
+    localStorage.setItem("theme", theme);
+};
 
-    themeSwitchBtn.setAttribute("class", newTheme == "dark" ? "ph ph-sun" : "ph ph-moon")
+// Load saved theme or fall back to OS preference
+const savedTheme = localStorage.getItem("theme")
+    ?? (window.matchMedia("(prefers-color-scheme: dark)").matches ? THEMES.DARK : THEMES.LIGHT);
+
+applyTheme(savedTheme);
+
+themeSwitchBtn.addEventListener("click", () => {
+    const current = body.getAttribute("data-bs-theme");
+    applyTheme(current === THEMES.DARK ? THEMES.LIGHT : THEMES.DARK);
 });
 
 // Select ENV =======================================================
@@ -40,21 +82,12 @@ selectEnv.addEventListener('change', (e) => {
 
 // Refresh bundle button ============================================
 function generateRandomAlphanumeric() {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-
-    function getRandomChars(length) {
-        let result = '';
-        for (let i = 0; i < length; i++) {
-            result += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        return result;
-    }
-
-    return `${getRandomChars(3)}-${getRandomChars(5)}-${getRandomChars(5)}-${getRandomChars(4)}`;
+    return crypto.randomUUID();
 }
 
-document.getElementById('refresh-bundleid').addEventListener('click', () => {
-    document.getElementById('bundleid-input').value = generateRandomAlphanumeric();
+refreshBundleIDBtn.addEventListener('click', () => {
+    bundleIDField.value = generateRandomAlphanumeric();
+    updateTimestamp(); //Update the timestamp with each bundle refresh
 });
 
 

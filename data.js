@@ -12,3 +12,7 @@ const ENVIRONMENTS = {
         "secretID": "rthshtrtjtjrtj"
     }
 }
+
+export {
+    ENVIRONMENTS
+}
