@@ -13,14 +13,14 @@ const ENVIRONMENTS = {
     }
 }
 
-const THEMES = { 
-    DARK: "dark", 
-    LIGHT: "light" 
+const THEMES = {
+    DARK: "dark",
+    LIGHT: "light"
 };
 
-const ICONS  = { 
-    dark: "ph ph-sun", 
-    light: "ph ph-moon" 
+const ICONS = {
+    dark: "ph ph-sun",
+    light: "ph ph-moon"
 };
 
 // Get Elements
@@ -28,12 +28,13 @@ const el = val => document.getElementById(val);
 const bundleIDField = el('bundleid-input');
 const refreshBundleIDBtn = el('refresh-bundleid');
 const timestampField = el('timestampField');
+const addItemBtn = el('addItemBtn');
 
 
 // INIT ============================================================
 function init() {
     console.log("App initialized!");
-    bundleIDField.value = generateRandomAlphanumeric(); 
+    bundleIDField.value = generateRandomAlphanumeric();
     updateTimestamp();
 }
 
@@ -72,7 +73,7 @@ const selectEnv = el("selectEnv");
 const displayedEnvURL = el("endpointUrl");
 selectEnv.addEventListener('change', (e) => {
     console.log(e.target.value);
-    if(e.target.value==="uat") {
+    if (e.target.value === "uat") {
         displayedEnvURL.value = ENVIRONMENTS.uat.URL;
     } else {
         displayedEnvURL.value = ENVIRONMENTS.pp.URL;
@@ -183,6 +184,84 @@ newProvModal.addEventListener('hidden.bs.modal', () => {
     if (selectProvider.value === 'addProvider') selectProvider.value = '';
 });
 
+
+// Add line items
+let lineItemCount = 1; // Start after your existing rows
+
+addItemBtn.addEventListener('click', function () {
+    lineItemCount++;
+
+    const tbody = document.querySelector('table tbody');
+
+    const newItem = document.createElement('tr');
+    newItem.innerHTML = `
+    <th class="text-secondary fw-normal" scope="row">${lineItemCount}</th>
+    <td>
+        <select class="form-select">
+            <option selected>Select...</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+        </select>
+    </td>
+    <td><input class="form-control" placeholder="Nphies Code"></td>
+    <td><input class="form-control" placeholder="Service Code"></td>
+    <td><input class="form-control" placeholder="Service Name"></td>
+    <td><input class="form-control" type="date"></td>
+    <td><input class="form-control" placeholder="QTY"></td>
+    <td><input class="form-control" placeholder="Unit Price"></td>
+    <td><input class="form-control" placeholder="Net Price"></td>
+    <td>
+        <div class="d-flex align-items-stretch h-100">
+            <button type="button" class="btn btn-outline-danger w-100 h-100 remove-row">X</button>
+        </div>
+    </td>
+    `;
+
+    tbody.appendChild(newItem);
+});
+
+document.querySelector('table tbody').addEventListener('click', function (e) {
+    if (e.target.classList.contains('remove-row')) {
+        e.target.closest('tr').remove();
+        reNumberItems();
+    }
+});
+
+function reNumberItems() {
+    document.querySelectorAll('table tbody tr').forEach((row, index) => {
+        row.querySelector('th').textContent = index + 1;
+    });
+    lineItemCount = document.querySelectorAll('table tbody tr').length;
+}
+
+function delAllRows() {
+    const tbody = document.querySelector('table tbody');
+    tbody.innerHTML = `
+    <th class="text-secondary fw-normal" scope="row">${lineItemCount}</th>
+    <td>
+        <select class="form-select">
+            <option selected>Select...</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+        </select>
+    </td>
+    <td><input class="form-control" placeholder="Nphies Code"></td>
+    <td><input class="form-control" placeholder="Service Code"></td>
+    <td><input class="form-control" placeholder="Service Name"></td>
+    <td><input class="form-control" type="date"></td>
+    <td><input class="form-control" placeholder="QTY"></td>
+    <td><input class="form-control" placeholder="Unit Price"></td>
+    <td><input class="form-control" placeholder="Net Price"></td>
+    <td>
+        <div class="d-flex align-items-stretch h-100">
+            <button type="button" class="btn btn-outline-danger w-100 h-100 remove-row">X</button>
+        </div>
+    </td>
+    `;
+    lineItemCount = 1;
+}
 
 // Tooltips
 const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')

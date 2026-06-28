@@ -81,3 +81,7 @@ body, html {
 .bg-primary-color {
     background-color: #34333d !important;
 }
+
+.td-style {
+    height: 23px;
+}
