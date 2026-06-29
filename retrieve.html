@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retrieve Request</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="vh-100" data-bs-theme="dark">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-body-tertiary px-2">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-medium" href="#">Request Builder</a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="index.html">Create</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="retrieve.html">Retreive</a>
+                    </li>
+                </ul>
+
+                <div class="input-group w-25 input-group-sm me-3">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">Endpoint</span>
+                    <select id="selectEnv" class="form-select" aria-label="Default select example">
+                        <option selected value="uat">UAT</option>
+                        <option value="pp">PP</option>
+                    </select>
+                    <input disabled type="text" class="form-control w-50" id="endpointUrl" value="www.uat.com" required>
+                </div>
+
+                <button id="themeToggleBtn" class="btn btn-sm btn-secondary me-2">
+                    <i class="ph ph-moon" id="switchTheme"></i>
+                </button>
+
+            </div>
+
+        </div>
+    </nav>
+
+    <h1>Hello</h1>
+    <textarea id="jsonInput" placeholder='Paste your JSON here, e.g. {"claimId": "ABC123", ...}'></textarea>
+    <!-- <button>Extract Claim ID</button>ß -->
+    <div id="error"></div>
+    <div id="result"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="common.js"></script>
+    <script src="retrieve.js"></script>
+</body>
+
+</html>
