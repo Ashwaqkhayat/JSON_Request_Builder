@@ -2,6 +2,8 @@ body, html {
     height: 100%;
     margin: 0;
     box-sizing: border-box;
+
+    font-family: "IBM Plex Sans", sans-serif;
 }
 
 /* Smooth theme switch */
@@ -33,11 +35,11 @@ body, html {
 }
 
 /* Grid */
-.col {
+/* .col {
     height: 100%;
     overflow-y: auto;
     box-sizing: border-box;
-}
+} */
 
 .fixed-col {
     flex: 0 0 40%;
@@ -84,4 +86,65 @@ body, html {
 
 .td-style {
     height: 23px;
+}
+
+/* Extract Page */
+
+.fs-small {
+    font-size: 12px;
+}
+
+.phicon-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.max-req-card-height {
+    max-height: 395px;
+}
+
+/* Scrollable list */
+.list-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;        /* takes remaining space after the two input rows */
+    min-height: 0;
+}
+
+.list-group {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.list-group-item {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    border: 0 !important;
+    background-color: RGBA(var(--bs-secondary-rgb),var(--bs-bg-opacity, 0.1)) !important;
+    margin-top: 0.2rem !important;
+    margin-bottom: 0.2rem !important;
+    border-radius: var(--bs-border-radius) !important;
+    /* d-flex flex-row justify-content-between */
+}
+
+.list-group-item > div {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+}
+
+.control-input-disable > input {
+    disable;
+}
+
+.container {
+    max-width: 100% !important;
+}
+
+.extension-val {
+    max-width: 350px;
 }
