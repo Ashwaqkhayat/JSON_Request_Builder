@@ -148,3 +148,7 @@ body, html {
 .extension-val {
     max-width: 350px;
 }
+
+.hidden {
+    opacity: 0;
+}

@@ -53,7 +53,8 @@
                 </div>
 
                 <button id="themeToggleBtn" class="btn btn-sm btn-secondary me-2">
-                    <i class="ph ph-moon" id="switchTheme"></i>
+                    <!-- <i class="ph ph-moon" ></i> -->
+                    <i class="ph ph-moon phicon-container" id="switchTheme" style="color: rgb(255, 255, 255)"></i>
                 </button>
 
             </div>
@@ -74,7 +75,6 @@
 
                     <!-- Card Body -->
                     <div class="card-body">
-
                         <div class="container">
                             <div class="row gap-2">
                                 <div class="col p-0">
@@ -96,8 +96,7 @@
                                                             class="form-label text-secondary">Request</label>
                                                         <div class="input-group">
                                                             <input type="text" class="form-control" id="reqInput"
-                                                                aria-describedby="basic-addon3 basic-addon4"
-                                                                value="Preauth">
+                                                                aria-describedby="basic-addon3 basic-addon4">
                                                         </div>
                                                     </div>
                                                     <div class="col p-0">
@@ -119,28 +118,20 @@
                                                 </div>
                                                 <div class="row gap-2 mb-4">
                                                     <div class="col p-0">
-                                                        <label for="reqPriorityInput"
-                                                            class="form-label text-secondary">Priority</label>
+                                                        <label for="reqPriorityInput" class="form-label text-secondary">Priority</label>
                                                         <div class="input-group">
-                                                            <input type="text" class="form-control"
-                                                                id="reqPriorityInput"
-                                                                aria-describedby="basic-addon3 basic-addon4">
+                                                            <input type="text" class="form-control" id="reqPriorityInput" aria-describedby="basic-addon3 basic-addon4">
                                                         </div>
                                                     </div>
                                                     <div class="col-9 p-0">
                                                         <label for="reqClaimIDInput"
-                                                            class="form-label text-secondary">Claim
-                                                            ID</label>
+                                                            class="form-label text-secondary">Claim ID</label>
                                                         <div class="input-group">
-                                                            <input type="text" class="form-control" id="reqClaimIDInput"
-                                                                aria-describedby="basic-addon3 basic-addon4">
-                                                            <button class="btn btn-outline-secondary" type="button"
-                                                                id="copyBtn"><i
-                                                                    class="ph ph-copy phicon-container"></i></button>
+                                                            <input type="text" class="form-control" id="reqClaimIDInput" aria-describedby="basic-addon3 basic-addon4">
+                                                            <button class="btn btn-outline-secondary" type="button" id="copyBtn"><i class="ph ph-copy phicon-container"></i></button>
                                                         </div>
                                                     </div>
                                                 </div>
-
                                                 <div class="row d-flex flex-column flex-grow-1 overflow-hidden">
                                                     <h6 class="p-0">Extensions</h6>
                                                     <ul class="list-group px-0 flex-grow-1 overflow-auto" style="font-size: 0.78rem">
@@ -217,6 +208,9 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Card Footer -->
+                    <div class="card-footer" id="errorFooter"></div>
                 </div>
             </div>
 
@@ -229,7 +223,7 @@
                     <div class="card-body p-0 overflow-x-auto">
                         <div class="form-floating h-100">
                             <textarea class="form-control border-0 h-100 text-nowrap" placeholder="Leave a comment here"
-                                id="requestBodyTxtArea"></textarea>
+                                id="requestBodyTxtArea" spellcheck="false"></textarea>
                             <label for="requestBodyTxtArea">Paste your request body here.</label>
                         </div>
                     </div>
