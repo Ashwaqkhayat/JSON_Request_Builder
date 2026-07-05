@@ -10,8 +10,10 @@
     <link rel="stylesheet" href="styles.css">
 
     <!-- Phosphor Icons -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -43,19 +45,22 @@
                     </li>
                 </ul>
 
-                <div class="input-group w-25 input-group-sm me-3">
-                    <span class="input-group-text" id="inputGroup-sizing-sm">Endpoint</span>
-                    <select id="selectEnv" class="form-select" aria-label="Default select example">
-                        <option selected value="uat">UAT</option>
-                        <option value="pp">PP</option>
-                    </select>
-                    <input disabled type="text" class="form-control w-50" id="endpointUrl" value="www.uat.com" required>
-                </div>
+                <div class="d-flex flex-row flex-sm-row min-w-45 max-w-50">
+                    <div class="input-group w-100 input-group-sm me-3">
+                        <span class="input-group-text" id="inputGroup-sizing-sm">Endpoint</span>
+                        <select id="selectEnv" class="form-select" aria-label="Default select example">
+                            <option selected value="uat">UAT</option>
+                            <option value="pp">PP</option>
+                        </select>
+                        <input disabled type="text" class="form-control w-50" id="endpointUrl" value="www.uat.com"
+                            required>
+                    </div>
 
-                <button id="themeToggleBtn" class="btn btn-sm btn-secondary me-2">
-                    <!-- <i class="ph ph-moon" ></i> -->
-                    <i class="ph ph-moon phicon-container" id="switchTheme" style="color: rgb(255, 255, 255)"></i>
-                </button>
+                    <button id="themeToggleBtn" class="btn btn-sm btn-secondary me-2">
+                        <!-- <i class="ph ph-moon" ></i> -->
+                        <i class="ph ph-moon phicon-container" id="switchTheme" style="color: rgb(255, 255, 255)"></i>
+                    </button>
+                </div>
 
             </div>
 
@@ -75,10 +80,11 @@
 
                     <!-- Card Body -->
                     <div class="card-body">
-                        <div class="container">
+                        <div class="container overflow-x-hidden">
                             <div class="row gap-2">
-                                <div class="col p-0">
+                                <div class="col p-0" style="min-width: 535px;">
                                     <div class="card h-100">
+
                                         <div class="card-header fw-semibold">
                                             <div class="d-flex flex-row gap-2 align-items-center">
                                                 <i class="ph ph-clipboard-text"></i>
@@ -87,11 +93,11 @@
                                         </div>
 
                                         <div class="card-body d-flex flex-column overflow-hidden"
-                                            style="height: 495px;">
+                                            style="height: 440px;">
                                             <div
                                                 class="container list-container d-flex flex-column flex-grow-1 overflow-hidden">
                                                 <div class="row gap-2 mb-3">
-                                                    <div class="col p-0">
+                                                    <div class="col p-1">
                                                         <label for="reqInput"
                                                             class="form-label text-secondary">Request</label>
                                                         <div class="input-group">
@@ -99,7 +105,7 @@
                                                                 aria-describedby="basic-addon3 basic-addon4">
                                                         </div>
                                                     </div>
-                                                    <div class="col p-0">
+                                                    <div class="col p-1">
                                                         <label for="reqTypeInput"
                                                             class="form-label text-secondary">Type</label>
                                                         <div class="input-group">
@@ -107,7 +113,7 @@
                                                                 aria-describedby="basic-addon3 basic-addon4">
                                                         </div>
                                                     </div>
-                                                    <div class="col p-0">
+                                                    <div class="col p-1">
                                                         <label for="reqSubtypeInput"
                                                             class="form-label text-secondary">Subtype</label>
                                                         <div class="input-group">
@@ -117,71 +123,106 @@
                                                     </div>
                                                 </div>
                                                 <div class="row gap-2 mb-4">
-                                                    <div class="col p-0">
-                                                        <label for="reqPriorityInput" class="form-label text-secondary">Priority</label>
+                                                    <div class="col p-1">
+                                                        <label for="reqPriorityInput"
+                                                            class="form-label text-secondary">Priority</label>
                                                         <div class="input-group">
-                                                            <input type="text" class="form-control" id="reqPriorityInput" aria-describedby="basic-addon3 basic-addon4">
+                                                            <input type="text" class="form-control"
+                                                                id="reqPriorityInput"
+                                                                aria-describedby="basic-addon3 basic-addon4">
                                                         </div>
                                                     </div>
-                                                    <div class="col-9 p-0">
+                                                    <div class="col-9 p-1">
                                                         <label for="reqClaimIDInput"
                                                             class="form-label text-secondary">Claim ID</label>
                                                         <div class="input-group">
-                                                            <input type="text" class="form-control" id="reqClaimIDInput" aria-describedby="basic-addon3 basic-addon4">
-                                                            <button class="btn btn-outline-secondary" type="button" id="copyBtn"><i class="ph ph-copy phicon-container"></i></button>
+                                                            <input type="text" class="form-control" id="reqClaimIDInput"
+                                                                aria-describedby="basic-addon3 basic-addon4">
+                                                            <button class="btn btn-outline-secondary" type="button"
+                                                                id="copyBtn"><i
+                                                                    class="ph ph-copy phicon-container"></i></button>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="row d-flex flex-column flex-grow-1 overflow-hidden">
-                                                    <h6 class="p-0">Extensions</h6>
-                                                    <ul class="list-group px-0 flex-grow-1 overflow-auto" style="font-size: 0.78rem">
+                                                    <h6 class="p-1">Extensions</h6>
+                                                    <ul class="list-group px-1 flex-grow-1 overflow-auto"
+                                                        style="font-size: 0.78rem">
                                                         <li class="list-group-item gap-5">
                                                             <p class="m-0 p-0"> Title </p>
                                                             <div class="gap-2">
-                                                                <p class="m-0 p-0 text-truncate extension-val"> Acute appendicitis with generalized Ashwaq Mohammed Khayat ddfsef</p>
-                                                                <button type="button" class="btn btn-sm"> <i class="ph ph-copy phicon-container"></i> </button>
+                                                                <p class="m-0 p-0 text-truncate extension-val"> Acute
+                                                                    appendicitis with generalized Ashwaq Mohammed Khayat
+                                                                    ddfsef</p>
+                                                                <button type="button" class="btn btn-sm"> <i
+                                                                        class="ph ph-copy phicon-container"></i>
+                                                                </button>
                                                             </div>
                                                         </li>
                                                         <li class="list-group-item gap-5">
                                                             <p class="m-0 p-0"> Title </p>
                                                             <div class="gap-2">
-                                                                <p class="m-0 p-0 text-truncate extension-val"> Acute appendicitis with generalized Ashwaq Mohammed Khayat ddfsef</p>
-                                                                <button type="button" class="btn btn-sm"> <i class="ph ph-copy phicon-container"></i> </button>
+                                                                <p class="m-0 p-0 text-truncate extension-val"> Acute
+                                                                    appendicitis with generalized Ashwaq Mohammed Khayat
+                                                                    ddfsef</p>
+                                                                <button type="button" class="btn btn-sm"> <i
+                                                                        class="ph ph-copy phicon-container"></i>
+                                                                </button>
                                                             </div>
                                                         </li>
                                                         <li class="list-group-item gap-5">
                                                             <p class="m-0 p-0"> Title </p>
                                                             <div class="gap-2">
-                                                                <p class="m-0 p-0 text-truncate extension-val"> Acute appendicitis with generalized Ashwaq Mohammed Khayat ddfsef</p>
-                                                                <button type="button" class="btn btn-sm"> <i class="ph ph-copy phicon-container"></i> </button>
+                                                                <p class="m-0 p-0 text-truncate extension-val"> Acute
+                                                                    appendicitis with generalized Ashwaq Mohammed Khayat
+                                                                    ddfsef</p>
+                                                                <button type="button" class="btn btn-sm"> <i
+                                                                        class="ph ph-copy phicon-container"></i>
+                                                                </button>
                                                             </div>
                                                         </li>
                                                         <li class="list-group-item gap-5">
                                                             <p class="m-0 p-0"> Title </p>
                                                             <div class="gap-2">
-                                                                <p class="m-0 p-0 text-truncate extension-val"> Acute appendicitis with generalized Ashwaq Mohammed Khayat ddfsef</p>
-                                                                <button type="button" class="btn btn-sm"> <i class="ph ph-copy phicon-container"></i> </button>
+                                                                <p class="m-0 p-0 text-truncate extension-val"> Acute
+                                                                    appendicitis with generalized Ashwaq Mohammed Khayat
+                                                                    ddfsef</p>
+                                                                <button type="button" class="btn btn-sm"> <i
+                                                                        class="ph ph-copy phicon-container"></i>
+                                                                </button>
                                                             </div>
                                                         </li>
                                                         <li class="list-group-item gap-5">
                                                             <p class="m-0 p-0"> Title </p>
                                                             <div class="gap-2">
-                                                                <p class="m-0 p-0 text-truncate extension-val"> Acute appendicitis with generalized Ashwaq Mohammed Khayat ddfsef</p>
-                                                                <button type="button" class="btn btn-sm"> <i class="ph ph-copy phicon-container"></i> </button>
+                                                                <p class="m-0 p-0 text-truncate extension-val"> Acute
+                                                                    appendicitis with generalized Ashwaq Mohammed Khayat
+                                                                    ddfsef</p>
+                                                                <button type="button" class="btn btn-sm"> <i
+                                                                        class="ph ph-copy phicon-container"></i>
+                                                                </button>
                                                             </div>
                                                         </li>
                                                         <li class="list-group-item gap-5">
                                                             <p class="m-0 p-0"> Title </p>
                                                             <div class="gap-2">
-                                                                <p class="m-0 p-0 text-truncate extension-val"> Acute appendicitis with generalized Ashwaq Mohammed Khayat ddfsef</p>
-                                                                <button type="button" class="btn btn-sm"> <i class="ph ph-copy phicon-container"></i> </button>
+                                                                <p class="m-0 p-0 text-truncate extension-val"> Acute
+                                                                    appendicitis with generalized Ashwaq Mohammed Khayat
+                                                                    ddfsef</p>
+                                                                <button type="button" class="btn btn-sm"> <i
+                                                                        class="ph ph-copy phicon-container"></i>
+                                                                </button>
                                                             </div>
                                                         </li>
                                                         <li class="list-group-item gap-5">
                                                             <p class="m-0 p-0"> Title </p>
                                                             <div class="gap-2">
-                                                                <p class="m-0 p-0 text-truncate extension-val"> Acute appendicitis with generalized Ashwaq Mohammed Khayat ddfsef</p>
-                                                                <button type="button" class="btn btn-sm"> <i class="ph ph-copy phicon-container"></i> </button>
+                                                                <p class="m-0 p-0 text-truncate extension-val"> Acute
+                                                                    appendicitis with generalized Ashwaq Mohammed Khayat
+                                                                    ddfsef</p>
+                                                                <button type="button" class="btn btn-sm"> <i
+                                                                        class="ph ph-copy phicon-container"></i>
+                                                                </button>
                                                             </div>
                                                         </li>
                                                     </ul>
@@ -192,17 +233,125 @@
                                     </div>
                                 </div>
 
-                                <div class="col p-0">
+                                <div class="col p-0" style="min-width: 535px;">
                                     <div class="card h-100">
+
                                         <div class="card-header fw-semibold">
                                             <div class="d-flex flex-row gap-2 align-items-center">
                                                 <i class="ph ph-user-list"></i>
                                                 Beneficiary Information
                                             </div>
                                         </div>
-                                        <div class="card-body">
-                                            Hello
+
+                                        <div class="card-body d-flex flex-column overflow-hidden"
+                                            style="height: 440px;">
+                                            <div
+                                                class="container list-container d-flex flex-column flex-grow-1 overflow-hidden">
+                                                <div class="row gap-2 mb-3">
+                                                    <div class="col-4 p-1">
+                                                        <label for="reqMembershipInput"
+                                                            class="form-label text-secondary">Membership No.</label>
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control"
+                                                                id="reqMembershipInput"
+                                                                aria-describedby="basic-addon3 basic-addon4">
+                                                            <button class="btn btn-outline-secondary" type="button"
+                                                                id="copyBtn"><i
+                                                                    class="ph ph-copy phicon-container"></i></button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col p-1">
+                                                        <label for="reqMemNameInput"
+                                                            class="form-label text-secondary">Name</label>
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control" id="reqMemNameInput"
+                                                                aria-describedby="basic-addon3 basic-addon4">
+                                                            <button class="btn btn-outline-secondary" type="button"
+                                                                id="copyBtn"><i
+                                                                    class="ph ph-copy phicon-container"></i></button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row gap-2 mb-3">
+                                                    <div class="col-4 p-1">
+                                                        <label for="reqIDTypeInput"
+                                                            class="form-label text-secondary">Identifier Type</label>
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control" id="reqIDTypeInput"
+                                                                aria-describedby="basic-addon3 basic-addon4">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col p-1">
+                                                        <label for="reqIDNumInput" class="form-label text-secondary">ID
+                                                            Number</label>
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control" id="reqIDNumInput"
+                                                                aria-describedby="basic-addon3 basic-addon4">
+                                                            <button class="btn btn-outline-secondary" type="button"
+                                                                id="copyBtn"><i
+                                                                    class="ph ph-copy phicon-container"></i></button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row gap-2 mb-3">
+                                                    <div class="col-4 p-1">
+                                                        <label for="reqPhoneNumInput"
+                                                            class="form-label text-secondary">Phone Number</label>
+                                                        <div class="input-group">
+                                                            <input type="tel" class="form-control" id="reqPhoneNumInput"
+                                                                aria-describedby="basic-addon3 basic-addon4">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col p-1">
+                                                        <label for="reqBDateInput"
+                                                            class="form-label text-secondary">Birthdate</label>
+                                                        <div class="input-group">
+                                                            <input type="date" class="form-control" id="reqBDateInput"
+                                                                aria-describedby="basic-addon3 basic-addon4">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col p-1">
+                                                        <label for="reqGenderInput"
+                                                            class="form-label text-secondary">Gender</label>
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control" id="reqGenderInput"
+                                                                aria-describedby="basic-addon3 basic-addon4">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row d-flex flex-column flex-grow-1 overflow-hidden">
+                                                    <h6 class="p-1">Extensions</h6>
+                                                    <ul class="list-group px-1 flex-grow-1 overflow-auto"
+                                                        style="font-size: 0.78rem">
+                                                        <li class="list-group-item gap-5">
+                                                            <p class="m-0 p-0"> Title </p>
+                                                            <div class="gap-2">
+                                                                <p class="m-0 p-0 text-truncate extension-val"> Acute
+                                                                    appendicitis with generalized Ashwaq Mohammed Khayat
+                                                                    ddfsef</p>
+                                                                <button type="button" class="btn btn-sm"> <i
+                                                                        class="ph ph-copy phicon-container"></i>
+                                                                </button>
+                                                            </div>
+                                                        </li>
+                                                        <li class="list-group-item gap-5">
+                                                            <p class="m-0 p-0"> Title </p>
+                                                            <div class="gap-2">
+                                                                <p class="m-0 p-0 text-truncate extension-val"> Acute
+                                                                    appendicitis with generalized Ashwaq Mohammed Khayat
+                                                                    ddfsef</p>
+                                                                <button type="button" class="btn btn-sm"> <i
+                                                                        class="ph ph-copy phicon-container"></i>
+                                                                </button>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+
+                                            </div>
                                         </div>
+
                                     </div>
                                 </div>
                             </div>

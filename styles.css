@@ -128,7 +128,6 @@ body, html {
     margin-top: 0.2rem !important;
     margin-bottom: 0.2rem !important;
     border-radius: var(--bs-border-radius) !important;
-    /* d-flex flex-row justify-content-between */
 }
 
 .list-group-item > div {
@@ -151,4 +150,12 @@ body, html {
 
 .hidden {
     opacity: 0;
+}
+
+.min-w-45 {
+    min-width: 45% !important;
+}
+
+.max-w-50 {
+    max-width: 50% !important;
 }

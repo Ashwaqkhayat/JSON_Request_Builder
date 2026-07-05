@@ -4,12 +4,10 @@ const THEMES = {
     DARK: "dark",
     LIGHT: "light"
 };
-
 const ICONS = {
     dark: "ph ph-sun",
     light: "ph ph-moon"
 };
-
 const ENVIRONMENTS = {
     "uat": {
         "label": "UAT",
@@ -74,7 +72,6 @@ function init() {
 }
 
 init();
-
 // Extract Data =====================================================
 
 function showErrorFooter(msg, type) {
@@ -203,22 +200,77 @@ function extractClaimID(x) {
     reqClaimIDInput.value = x.value;
 }
 
+
+// User Modifications =======================================
 reqClaimIDInput.addEventListener('change', () => {
     const input = requestBodyTxtArea.value.trim();
+    const paths = [
+        'entry[1].resource.identifier[0].value'
+    ];
+    changeReqValue(paths, input, reqClaimIDInput.value);
+});
 
-    if (input && input !== '') {
+// reqInput.addEventListener('change', () => {
+//     const input = requestBodyTxtArea.value.trim();
+//     const paths = [
+//         'entry[1].resource.identifier[0].system'
+//     ];
 
+//     let reqT;
+//     if (reqInput.value == 'preauth') {
+//         reqT = 'authorization'
+//     } else {
+//         reqT = 'claim'
+//     }
+
+//     // I need to keep the URL and only change the last url/....
+//     let newValue = JSON.parse(input).entry[1].resource.identifier[0].system;
+//     changeReqValue(paths, input, );
+// });
+
+function changeReqValue(paths, reqBody, newValue) {
+    console.log("entered the func: ", paths, newValue);
+    if (reqBody && reqBody !== '') {
         let parsed;
-        try { 
-            parsed = JSON.parse(input); 
-            parsed.entry[1].resource.identifier[0].value = reqClaimIDInput.value;
-            requestBodyTxtArea.value = JSON.stringify(parsed, null, 4);
-        }
-        catch (e) {
+        try {
+            parsed = JSON.parse(reqBody);
+        } catch (e) {
             showErrorFooter('Invalid JSON: ' + e.message, 'error');
             return;
         }
 
+        try {
+            paths.forEach(path => {
+                setValueByPath(parsed, path, newValue);
+            });
+        } catch (e) {
+            showErrorFooter('Failed to update value: ' + e.message, 'error');
+            return;
+        }
+
+        requestBodyTxtArea.value = JSON.stringify(parsed, null, 4);
+    }
+}
+
+function setValueByPath(obj, path, value) {
+    const keys = path
+        .replace(/\[(\d+)\]/g, '.$1') // convert [1] -> .1
+        .split('.')
+        .filter(k => k !== '');
+
+    let target = obj;
+    for (let i = 0; i < keys.length - 1; i++) {
+        const key = keys[i];
+        if (target[key] === undefined) {
+            throw new Error(`Path "${path}" is invalid: "${key}" does not exist at this level.`);
+        }
+        target = target[key];
     }
 
-});
+    const lastKey = keys[keys.length - 1];
+    if (target[lastKey] === undefined) {
+        throw new Error(`Path "${path}" is invalid: final key "${lastKey}" does not exist.`);
+    }
+
+    target[lastKey] = value;
+}
