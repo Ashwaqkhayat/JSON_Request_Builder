@@ -66,6 +66,14 @@ const reqPriorityInput = el('reqPriorityInput');
 const reqClaimIDInput = el('reqClaimIDInput');
 const claimExtensionsUL = el('claimExtensionsUL');
 
+const reqMembershipInput = el('reqMembershipInput');
+const reqMemNameInput = el('reqMemNameInput');
+const reqIDTypeInput = el('reqIDTypeInput');
+const reqIDNumInput = el('reqIDNumInput');
+const reqPhoneNumInput = el('reqPhoneNumInput');
+const reqBDateInput = el('reqBDateInput');
+const reqGenderInput = el('reqGenderInput');
+
 // Init =============================================================
 window.addEventListener('load', () => {
     init();
@@ -74,6 +82,7 @@ window.addEventListener('load', () => {
 function init() {
     console.log('Request Initialized');
     errorFooter.classList.add('hidden');
+    displayedEnvURL.value = ENVIRONMENTS.uat.URL;
 }
 
 // Extract input JSON ===============================================
@@ -94,7 +103,9 @@ function showErrorFooter(msg, type) {
         "bg-primary",
         "bg-secondary",
         "bg-info",
-        "bg-warning"
+        "bg-warning",
+        "text-black",
+        "text-white"
     );
 
     if (type == 'error') {
@@ -102,7 +113,7 @@ function showErrorFooter(msg, type) {
         errorFooter.classList.add("text-white");
     } else if (type == 'warning') {
         errorFooter.classList.add("bg-warning");
-        errorFooter.classList.add("text-white");
+        errorFooter.classList.add("text-black");
     } else {
         // Nothing
     }
@@ -117,6 +128,7 @@ requestBodyTxtArea.addEventListener('change', () => {
         document.querySelectorAll('.form-control').forEach(function (input) {
             input.value = '';
         });
+        clearExtensionLists();
         showErrorFooter('Please paste JSON request.', 'warning');
         return;
     } else {
@@ -152,7 +164,58 @@ requestBodyTxtArea.addEventListener('change', () => {
     extractedInfo = parsed.entry[1].resource.extension;
     extractClaimExtensions(extractedInfo);
 
+    // Extract Req Membership
+    let entryOfInfo = findResource(parsed.entry, 'Coverage', null);
+    extractedInfo = entryOfInfo?.resource.identifier[0] ?? null;
+    extracReqMembership(extractedInfo);
+
+    // Extract Req Member Name - Challenge
+    // extractedInfo = parsed.entry[1].resource.extension;
+    // extractClaimExtensions(extractedInfo);
+
+    // // Extract Req Extensions
+    // extractedInfo = parsed.entry[1].resource.extension;
+    // extractClaimExtensions(extractedInfo);
+
+    // // Extract Req Extensions
+    // extractedInfo = parsed.entry[1].resource.extension;
+    // extractClaimExtensions(extractedInfo);
+
+    // // Extract Req Extensions
+    // extractedInfo = parsed.entry[1].resource.extension;
+    // extractClaimExtensions(extractedInfo);
+
+    // // Extract Req Extensions
+    // extractedInfo = parsed.entry[1].resource.extension;
+    // extractClaimExtensions(extractedInfo);
+
+    // // Extract Req Extensions
+    // extractedInfo = parsed.entry[1].resource.extension;
+    // extractClaimExtensions(extractedInfo);
+
 });
+
+function findResource(entriesList, resourceName, recourceVal) {
+    // parsed.entry, 'Coverage'
+    // recourceVal = the number after Coverage
+
+    let entURL;
+    let segment;
+    for (let index = 0; index < entriesList.length; index++) {
+        const entry = entriesList[index];
+        const entURL = entry.fullUrl;
+        if (!entURL || entURL === '') {
+            showErrorFooter('Error in findResource: Unable to find the entry', 'error');
+            continue;
+        }
+        const segment = new URL(entURL).pathname.split("/")[1];
+        if (segment == resourceName) {
+            return entriesList[index]; // returning the index
+        }
+    }
+    // If the recource is not found
+    return null;
+}
 
 function extractReqCat(x) {
     if (!('system' in x)) {
@@ -250,42 +313,44 @@ function extractClaimID(x) {
 //     }
 // }
 
+
 function extractClaimExtensions(x) {
     // x is an array of extension items!
+    if (!x || x.length == 0) {
+        claimExtensionsUL();
+    } else {
+        claimExtensionsUL.innerHTML = '';
+        x.forEach((ex, index) => {
+            let extensionType = ex.url.split('/').pop();
+            let extensionValue;
 
-    claimExtensionsUL.innerHTML = '';
-    x.forEach((ex, index) => {
-        let extensionType = ex.url.split('/').pop();
-        let extensionValue;
+            switch (extensionType) {
+                case "extension-encounter":
+                    extensionValue = ex.valueReference.reference;
+                    break;
+                case "extension-eligibility-response":
+                    extensionValue = ex.valueReference.identifier.value;
+                    break;
+                case "extension-eligibility-offline-reference":
+                    extensionValue = ex.valueString;
+                    break;
+                case "extension-eligibility-offline-date":
+                    extensionValue = ex.valueDateTime;
+                    break;
+                case "extension-newborn":
+                    extensionValue = ex.valueBoolean;
+                    break;
+                case "extension-episode":
+                    extensionValue = ex.valueIdentifier.value;
+                    break;
+                default:
+                    extensionValue = "In Progress"
+            }
 
-        switch (extensionType) {
-            case "extension-encounter":
-                extensionValue = ex.valueReference.reference;
-                break;
-            case "extension-eligibility-response":
-                extensionValue = ex.valueReference.identifier.value;
-                break;
-            case "extension-eligibility-offline-reference":
-                extensionValue = ex.valueString;
-                break;
-            case "extension-eligibility-offline-date":
-                extensionValue = ex.valueDateTime;
-                break;
-            case "extension-newborn":
-                extensionValue = ex.valueBoolean;
-                break;
-            case "extension-episode":
-                extensionValue = ex.valueIdentifier.value;
-                break;
-            default:
-                extensionValue = "In Progress"
-        }
-
-        addExtensionToList(extensionType, extensionValue, index);
-    });
-
+            addExtensionToList(extensionType, extensionValue, index);
+        });
+    }
 }
-
 function addExtensionToList(extType, extVal, index) {
     const li = document.createElement('li');
     li.className = 'list-group-item gap-5';
@@ -302,6 +367,25 @@ function addExtensionToList(extType, extVal, index) {
     `;
     claimExtensionsUL.appendChild(li);
 }
+function clearExtensionLists() {
+    claimExtensionsUL.innerHTML = `
+        <li class="list-group-item gap-5 h-100 d-flex">
+            <div class="align-items-center justify-content-center h-100 w-100 fs-6">No Extensions</div>
+        </li>
+    `;
+}
+
+function extracReqMembership(x) {
+    if ( !x || !('value' in x)) {
+        showErrorFooter(
+            'Key "entry[Coverage].resource.identifier[0].value" not found in JSON.',
+            'error'
+        );
+        return;
+    }
+    reqMembershipInput.value = x.value;
+}
+
 
 // User Modifications =======================================
 reqClaimIDInput.addEventListener('change', () => {
