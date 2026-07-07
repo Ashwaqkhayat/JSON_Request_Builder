@@ -64,38 +64,60 @@ const reqTypeInput = el('reqTypeInput');
 const reqSubtypeInput = el('reqSubtypeInput');
 const reqPriorityInput = el('reqPriorityInput');
 const reqClaimIDInput = el('reqClaimIDInput');
+const claimExtensionsUL = el('claimExtensionsUL');
 
 // Init =============================================================
+window.addEventListener('load', () => {
+    init();
+});
+
 function init() {
     console.log('Request Initialized');
     errorFooter.classList.add('hidden');
 }
 
-init();
+// Extract input JSON ===============================================
+let userInputJSON;
+requestBodyTxtArea.addEventListener('change', () => {
+    userInputJSON = requestBodyTxtArea.value.trim();
+})
+
+
 // Extract Data =====================================================
 
 function showErrorFooter(msg, type) {
     console.log("Error displayed");
     errorFooter.textContent = msg;
+    errorFooter.classList.remove(
+        "bg-danger",
+        "bg-success",
+        "bg-primary",
+        "bg-secondary",
+        "bg-info",
+        "bg-warning"
+    );
+
     if (type == 'error') {
         errorFooter.classList.add("bg-danger");
         errorFooter.classList.add("text-white");
+    } else if (type == 'warning') {
+        errorFooter.classList.add("bg-warning");
+        errorFooter.classList.add("text-white");
     } else {
-        errorFooter.classList.remove("bg-danger");
-        errorFooter.classList.remove("text-white");
+        // Nothing
     }
     errorFooter.classList.remove('hidden');
 }
 
 requestBodyTxtArea.addEventListener('change', () => {
-    const input = requestBodyTxtArea.value.trim();
+    const input = userInputJSON;
 
     if (!input || input === '') {
         // Clear all the input fields
         document.querySelectorAll('.form-control').forEach(function (input) {
             input.value = '';
         });
-        showErrorFooter('Please paste JSON request.', 'info');
+        showErrorFooter('Please paste JSON request.', 'warning');
         return;
     } else {
         errorFooter.classList.add('hidden');
@@ -126,6 +148,10 @@ requestBodyTxtArea.addEventListener('change', () => {
     extractedInfo = parsed.entry[1].resource.priority.coding[0];
     extractReqPriority(extractedInfo);
 
+    // Extract Req Extensions
+    extractedInfo = parsed.entry[1].resource.extension;
+    extractClaimExtensions(extractedInfo);
+
 });
 
 function extractReqCat(x) {
@@ -138,11 +164,11 @@ function extractReqCat(x) {
     }
     const reqCategory = x.system.split('/').pop();
     if (reqCategory === 'authorization') {
-        reqInput.value = 'Preauth';
+        reqInput.value = 'authorization';
     } else if (reqCategory === 'claim') {
-        reqInput.value = 'Claim';
+        reqInput.value = 'claim';
     } else {
-        reqInput.value = 'Unknown';
+        reqInput.value = '';
     }
 }
 
@@ -186,6 +212,7 @@ function extractReqPriority(x) {
         );
         return;
     }
+
     reqPriorityInput.value = x.code;
 }
 
@@ -200,10 +227,62 @@ function extractClaimID(x) {
     reqClaimIDInput.value = x.value;
 }
 
+function extractClaimExtensions(x) {
+    // x is an array of extension items!
+
+    claimExtensionsUL.innerHTML = '';
+    x.forEach((ex, index) => {
+        let extensionType = ex.url.split('/').pop();
+        let extensionValue;
+
+        switch (extensionType) {
+            case "extension-encounter":
+                extensionValue = ex.valueReference.reference;
+                break;
+            case "extension-eligibility-response":
+                extensionValue = ex.valueReference.identifier.value;
+                break;
+            case "extension-eligibility-offline-reference":
+                extensionValue = ex.valueString;
+                break;
+            case "extension-eligibility-offline-date":
+                extensionValue = ex.valueDateTime;
+                break;
+            case "extension-newborn":
+                extensionValue = ex.valueBoolean;
+                break;
+            case "extension-episode":
+                extensionValue = ex.valueIdentifier.value;
+                break;
+            default:
+                extensionValue = "In Progress"
+        }
+
+        addExtensionToList(extensionType, extensionValue, index);
+    });
+
+}
+
+function addExtensionToList(extType, extVal, index) {
+    const li = document.createElement('li');
+    li.className = 'list-group-item gap-5';
+    li.id = `${extType}Li`;
+
+    li.innerHTML = `
+    <p class="m-0 p-0 extension-type">#${index}    ${extType}</p>
+    <div class="gap-2">
+        <p class="m-0 p-0 text-truncate extension-val">${extVal}</p>
+        <button type="button" class="btn copy-ex-btn btn-sm" data-bs-target="${li.id}">
+        <i class="ph ph-copy phicon-container"></i>
+        </button>
+    </div>
+    `;
+    claimExtensionsUL.appendChild(li);
+}
 
 // User Modifications =======================================
 reqClaimIDInput.addEventListener('change', () => {
-    const input = requestBodyTxtArea.value.trim();
+    const input = userInputJSON;
     const paths = [
         'entry[1].resource.identifier[0].value'
     ];
@@ -211,7 +290,7 @@ reqClaimIDInput.addEventListener('change', () => {
 });
 
 // reqInput.addEventListener('change', () => {
-//     const input = requestBodyTxtArea.value.trim();
+//     const input = userInputJSON;
 //     const paths = [
 //         'entry[1].resource.identifier[0].system'
 //     ];
@@ -273,4 +352,68 @@ function setValueByPath(obj, path, value) {
     }
 
     target[lastKey] = value;
+}
+
+// Copy to clipboard
+document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const targetID = btn.getAttribute('data-bs-target');
+        const input = document.getElementById(targetID);
+        copyToClipboard(input);
+    });
+});
+
+// Copy to clipboard - Extensions only
+claimExtensionsUL.addEventListener('click', (event) => {
+    // Check if the clicked element (or its parent, like the <i> icon) is the button
+    const btn = event.target.closest('.copy-ex-btn');
+
+    // If the click wasn't on or inside a copy button, ignore it
+    if (!btn) return;
+
+    const targetID = btn.getAttribute('data-bs-target');
+
+    // Use querySelector to find the list item by its id attribute
+    const listItem = document.querySelector(`[id="${targetID}"]`);
+
+    if (listItem) {
+        // Find the element with the class '.extension-type' inside that list item
+        const extValElement = listItem.querySelector('.extension-type');
+        let parsed;
+        try {
+            parsed = JSON.parse(userInputJSON);
+            copyToClipboardExtension(parsed.entry[1].resource.extension[extValElement.textContent[1]]);
+        } catch (e) {
+            showErrorFooter('Error in extension copy: ' + e.message, 'error');
+            return;
+        }
+    }
+});
+
+function copyToClipboard(val) {
+    if (!val || typeof val.value !== 'string') {
+        showErrorFooter('Error: Unable to copy' + val, 'error'); return;
+    }
+
+    const text = val.value;
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).catch(() => fallbackCopy(val));
+    } else {
+        fallbackCopy(val);
+    }
+}
+function copyToClipboardExtension(val) {
+    if (!val) {
+        showErrorFooter('Error: Unable to copy extension', 'error'); return;
+    }
+
+    navigator.clipboard.writeText(JSON.stringify(val, null, 4))
+        .then(() => console.log("Copied extension"))
+        .catch(err => console.error('Navigator copy extension failed:', err));
+}
+
+function fallbackCopy(val) {
+    val.select();
+    val.setSelectionRange(0, 9999);
+    document.execCommand('copy');
 }

@@ -40,8 +40,13 @@
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="index.html">Create</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="retrieve.html">Retreive</a>
+                    <li class="nav-item position-relative">
+                        <a class="nav-link position-relative" href="retrieve.html">Retreive</a>
+                        <span class="position-absolute start-100 translate-middle badge rounded-pill bg-danger"
+                            style="top: 20% !important;">
+                            new
+                            <span class="visually-hidden">unread messages</span>
+                        </span>
                     </li>
                 </ul>
 
@@ -101,8 +106,11 @@
                                                         <label for="reqInput"
                                                             class="form-label text-secondary">Request</label>
                                                         <div class="input-group">
-                                                            <input type="text" class="form-control" id="reqInput"
-                                                                aria-describedby="basic-addon3 basic-addon4">
+                                                            <select class="form-select" id="reqInput"
+                                                                aria-label="Default select example">
+                                                                <option value="authorization">Preauth</option>
+                                                                <option value="claim">Claim</option>
+                                                            </select>
                                                         </div>
                                                     </div>
                                                     <div class="col p-1">
@@ -138,71 +146,17 @@
                                                         <div class="input-group">
                                                             <input type="text" class="form-control" id="reqClaimIDInput"
                                                                 aria-describedby="basic-addon3 basic-addon4">
-                                                            <button class="btn btn-outline-secondary" type="button"
-                                                                id="copyBtn"><i
+                                                            <button class="btn btn-outline-secondary copy-btn"
+                                                                type="button" data-bs-target="reqClaimIDInput"><i
                                                                     class="ph ph-copy phicon-container"></i></button>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="row d-flex flex-column flex-grow-1 overflow-hidden">
                                                     <h6 class="p-1">Extensions</h6>
-                                                    <ul class="list-group px-1 flex-grow-1 overflow-auto"
+                                                    <ul id="claimExtensionsUL"
+                                                        class="list-group px-1 flex-grow-1 overflow-auto"
                                                         style="font-size: 0.78rem">
-                                                        <li class="list-group-item gap-5">
-                                                            <p class="m-0 p-0"> Title </p>
-                                                            <div class="gap-2">
-                                                                <p class="m-0 p-0 text-truncate extension-val"> Acute
-                                                                    appendicitis with generalized Ashwaq Mohammed Khayat
-                                                                    ddfsef</p>
-                                                                <button type="button" class="btn btn-sm"> <i
-                                                                        class="ph ph-copy phicon-container"></i>
-                                                                </button>
-                                                            </div>
-                                                        </li>
-                                                        <li class="list-group-item gap-5">
-                                                            <p class="m-0 p-0"> Title </p>
-                                                            <div class="gap-2">
-                                                                <p class="m-0 p-0 text-truncate extension-val"> Acute
-                                                                    appendicitis with generalized Ashwaq Mohammed Khayat
-                                                                    ddfsef</p>
-                                                                <button type="button" class="btn btn-sm"> <i
-                                                                        class="ph ph-copy phicon-container"></i>
-                                                                </button>
-                                                            </div>
-                                                        </li>
-                                                        <li class="list-group-item gap-5">
-                                                            <p class="m-0 p-0"> Title </p>
-                                                            <div class="gap-2">
-                                                                <p class="m-0 p-0 text-truncate extension-val"> Acute
-                                                                    appendicitis with generalized Ashwaq Mohammed Khayat
-                                                                    ddfsef</p>
-                                                                <button type="button" class="btn btn-sm"> <i
-                                                                        class="ph ph-copy phicon-container"></i>
-                                                                </button>
-                                                            </div>
-                                                        </li>
-                                                        <li class="list-group-item gap-5">
-                                                            <p class="m-0 p-0"> Title </p>
-                                                            <div class="gap-2">
-                                                                <p class="m-0 p-0 text-truncate extension-val"> Acute
-                                                                    appendicitis with generalized Ashwaq Mohammed Khayat
-                                                                    ddfsef</p>
-                                                                <button type="button" class="btn btn-sm"> <i
-                                                                        class="ph ph-copy phicon-container"></i>
-                                                                </button>
-                                                            </div>
-                                                        </li>
-                                                        <li class="list-group-item gap-5">
-                                                            <p class="m-0 p-0"> Title </p>
-                                                            <div class="gap-2">
-                                                                <p class="m-0 p-0 text-truncate extension-val"> Acute
-                                                                    appendicitis with generalized Ashwaq Mohammed Khayat
-                                                                    ddfsef</p>
-                                                                <button type="button" class="btn btn-sm"> <i
-                                                                        class="ph ph-copy phicon-container"></i>
-                                                                </button>
-                                                            </div>
-                                                        </li>
                                                         <li class="list-group-item gap-5">
                                                             <p class="m-0 p-0"> Title </p>
                                                             <div class="gap-2">
@@ -255,7 +209,8 @@
                                                             <input type="text" class="form-control"
                                                                 id="reqMembershipInput"
                                                                 aria-describedby="basic-addon3 basic-addon4">
-                                                            <button class="btn btn-outline-secondary" type="button"
+                                                            <button class="btn btn-outline-secondary copy-btn"
+                                                                data-bs-target="reqMembershipInput" type="button"
                                                                 id="copyBtn"><i
                                                                     class="ph ph-copy phicon-container"></i></button>
                                                         </div>
@@ -266,8 +221,9 @@
                                                         <div class="input-group">
                                                             <input type="text" class="form-control" id="reqMemNameInput"
                                                                 aria-describedby="basic-addon3 basic-addon4">
-                                                            <button class="btn btn-outline-secondary" type="button"
-                                                                id="copyBtn"><i
+                                                            <button class="btn btn-outline-secondary copy-btn"
+                                                                type="button" id="copyBtn"
+                                                                data-bs-target="reqMemNameInput"><i
                                                                     class="ph ph-copy phicon-container"></i></button>
                                                         </div>
                                                     </div>
@@ -287,8 +243,9 @@
                                                         <div class="input-group">
                                                             <input type="text" class="form-control" id="reqIDNumInput"
                                                                 aria-describedby="basic-addon3 basic-addon4">
-                                                            <button class="btn btn-outline-secondary" type="button"
-                                                                id="copyBtn"><i
+                                                            <button class="btn btn-outline-secondary copy-btn"
+                                                                type="button" id="copyBtn"
+                                                                data-bs-target="reqIDNumInput"><i
                                                                     class="ph ph-copy phicon-container"></i></button>
                                                         </div>
                                                     </div>
