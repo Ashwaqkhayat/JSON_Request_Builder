@@ -227,6 +227,29 @@ function extractClaimID(x) {
     reqClaimIDInput.value = x.value;
 }
 
+// {
+//     "preauth-extensions": {
+//         "extension-encounter": "valueReference"."reference",
+//         "extension-eligibility-response": "valueReference"."identifier"."value",
+//         "extension-eligibility-offline-reference": "valueString",
+//         "extension-eligibility-offline-date": "valueDateTime",
+//         "extension-newborn": "valueBoolean",
+//         "extension-episode": "valueIdentifier"."value",
+//         "extension-priorauthresponse": "valueIdentifier"."identifier"."value",
+//         "extension-transfer": "valueBoolean",
+//         "extension-maternity": "valueBoolean",
+//         "extension-package": "valueBoolean",
+//         ""
+//     },
+//     "claim-extensions": {
+//         "extension-batch-identifier": "valueIdentifier"."value",
+//         "extension-batch-number": "valuePositiveInt",
+//         "extension-batch-period": "valuePeriod"."start" &."end",
+//         "extension-authorization-offline-date": "valueDateTime",
+//         "extension-episode": "valueIdentifier"."value",
+//     }
+// }
+
 function extractClaimExtensions(x) {
     // x is an array of extension items!
 
