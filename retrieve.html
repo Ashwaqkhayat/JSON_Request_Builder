@@ -260,29 +260,10 @@
 
                                                 <div class="row d-flex flex-column flex-grow-1 overflow-hidden">
                                                     <h6 class="p-1">Extensions</h6>
-                                                    <ul class="list-group px-1 flex-grow-1 overflow-auto"
+                                                    <ul id="benefitiaryExtensionsUL" class="list-group px-1 flex-grow-1 overflow-auto"
                                                         style="font-size: 0.78rem">
-                                                        <li class="list-group-item gap-5">
-                                                            <p class="m-0 p-0"> Title </p>
-                                                            <div class="gap-2">
-                                                                <p class="m-0 p-0 text-truncate extension-val"> Acute
-                                                                    appendicitis with generalized Ashwaq Mohammed Khayat
-                                                                    ddfsef</p>
-                                                                <button type="button" class="btn btn-sm"> <i
-                                                                        class="ph ph-copy phicon-container"></i>
-                                                                </button>
-                                                            </div>
-                                                        </li>
-                                                        <li class="list-group-item gap-5">
-                                                            <p class="m-0 p-0"> Title </p>
-                                                            <div class="gap-2">
-                                                                <p class="m-0 p-0 text-truncate extension-val"> Acute
-                                                                    appendicitis with generalized Ashwaq Mohammed Khayat
-                                                                    ddfsef</p>
-                                                                <button type="button" class="btn btn-sm"> <i
-                                                                        class="ph ph-copy phicon-container"></i>
-                                                                </button>
-                                                            </div>
+                                                        <li class="list-group-item gap-5 h-100 d-flex">
+                                                            <div class="align-items-center justify-content-center h-100 w-100 fs-6">No Extensions</div>
                                                         </li>
                                                     </ul>
                                                 </div>
@@ -309,7 +290,7 @@
                     </div>
                     <div class="card-body p-0 overflow-x-auto">
                         <div class="form-floating h-100">
-                            <textarea class="form-control border-0 h-100 text-nowrap" placeholder="Leave a comment here"
+                            <textarea class="form-control border-0 h-100 text-nowrap font-monospace" placeholder="Leave a comment here"
                                 id="requestBodyTxtArea" spellcheck="false"></textarea>
                             <label for="requestBodyTxtArea">Paste your request body here.</label>
                         </div>

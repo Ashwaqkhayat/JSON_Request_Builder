@@ -735,6 +735,17 @@
                 },
                 "extension": [
                     {
+                        "url": "http://nphies.sa/fhir/ksa/nphies-fs/StructureDefinition/extension-patient-religion",
+                        "valueCodeableConcept": {
+                            "coding": [
+                                {
+                                    "system": "http://nphies.sa/terminology/CodeSystem/religion",
+                                    "code": "1"
+                                }
+                            ]
+                        }
+                    },
+                    {
                         "url": "http://nphies.sa/fhir/ksa/nphies-fs/StructureDefinition/extension-occupation",
                         "valueCodeableConcept": {
                             "coding": [

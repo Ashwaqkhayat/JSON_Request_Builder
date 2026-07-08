@@ -22,6 +22,10 @@ const ENVIRONMENTS = {
         "secretID": "rthshtrtjtjrtj"
     }
 }
+const EXTENSION_CATEGORIES = {
+    "Claim": "claim",
+    "Beneficiary": "beneficiary"
+}
 
 // Update theme ====================================================
 const themeSwitchBtn = el("switchTheme");
@@ -73,6 +77,10 @@ const reqIDNumInput = el('reqIDNumInput');
 const reqPhoneNumInput = el('reqPhoneNumInput');
 const reqBDateInput = el('reqBDateInput');
 const reqGenderInput = el('reqGenderInput');
+const benefitiaryExtensionsUL = el('benefitiaryExtensionsUL');
+
+// for copy func
+let benefEntry = null;
 
 // Init =============================================================
 window.addEventListener('load', () => {
@@ -94,32 +102,6 @@ requestBodyTxtArea.addEventListener('change', () => {
 
 // Extract Data =====================================================
 
-function showErrorFooter(msg, type) {
-    console.log("Error displayed");
-    errorFooter.textContent = msg;
-    errorFooter.classList.remove(
-        "bg-danger",
-        "bg-success",
-        "bg-primary",
-        "bg-secondary",
-        "bg-info",
-        "bg-warning",
-        "text-black",
-        "text-white"
-    );
-
-    if (type == 'error') {
-        errorFooter.classList.add("bg-danger");
-        errorFooter.classList.add("text-white");
-    } else if (type == 'warning') {
-        errorFooter.classList.add("bg-warning");
-        errorFooter.classList.add("text-black");
-    } else {
-        // Nothing
-    }
-    errorFooter.classList.remove('hidden');
-}
-
 requestBodyTxtArea.addEventListener('change', () => {
     const input = userInputJSON;
 
@@ -128,7 +110,8 @@ requestBodyTxtArea.addEventListener('change', () => {
         document.querySelectorAll('.form-control').forEach(function (input) {
             input.value = '';
         });
-        clearExtensionLists();
+        clearExtensionLists(claimExtensionsUL);
+        clearExtensionLists(benefitiaryExtensionsUL);
         showErrorFooter('Please paste JSON request.', 'warning');
         return;
     } else {
@@ -141,8 +124,10 @@ requestBodyTxtArea.addEventListener('change', () => {
         return;
     }
 
+    let extractedInfo;
+    let entryOfInfo;
     // Extract Req Category
-    let extractedInfo = parsed.entry[1].resource.identifier[0];
+    extractedInfo = parsed.entry[1].resource.identifier[0];
     extractReqCat(extractedInfo);
 
     // Extract Claim ID
@@ -162,42 +147,57 @@ requestBodyTxtArea.addEventListener('change', () => {
 
     // Extract Req Extensions
     extractedInfo = parsed.entry[1].resource.extension;
-    extractClaimExtensions(extractedInfo);
+    extractClaimExtensions(extractedInfo, claimExtensionsUL, EXTENSION_CATEGORIES.Claim);
 
     // Extract Req Membership
-    let entryOfInfo = findResource(parsed.entry, 'Coverage', null);
+    entryOfInfo = findResource(parsed.entry, 'Coverage', null);
     extractedInfo = entryOfInfo?.resource.identifier[0] ?? null;
     extracReqMembership(extractedInfo);
 
-    // Extract Req Member Name - Challenge
-    // extractedInfo = parsed.entry[1].resource.extension;
-    // extractClaimExtensions(extractedInfo);
+    // Extract Req Member Name
+    let beneficiaryResource = entryOfInfo?.resource.beneficiary.reference ?? null;
+    let extractedTypeVal = splitString(beneficiaryResource);
+    // extractedTypeVal = Array of [resourceType, resourceVal]
+    benefEntry = findResource(parsed.entry, extractedTypeVal[0], extractedTypeVal[1]);
+    extractedInfo = benefEntry?.resource.name[0] ?? null;
+    extractMemberName(extractedInfo);
 
-    // // Extract Req Extensions
-    // extractedInfo = parsed.entry[1].resource.extension;
-    // extractClaimExtensions(extractedInfo);
+    // Extract Req Id type
+    extractedInfo = benefEntry?.resource.identifier[0] ?? null;
+    extractBenifitiaryIdType(extractedInfo);
 
-    // // Extract Req Extensions
-    // extractedInfo = parsed.entry[1].resource.extension;
-    // extractClaimExtensions(extractedInfo);
+    // Extract Req ID Number
+    extractBenifitiaryId(extractedInfo);
 
-    // // Extract Req Extensions
-    // extractedInfo = parsed.entry[1].resource.extension;
-    // extractClaimExtensions(extractedInfo);
+    // Extract Phone number
+    extractedInfo = benefEntry?.resource.telecom[0] ?? null;
+    extractBenifitiaryPhoneNum(extractedInfo);
 
-    // // Extract Req Extensions
-    // extractedInfo = parsed.entry[1].resource.extension;
-    // extractClaimExtensions(extractedInfo);
+    // Extract Birthdate
+    extractedInfo = benefEntry?.resource.birthDate ?? null;
+    extractBenifitiaryBD(extractedInfo);
 
-    // // Extract Req Extensions
-    // extractedInfo = parsed.entry[1].resource.extension;
-    // extractClaimExtensions(extractedInfo);
+    // Extract Gender
+    extractedInfo = benefEntry?.resource.gender ?? null;
+    extractBenifitiaryGender(extractedInfo);
+
+    // Extract Benefitiary Extensions
+    extractedInfo = benefEntry?.resource.extension ?? null;
+    extractClaimExtensions(extractedInfo, benefitiaryExtensionsUL, EXTENSION_CATEGORIES.Beneficiary);
 
 });
 
-function findResource(entriesList, resourceName, recourceVal) {
-    // parsed.entry, 'Coverage'
-    // recourceVal = the number after Coverage
+function splitString(str) {
+    if (str && str !== '') {
+        return str.split("/");
+    } else {
+        showErrorFooter(`Error: Could not split ${str}.`, 'error');
+        return null;
+    }
+}
+
+function findResource(entriesList, resourceName, resourceVal) {
+    // recourceVal = the number after resourceName
 
     let entURL;
     let segment;
@@ -205,12 +205,21 @@ function findResource(entriesList, resourceName, recourceVal) {
         const entry = entriesList[index];
         const entURL = entry.fullUrl;
         if (!entURL || entURL === '') {
-            showErrorFooter('Error in findResource: Unable to find the entry', 'error');
+            showErrorFooter(`Error in findResource: Unable to find the entry [${resourceName}]`, 'error');
             continue;
         }
-        const segment = new URL(entURL).pathname.split("/")[1];
-        if (segment == resourceName) {
-            return entriesList[index]; // returning the index
+
+        const splittedURL = new URL(entURL).pathname.split("/");
+        // length-1 = the value, length-2 = the resource type
+        const segment = [splittedURL[splittedURL.length - 2], splittedURL[splittedURL.length - 1]];
+        if (resourceVal && resourceVal !== '') {
+            if (segment[0] == resourceName && segment[1] == resourceVal) {
+                return entriesList[index];
+            }
+        } else {
+            if (segment[0] == resourceName) {
+                return entriesList[index];
+            }
         }
     }
     // If the recource is not found
@@ -314,50 +323,103 @@ function extractClaimID(x) {
 // }
 
 
-function extractClaimExtensions(x) {
+function extractClaimExtensions(x, el, extensionOf) {
     // x is an array of extension items!
     if (!x || x.length == 0) {
-        claimExtensionsUL();
+        clearExtensionLists(el);
     } else {
-        claimExtensionsUL.innerHTML = '';
+        el.innerHTML = '';
         x.forEach((ex, index) => {
             let extensionType = ex.url.split('/').pop();
             let extensionValue;
 
-            switch (extensionType) {
-                case "extension-encounter":
-                    extensionValue = ex.valueReference.reference;
-                    break;
-                case "extension-eligibility-response":
-                    extensionValue = ex.valueReference.identifier.value;
-                    break;
-                case "extension-eligibility-offline-reference":
-                    extensionValue = ex.valueString;
-                    break;
-                case "extension-eligibility-offline-date":
-                    extensionValue = ex.valueDateTime;
-                    break;
-                case "extension-newborn":
-                    extensionValue = ex.valueBoolean;
-                    break;
-                case "extension-episode":
-                    extensionValue = ex.valueIdentifier.value;
-                    break;
-                default:
-                    extensionValue = "In Progress"
+            // extensionOf = 'claim' / 'benefitiary' / ... other resources in progress
+            if (extensionOf == 'claim') {
+                switch (extensionType) {
+                    case "extension-encounter":
+                        extensionValue = ex.valueReference.reference;
+                        break;
+                    case "extension-eligibility-response":
+                        extensionValue = ex.valueReference.identifier.value;
+                        break;
+                    case "extension-eligibility-offline-reference":
+                        extensionValue = ex.valueString;
+                        break;
+                    case "extension-eligibility-offline-date":
+                        extensionValue = ex.valueDateTime;
+                        break;
+                    case "extension-newborn":
+                        extensionValue = ex.valueBoolean;
+                        break;
+                    case "extension-episode":
+                        extensionValue = ex.valueIdentifier.value;
+                        break;
+                    default:
+                        extensionValue = "In Progress"
+                }
+            } else { // extensionOf == 'benefitiary'
+                switch (extensionType) {
+                    case "extension-patient-religion":
+                        let religNum = ex.valueCodeableConcept.coding[0].code;
+                        console.log("religNum ", typeof religNum);
+                        switch (religNum) {
+                            case "1":
+                                extensionValue = "Muslim";
+                                break;
+                            case "2":
+                                extensionValue = "Christian";
+                                break;
+                            case "3":
+                                extensionValue = "Judaism";
+                                break;
+                            case "4":
+                                extensionValue = "Buddhism";
+                                break;
+                            case "5":
+                                extensionValue = "Zoroastrian";
+                                break;
+                            case "9":
+                                extensionValue = "Without";
+                                break;
+                            case "98":
+                                extensionValue = "Not available";
+                                break;
+                            case "0":
+                                extensionValue = "Other";
+                                break;
+                            case "99":
+                                extensionValue = "Not Mentioned";
+                                break;
+                            case "7":
+                                extensionValue = "Hinduism";
+                                break;
+                            case "8":
+                                extensionValue = "Sikh";
+                                break;
+                            default:
+                                extensionValue = "-";
+                        }
+                        break;
+                    case "extension-occupation":
+                        extensionValue = ex.valueCodeableConcept.coding[0].code;
+                        break;
+                    default:
+                        extensionValue = "Not Found"
+                }
             }
-
-            addExtensionToList(extensionType, extensionValue, index);
+            addExtensionToList(el, extensionType, extensionValue, index);
         });
     }
 }
-function addExtensionToList(extType, extVal, index) {
+function addExtensionToList(el, extType, extVal, index) {
     const li = document.createElement('li');
+    let formattedType = extType.slice("extension-".length);
+    formattedType = formattedType.charAt(0).toUpperCase() + formattedType.slice(1);
     li.className = 'list-group-item gap-5';
-    li.id = `${extType}Li`;
+    li.id = `${formattedType}Li`;
 
     li.innerHTML = `
-    <p class="m-0 p-0 extension-type">#${index}    ${extType}</p>
+    <p class="m-0 p-0 extension-type text-nowrap">#${index}    ${formattedType}</p>
     <div class="gap-2">
         <p class="m-0 p-0 text-truncate extension-val">${extVal}</p>
         <button type="button" class="btn copy-ex-btn btn-sm" data-bs-target="${li.id}">
@@ -365,25 +427,101 @@ function addExtensionToList(extType, extVal, index) {
         </button>
     </div>
     `;
-    claimExtensionsUL.appendChild(li);
+    el.appendChild(li);
 }
-function clearExtensionLists() {
-    claimExtensionsUL.innerHTML = `
+function clearExtensionLists(el) {
+    el.innerHTML = `
         <li class="list-group-item gap-5 h-100 d-flex">
             <div class="align-items-center justify-content-center h-100 w-100 fs-6">No Extensions</div>
         </li>
     `;
 }
 
+
 function extracReqMembership(x) {
-    if ( !x || !('value' in x)) {
+    if (!x || !('value' in x)) {
         showErrorFooter(
-            'Key "entry[Coverage].resource.identifier[0].value" not found in JSON.',
+            // Key "entry[Coverage].resource.identifier[0].value" not found in JSON.
+            'Membership No. not found in JSON.',
             'error'
         );
         return;
     }
     reqMembershipInput.value = x.value;
+}
+
+function extractMemberName(x) {
+    // reqMemNameInput
+    if (!x || !('text' in x)) {
+        showErrorFooter(
+            // Key "entry[..].resource.name[0].text" not found in JSON.
+            'Member Name not found in JSON.',
+            'error'
+        );
+        return;
+    }
+    reqMemNameInput.value = x.text;
+}
+
+function extractBenifitiaryIdType(x) {
+    if (!x || !('system' in x)) {
+        showErrorFooter(
+            // Key "entry[..].resource.identifier[0].system" not found in JSON.
+            'Patient ID Type not found in JSON.',
+            'error'
+        );
+        return;
+    }
+    const extractedIDType = splitString(x.system);
+    reqIDTypeInput.value = extractedIDType[extractedIDType.length - 1];
+}
+
+function extractBenifitiaryId(x) {
+    if (!x || !('value' in x)) {
+        showErrorFooter(
+            // Key "entry[..].resource.identifier[0].value" not found in JSON.
+            'Patient ID not found in JSON.',
+            'error'
+        );
+        return;
+    }
+    reqIDNumInput.value = x.value;
+}
+
+function extractBenifitiaryPhoneNum(x) {
+    if (!x || !('value' in x)) {
+        showErrorFooter(
+            // Key "entry[..].resource.telecom[0].value" not found in JSON.
+            'Beneficiary phone number not found in JSON.',
+            'error'
+        );
+        return;
+    }
+    reqPhoneNumInput.value = x.value;
+}
+
+function extractBenifitiaryBD(x) {
+    if (!x) {
+        showErrorFooter(
+            // Key "entry[..].resource.birthDate" not found in JSON.
+            'Beneficiary birthdate not found in JSON.',
+            'error'
+        );
+        return;
+    }
+    reqBDateInput.value = x;
+}
+
+function extractBenifitiaryGender(x) {
+    if (!x) {
+        showErrorFooter(
+            // Key "entry[..].resource.gender" not found in JSON.
+            'Beneficiary gender not found in JSON.',
+            'error'
+        );
+        return;
+    }
+    reqGenderInput.value = x;
 }
 
 
@@ -461,7 +599,7 @@ function setValueByPath(obj, path, value) {
     target[lastKey] = value;
 }
 
-// Copy to clipboard
+// Copy to clipboard ========================================
 document.querySelectorAll('.copy-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         const targetID = btn.getAttribute('data-bs-target');
@@ -497,6 +635,33 @@ claimExtensionsUL.addEventListener('click', (event) => {
     }
 });
 
+
+benefitiaryExtensionsUL.addEventListener('click', (event) => {
+    // Check if the clicked element (or its parent, like the <i> icon) is the button
+    const btn = event.target.closest('.copy-ex-btn');
+
+    // If the click wasn't on or inside a copy button, ignore it
+    if (!btn) return;
+
+    const targetID = btn.getAttribute('data-bs-target');
+
+    // Use querySelector to find the list item by its id attribute
+    const listItem = document.querySelector(`[id="${targetID}"]`);
+
+    if (listItem && benefEntry !== null) {
+        // Find the element with the class '.extension-type' inside that list item
+        const extValElement = listItem.querySelector('.extension-type');
+        let parsed;
+        try {
+            parsed = JSON.parse(userInputJSON);
+            copyToClipboardExtension(benefEntry.resource.extension[extValElement.textContent[1]]);
+        } catch (e) {
+            showErrorFooter('Error in extension copy: ' + e.message, 'error');
+            return;
+        }
+    }
+});
+
 function copyToClipboard(val) {
     if (!val || typeof val.value !== 'string') {
         showErrorFooter('Error: Unable to copy' + val, 'error'); return;
@@ -518,9 +683,35 @@ function copyToClipboardExtension(val) {
         .then(() => console.log("Copied extension"))
         .catch(err => console.error('Navigator copy extension failed:', err));
 }
-
 function fallbackCopy(val) {
     val.select();
     val.setSelectionRange(0, 9999);
     document.execCommand('copy');
+}
+
+// Error Handling ===========================================
+function showErrorFooter(msg, type) {
+    console.log("Error displayed");
+    errorFooter.textContent = msg;
+    errorFooter.classList.remove(
+        "bg-danger",
+        "bg-success",
+        "bg-primary",
+        "bg-secondary",
+        "bg-info",
+        "bg-warning",
+        "text-black",
+        "text-white"
+    );
+
+    if (type == 'error') {
+        errorFooter.classList.add("bg-danger");
+        errorFooter.classList.add("text-white");
+    } else if (type == 'warning') {
+        errorFooter.classList.add("bg-warning");
+        errorFooter.classList.add("text-black");
+    } else {
+        // Nothing
+    }
+    errorFooter.classList.remove('hidden');
 }
