@@ -84,11 +84,12 @@
                     </div>
 
                     <!-- Card Body -->
-                    <div class="card-body">
-                        <div class="container overflow-x-hidden">
-                            <div class="row gap-2">
-                                <div class="col p-0" style="min-width: 535px;">
-                                    <div class="card h-100">
+                    <div class="card-body p-4">
+                        <div class="container d-flex flex-column row-gap-4 p-0 overflow-x-hidden">
+
+                            <div class="row row-gap-4">
+                                <div class="col" style="min-width: 535px;">
+                                    <div class="card h-100" style="padding-right: 0px;">
 
                                         <div class="card-header fw-semibold">
                                             <div class="d-flex flex-row gap-2 align-items-center">
@@ -158,7 +159,9 @@
                                                         class="list-group px-1 flex-grow-1 overflow-auto"
                                                         style="font-size: 0.78rem">
                                                         <li class="list-group-item gap-5 h-100 d-flex">
-                                                            <div class="align-items-center justify-content-center h-100 w-100 fs-6">No Extensions</div>
+                                                            <div
+                                                                class="align-items-center justify-content-center h-100 w-100 fs-6">
+                                                                No Extensions</div>
                                                         </li>
                                                     </ul>
                                                 </div>
@@ -168,8 +171,8 @@
                                     </div>
                                 </div>
 
-                                <div class="col p-0" style="min-width: 535px;">
-                                    <div class="card h-100">
+                                <div class="col" style="min-width: 535px;">
+                                    <div class="card h-100" style="padding-left: 0px;">
 
                                         <div class="card-header fw-semibold">
                                             <div class="d-flex flex-row gap-2 align-items-center">
@@ -260,10 +263,13 @@
 
                                                 <div class="row d-flex flex-column flex-grow-1 overflow-hidden">
                                                     <h6 class="p-1">Extensions</h6>
-                                                    <ul id="benefitiaryExtensionsUL" class="list-group px-1 flex-grow-1 overflow-auto"
+                                                    <ul id="benefitiaryExtensionsUL"
+                                                        class="list-group px-1 flex-grow-1 overflow-auto"
                                                         style="font-size: 0.78rem">
                                                         <li class="list-group-item gap-5 h-100 d-flex">
-                                                            <div class="align-items-center justify-content-center h-100 w-100 fs-6">No Extensions</div>
+                                                            <div
+                                                                class="align-items-center justify-content-center h-100 w-100 fs-6">
+                                                                No Extensions</div>
                                                         </li>
                                                     </ul>
                                                 </div>
@@ -274,6 +280,42 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="card">
+                                <div class="card-header fw-semibold">
+                                    <div class="d-flex flex-row gap-2 align-items-center">
+                                        <i class="ph ph-pulse"></i>
+                                        Diagnosis & Supporting Info
+                                    </div>
+                                </div>
+
+                                <div class="card-body overflow-hidden">
+                                    <div class="container">
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <p class="fs-6">Diagnosis Code</p>
+                                                <div class="row bg-body">
+                                                    <div class="col-2 bg-info">
+                                                        test
+                                                    </div>
+                                                    <div class="col-3 bg-warning">
+                                                        test
+                                                    </div>
+                                                    <div class="col-5 bg-secondary">
+                                                        test
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-5">
+                                                <p class="fs-6">Supporting Info</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- <div class="col p-0" style="min-width: 535px;">
+                            </div> -->
+
                         </div>
                     </div>
 
@@ -290,8 +332,9 @@
                     </div>
                     <div class="card-body p-0 overflow-x-auto">
                         <div class="form-floating h-100">
-                            <textarea class="form-control border-0 h-100 text-nowrap font-monospace" placeholder="Leave a comment here"
-                                id="requestBodyTxtArea" spellcheck="false"></textarea>
+                            <textarea class="form-control border-0 h-100 text-nowrap font-monospace"
+                                placeholder="Leave a comment here" id="requestBodyTxtArea"
+                                spellcheck="false"></textarea>
                             <label for="requestBodyTxtArea">Paste your request body here.</label>
                         </div>
                     </div>

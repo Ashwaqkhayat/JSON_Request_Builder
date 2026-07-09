@@ -229,7 +229,8 @@ function findResource(entriesList, resourceName, resourceVal) {
 function extractReqCat(x) {
     if (!('system' in x)) {
         showErrorFooter(
-            'Key "parsed.entry[1].resource.identifier[0].system" not found in JSON.',
+            // parsed.entry[1].resource.identifier[0].system
+            'Request category not found in JSON.',
             'error'
         );
         return;
@@ -247,7 +248,8 @@ function extractReqCat(x) {
 function extractReqType(x) {
     if (!('code' in x)) {
         showErrorFooter(
-            'Key "parsed.entry[1].resource.type.coding[0].code" not found in JSON.',
+            // parsed.entry[1].resource.type.coding[0].code
+            'Request type not found in JSON.',
             'error'
         );
         return;
@@ -258,9 +260,11 @@ function extractReqType(x) {
 function extractReqSubtype(x) {
     if (!('code' in x)) {
         showErrorFooter(
-            'Key "parsed.entry[1].resource.subType.coding[0].code" not found in JSON.',
+            // Key "parsed.entry[1].resource.subType.coding[0].code" 
+            'Request subtype not found in JSON.',
             'error'
         );
+        console.log('teettete');
         return;
     }
 
