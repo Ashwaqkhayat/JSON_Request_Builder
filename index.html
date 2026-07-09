@@ -10,8 +10,16 @@
     <link rel="stylesheet" href="styles.css">
 
     <!-- Phosphor -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap"
+        rel="stylesheet">
 </head>
 
 <body class="vh-100" data-bs-theme="dark">
@@ -32,26 +40,36 @@
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="index.html">Create</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="retrieve.html">Retreive</a>
+                    <li class="nav-item position-relative">
+                        <a class="nav-link position-relative" href="retrieve.html">Retreive</a>
+                        <span class="position-absolute start-100 translate-middle badge rounded-pill bg-danger"
+                            style="top: 20% !important;">
+                            new
+                            <span class="visually-hidden">unread messages</span>
+                        </span>
                     </li>
                 </ul>
 
-                <div class="input-group w-25 input-group-sm me-3">
-                    <span class="input-group-text" id="inputGroup-sizing-sm">Endpoint</span>
-                    <select id="selectEnv" class="form-select" aria-label="Default select example">
-                        <option selected value="uat">UAT</option>
-                        <option value="pp">PP</option>
-                    </select>
-                    <input disabled type="text" class="form-control w-50" id="endpointUrl" value="www.uat.com" required>
+                <div class="d-flex flex-row flex-sm-row min-w-45 max-w-50">
+                    <div class="input-group w-100 input-group-sm me-3">
+                        <span class="input-group-text" id="inputGroup-sizing-sm">Endpoint</span>
+                        <select id="selectEnv" class="form-select" aria-label="Default select example">
+                            <option selected value="uat">UAT</option>
+                            <option value="pp">PP</option>
+                        </select>
+                        <input disabled type="text" class="form-control w-50" id="endpointUrl" value="www.uat.com"
+                            required>
+                    </div>
+
+                    <button id="themeToggleBtn" class="btn btn-sm btn-secondary me-2">
+                        <!-- <i class="ph ph-moon" ></i> -->
+                        <i class="ph ph-moon phicon-container" id="switchTheme" style="color: rgb(255, 255, 255)"></i>
+                    </button>
+
+                    <button class="btn btn-sm btn-primary" id="validateRequestbtn" form="requestForm"
+                        type="submit">Submit</button>
+
                 </div>
-
-                <button id="themeToggleBtn" class="btn btn-sm btn-secondary me-2">
-                    <i class="ph ph-moon" id="switchTheme"></i>
-                </button>
-
-                <button class="btn btn-sm btn-primary" id="validateRequestbtn" form="requestForm"
-                    type="submit">Submit</button>
 
             </div>
 
