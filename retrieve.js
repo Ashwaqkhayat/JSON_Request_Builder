@@ -102,6 +102,14 @@ requestBodyTxtArea.addEventListener('change', () => {
 
 // Extract Data =====================================================
 
+requestBodyTxtArea.addEventListener('paste', function (e) {
+    const scrollTop = this.scrollTop;
+    // Stop from auto-scrolling the view to the end
+    setTimeout(() => {
+        this.scrollTop = scrollTop;
+    }, 0);
+});
+
 requestBodyTxtArea.addEventListener('change', () => {
     const input = userInputJSON;
 
@@ -419,7 +427,7 @@ function addExtensionToList(el, extType, extVal, index) {
     const li = document.createElement('li');
     let formattedType = extType.slice("extension-".length);
     formattedType = formattedType.charAt(0).toUpperCase() + formattedType.slice(1);
-    li.className = 'list-group-item gap-5';
+    li.className = 'list-group-item list-group-item-ex gap-5';
     li.id = `${formattedType}Li`;
 
     li.innerHTML = `
@@ -435,7 +443,7 @@ function addExtensionToList(el, extType, extVal, index) {
 }
 function clearExtensionLists(el) {
     el.innerHTML = `
-        <li class="list-group-item gap-5 h-100 d-flex">
+        <li class="list-group-item-ex gap-5 h-100 d-flex">
             <div class="align-items-center justify-content-center h-100 w-100 fs-6">No Extensions</div>
         </li>
     `;

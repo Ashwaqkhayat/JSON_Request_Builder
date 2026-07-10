@@ -95,6 +95,7 @@ body, html {
 }
 
 .phicon-container {
+    font-size: 1.25rem !important;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -118,7 +119,7 @@ body, html {
     overflow-y: auto;
 }
 
-.list-group-item {
+.list-group-item-ex {
     display: flex !important;
     flex-direction: row !important;
     justify-content: space-between !important;
@@ -129,8 +130,10 @@ body, html {
     margin-bottom: 0.2rem !important;
     border-radius: var(--bs-border-radius) !important;
 }
+.list-group-item-suppInf {
+}
 
-.list-group-item > div {
+.list-group-item-ex > div {
     display: flex !important;
     flex-direction: row !important;
     align-items: center !important;
@@ -158,4 +161,53 @@ body, html {
 
 .max-w-50 {
     max-width: 50% !important;
+}
+
+
+
+/* Supporting Info list */
+
+.info-item {
+    display: flex;
+    align-items: stretch;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.info-content {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: RGBA(var(--bs-secondary-rgb),var(--bs-bg-opacity, 0.1)) !important;
+    border-radius: 10px;
+    padding: 10px 20px;
+    min-width: 0;
+    /* allows text truncation inside flex */
+    overflow: hidden;
+}
+
+.info-index {
+    --bs-text-opacity: 1;
+    color: rgba(125, 126, 124 ,1);
+    margin-right: 20px;
+    flex-shrink: 0;
+}
+
+.info-label {
+    flex-shrink: 0;
+    margin-right: 25px;
+}
+
+.info-value {
+    text-align: right;
+    margin-left: auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.info-copy-btn {
+    background-color: RGBA(var(--bs-secondary-rgb),var(--bs-bg-opacity, 0.1)) !important;
+    transition: background-color 0.15s ease, color 0.15s ease;
 }
