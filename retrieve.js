@@ -78,6 +78,7 @@ const reqPhoneNumInput = el('reqPhoneNumInput');
 const reqBDateInput = el('reqBDateInput');
 const reqGenderInput = el('reqGenderInput');
 const benefitiaryExtensionsUL = el('benefitiaryExtensionsUL');
+const ICDtableList = el('ICDtableList');
 
 // for copy func
 let benefEntry = null;
@@ -120,6 +121,7 @@ requestBodyTxtArea.addEventListener('change', () => {
         });
         clearExtensionLists(claimExtensionsUL);
         clearExtensionLists(benefitiaryExtensionsUL);
+        clearICDList();
         showErrorFooter('Please paste JSON request.', 'warning');
         return;
     } else {
@@ -134,34 +136,48 @@ requestBodyTxtArea.addEventListener('change', () => {
 
     let extractedInfo;
     let entryOfInfo;
+
+    // Extract data for Claim resource type ==============================
+    entryOfInfo = findResource(parsed.entry, 'Claim', null);
     // Extract Req Category
-    extractedInfo = parsed.entry[1].resource.identifier[0];
+    extractedInfo = entryOfInfo?.resource.identifier[0] ?? null;
     extractReqCat(extractedInfo);
 
     // Extract Claim ID
     extractClaimID(extractedInfo);
 
     // Extract Req Type
-    extractedInfo = parsed.entry[1].resource.type.coding[0];
+    extractedInfo = entryOfInfo?.resource.type.coding[0] ?? null;
     extractReqType(extractedInfo);
 
     // Extract Req Subtype
-    extractedInfo = parsed.entry[1].resource.subType.coding[0];
+    extractedInfo = entryOfInfo?.resource.subType.coding[0] ?? null;
     extractReqSubtype(extractedInfo);
 
     // Extract Req Priority
-    extractedInfo = parsed.entry[1].resource.priority.coding[0];
+    extractedInfo = entryOfInfo?.resource.priority.coding[0] ?? null;
     extractReqPriority(extractedInfo);
 
     // Extract Req Extensions
-    extractedInfo = parsed.entry[1].resource.extension;
+    extractedInfo = entryOfInfo?.resource.extension ?? null;
     extractClaimExtensions(extractedInfo, claimExtensionsUL, EXTENSION_CATEGORIES.Claim);
 
+    // Extract ICD codes
+    extractedInfo = entryOfInfo?.resource.diagnosis
+    console.log("ICD ", extractedInfo);
+    extractICDCodes(extractedInfo);
+
+    // Extract Supporting info
+    // extractedInfo = entryOfInfo?.resource.supportingInfo ?? null;
+    // console.log("SuppInfo ", extractedInfo);
+
+    // Extract data for Coverage resource type ==========================
     // Extract Req Membership
     entryOfInfo = findResource(parsed.entry, 'Coverage', null);
     extractedInfo = entryOfInfo?.resource.identifier[0] ?? null;
     extracReqMembership(extractedInfo);
 
+    // Extract data for Patient (benefitiary) resource type ============
     // Extract Req Member Name
     let beneficiaryResource = entryOfInfo?.resource.beneficiary.reference ?? null;
     let extractedTypeVal = splitString(beneficiaryResource);
@@ -373,7 +389,6 @@ function extractClaimExtensions(x, el, extensionOf) {
                 switch (extensionType) {
                     case "extension-patient-religion":
                         let religNum = ex.valueCodeableConcept.coding[0].code;
-                        console.log("religNum ", typeof religNum);
                         switch (religNum) {
                             case "1":
                                 extensionValue = "Muslim";
@@ -431,7 +446,7 @@ function addExtensionToList(el, extType, extVal, index) {
     li.id = `${formattedType}Li`;
 
     li.innerHTML = `
-    <p class="m-0 p-0 extension-type text-nowrap">#${index}    ${formattedType}</p>
+    <p class="m-0 p-0 extension-type text-nowrap">#${index+1}    ${formattedType}</p>
     <div class="gap-2">
         <p class="m-0 p-0 text-truncate extension-val">${extVal}</p>
         <button type="button" class="btn copy-ex-btn btn-sm" data-bs-target="${li.id}">
@@ -449,6 +464,37 @@ function clearExtensionLists(el) {
     `;
 }
 
+function extractICDCodes(x) {
+    // x is an array of icd items!
+    if (!x || x.length == 0) {
+        clearICDList();
+    } else {
+        ICDtableList.innerHTML = '';
+        x.forEach((icd, index) => {
+            let icdCode = icd.diagnosisCodeableConcept.coding[0].code ?? null;
+            let icdType = icd.type[0].coding[0].code ?? null;
+
+            const newICDRow = document.createElement('tr');
+
+            newICDRow.innerHTML = `
+            <th class="text-secondary fw-normal align-middle" scope="row">${index+1}</th>
+            <td><input class="form-control" value="${icdCode}"></td>
+            <td style="width: 55%;"><input class="form-control" value="${icdType}"></td>
+            `;
+            ICDtableList.appendChild(newICDRow);
+        });
+    }
+}
+
+function clearICDList() {
+    ICDtableList.innerHTML = `
+    <tr>
+        <th class="text-secondary fw-normal align-middle" scope="row">1</th>
+        <td><input class="form-control"></td>
+        <td style="width: 55%;"><input class="form-control"></td>
+    </tr>
+    `;
+}
 
 function extracReqMembership(x) {
     if (!x || !('value' in x)) {
