@@ -177,10 +177,10 @@ body, html {
 .info-content {
     flex: 1 1 auto;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    /* align-items: center;
+    justify-content: space-between; */
     background-color: RGBA(var(--bs-secondary-rgb),var(--bs-bg-opacity, 0.1)) !important;
-    border-radius: 10px;
+    border-radius: var(--bs-border-radius) !important;
     padding: 10px 20px;
     min-width: 0;
     /* allows text truncation inside flex */
@@ -190,7 +190,7 @@ body, html {
 .info-index {
     --bs-text-opacity: 1;
     color: rgba(125, 126, 124 ,1);
-    margin-right: 20px;
+    margin-right: 2rem !important;;
     flex-shrink: 0;
 }
 
@@ -210,4 +210,8 @@ body, html {
 .info-copy-btn {
     background-color: RGBA(var(--bs-secondary-rgb),var(--bs-bg-opacity, 0.1)) !important;
     transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.second-info {
+    font-size: 0.8rem !important;
 }

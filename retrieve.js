@@ -79,6 +79,7 @@ const reqBDateInput = el('reqBDateInput');
 const reqGenderInput = el('reqGenderInput');
 const benefitiaryExtensionsUL = el('benefitiaryExtensionsUL');
 const ICDtableList = el('ICDtableList');
+const supportingInfoUL = el('supportingInfoUL');
 
 // for copy func
 let benefEntry = null;
@@ -122,6 +123,7 @@ requestBodyTxtArea.addEventListener('change', () => {
         clearExtensionLists(claimExtensionsUL);
         clearExtensionLists(benefitiaryExtensionsUL);
         clearICDList();
+        clearSuppInfoLists();
         showErrorFooter('Please paste JSON request.', 'warning');
         return;
     } else {
@@ -164,12 +166,12 @@ requestBodyTxtArea.addEventListener('change', () => {
 
     // Extract ICD codes
     extractedInfo = entryOfInfo?.resource.diagnosis
-    console.log("ICD ", extractedInfo);
     extractICDCodes(extractedInfo);
 
     // Extract Supporting info
-    // extractedInfo = entryOfInfo?.resource.supportingInfo ?? null;
-    // console.log("SuppInfo ", extractedInfo);
+    extractedInfo = entryOfInfo?.resource.supportingInfo ?? null;
+    console.log("SuppInfo ", extractedInfo);
+    extractSupportingInfo(extractedInfo);
 
     // Extract data for Coverage resource type ==========================
     // Extract Req Membership
@@ -446,7 +448,7 @@ function addExtensionToList(el, extType, extVal, index) {
     li.id = `${formattedType}Li`;
 
     li.innerHTML = `
-    <p class="m-0 p-0 extension-type text-nowrap">#${index+1}    ${formattedType}</p>
+    <p class="m-0 p-0 extension-type text-nowrap">#${index + 1}    ${formattedType}</p>
     <div class="gap-2">
         <p class="m-0 p-0 text-truncate extension-val">${extVal}</p>
         <button type="button" class="btn copy-ex-btn btn-sm" data-bs-target="${li.id}">
@@ -464,6 +466,81 @@ function clearExtensionLists(el) {
     `;
 }
 
+function extractSupportingInfo(x) {
+    // X is the list of SupportingInfo
+    if (!x || x.length == 0) {
+        clearSuppInfoLists();
+    } else {
+        supportingInfoUL.innerHTML = '';
+        x.forEach((info, index) => {
+            let infoType = info.category.coding[0].code;
+            console.log("infoType ", infoType);
+            let infoValue;
+
+            switch (infoType) {
+                case "vital-sign-systolic":
+                    // infoValue = ex.valueReference.reference;
+                    break;
+                case "vital-sign-diastolic":
+                    // infoValue = ex.valueReference.reference;
+                    break;
+                case "vital-sign-height":
+                    // infoValue = ex.valueReference.reference;
+                    break;
+                case "vital-sign-weight":
+                    // infoValue = ex.valueReference.reference;
+                    break;
+                case "pulse":
+                    // infoValue = ex.valueReference.reference;
+                    break;
+                case "temperature":
+                    // infoValue = ex.valueReference.reference;
+                    break;
+                case "chief-complaint":
+                    // infoValue = ex.valueReference.reference;
+                    break;
+                case "oxygen-saturation":
+                    // infoValue = ex.valueReference.reference;
+                    break;
+                case "respiratory-rate":
+                    // infoValue = ex.valueReference.reference;
+                    break;
+                case "admission-weight":
+                    // infoValue = ex.valueReference.reference;
+                    break;
+                case "estimated-Length-of-Stay":
+                    // infoValue = ex.valueReference.reference;
+                    break;
+                case "patient-history":
+                    // infoValue = ex.valueReference.reference;
+                    break;
+                case "investigation-result":
+                    // infoValue = ex.valueReference.reference;
+                    break;
+                case "treatment-plan":
+                    // infoValue = ex.valueReference.reference;
+                    break;
+                case "physical-examination":
+                    // infoValue = ex.valueReference.reference;
+                    break;
+                case "history-of-present-illness":
+                    // infoValue = ex.valueReference.reference;
+                    break;
+                default:
+                    infoValue = "Under Development (Pls notify Ashwaq)"
+            }
+            // addExtensionToList(el, infoType, infoValue, index);
+        });
+    }
+}
+function clearSuppInfoLists() {
+    supportingInfoUL.innerHTML = `
+    <li class="info-item d-flex w-100 h-100">
+        <div class="info-content justify-content-center">Empty</div>
+    </li>
+    `;
+}
+
 function extractICDCodes(x) {
     // x is an array of icd items!
     if (!x || x.length == 0) {
@@ -477,7 +554,7 @@ function extractICDCodes(x) {
             const newICDRow = document.createElement('tr');
 
             newICDRow.innerHTML = `
-            <th class="text-secondary fw-normal align-middle" scope="row">${index+1}</th>
+            <th class="text-secondary fw-normal align-middle" scope="row">${index + 1}</th>
             <td><input class="form-control" value="${icdCode}"></td>
             <td style="width: 55%;"><input class="form-control" value="${icdType}"></td>
             `;
@@ -485,7 +562,6 @@ function extractICDCodes(x) {
         });
     }
 }
-
 function clearICDList() {
     ICDtableList.innerHTML = `
     <tr>

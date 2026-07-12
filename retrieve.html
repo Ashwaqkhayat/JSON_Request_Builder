@@ -289,12 +289,12 @@
                                     </div>
                                 </div>
 
-                                <div class="card-body overflow-hidden">
-                                    <div class="container">
-                                        <div class="row gap-3">
-                                            <div class="col col-xl-12 col-xxl-3 p-0">
+                                <div class="card-body overflow-hidden" style="height: auto; height: 220px;">
+                                    <div class="container h-100">
+                                        <div class="row gap-3 h-100">
+                                            <div class="col col-xl-12 col-xxl-3 p-0 h-100">
                                                 <p class="fs-6 mb-2 fw-semibold">Diagnosis Code</p>
-                                                <table class="table table-sm table-borderless">
+                                                <table class="table table-sm table-borderless overflow-auto">
                                                     <thead>
                                                         <tr>
                                                             <th class="fw-normal text-nowrap text-secondary" scope="col"></th>
@@ -313,14 +313,27 @@
                                                 </table>
                                             </div>
 
-                                            <div class="col">
+                                            <div class="col d-flex flex-column w-100 h-100">
                                                 <p class="fs-6 mb-2 fw-semibold">Supporting Info</p>
-                                                <ul class="list-group">
+                                                <ul class="list-group overflow-auto" id="supportingInfoUL">
+                                                    <!-- <li class="info-item d-flex w-100 h-100">
+                                                        <div class="info-content justify-content-center">Empty</div>
+                                                    </li> -->
                                                     <li class="info-item">
                                                         <div class="info-content">
-                                                            <span class="info-index">#1</span>
-                                                            <span class="info-label">Chief Complaint</span>
-                                                            <span class="info-value">Acute appendicitis with generalized peritonitis</span>
+                                                            <div class="d-flex flex-row w-100">
+                                                                <div class="info-index">#1</div>
+                                                                <div class="d-flex flex-column flex-grow-1">
+                                                                    <div class="d-flex flex-grow-1 flex-row justify-content-between">
+                                                                        <div class="info-label">vital sign systolic</div>
+                                                                        <div class="info-value">120 mm[Hg]</div>
+                                                                    </div>
+                                                                    <div class="d-flex flex-grow-1 flex-row justify-content-between">
+                                                                        <div class="info-label second-info text-warning opacity-50">Timing Period</div>
+                                                                        <div class="info-value second-info text-warning opacity-50">2023-12-04T10:00 → 2023-12-04T11:00</div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                         <button class="btn btn-outline-secondary info-copy-btn" type="button">
                                                             <i class="ph ph-copy phicon-container"></i>
@@ -328,19 +341,15 @@
                                                     </li>
                                                     <li class="info-item">
                                                         <div class="info-content">
-                                                            <span class="info-index">#1</span>
-                                                            <span class="info-label">Chief Complaint</span>
-                                                            <span class="info-value">Acute appendicitis with generalized peritonitis</span>
-                                                        </div>
-                                                        <button class="btn btn-outline-secondary info-copy-btn" type="button">
-                                                            <i class="ph ph-copy phicon-container"></i>
-                                                        </button>
-                                                    </li>
-                                                    <li class="info-item">
-                                                        <div class="info-content">
-                                                            <span class="info-index">#1</span>
-                                                            <span class="info-label">Chief Complaint</span>
-                                                            <span class="info-value">Acute appendicitis with generalized peritonitis</span>
+                                                            <div class="d-flex flex-row w-100">
+                                                                <div class="info-index">#1</div>
+                                                                <div class="d-flex flex-column flex-grow-1">
+                                                                    <div class="d-flex flex-grow-1 flex-row justify-content-between">
+                                                                        <div class="info-label">vital sign systolic</div>
+                                                                        <div class="info-value">120 mm[Hg]</div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                         <button class="btn btn-outline-secondary info-copy-btn" type="button">
                                                             <i class="ph ph-copy phicon-container"></i>
