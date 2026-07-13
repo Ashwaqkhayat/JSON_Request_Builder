@@ -215,3 +215,7 @@ body, html {
 .second-info {
     font-size: 0.8rem !important;
 }
+
+.h-85 {
+    height: 80% !important;
+}

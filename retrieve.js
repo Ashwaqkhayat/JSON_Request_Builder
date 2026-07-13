@@ -475,63 +475,112 @@ function extractSupportingInfo(x) {
         x.forEach((info, index) => {
             let infoType = info.category.coding[0].code;
             console.log("infoType ", infoType);
-            let infoValue;
+            let mainValue;
+            let thirdValue = null;
+            let noOfData = 2;
 
             switch (infoType) {
                 case "vital-sign-systolic":
-                    // infoValue = ex.valueReference.reference;
+                    mainValue = info.valueQuantity;
+                    thirdValue = info.timingPeriod;
+                    noOfData = 3;
                     break;
                 case "vital-sign-diastolic":
-                    // infoValue = ex.valueReference.reference;
+                    // mainValue = ex.valueReference.reference;
                     break;
                 case "vital-sign-height":
-                    // infoValue = ex.valueReference.reference;
+                    // mainValue = ex.valueReference.reference;
                     break;
                 case "vital-sign-weight":
-                    // infoValue = ex.valueReference.reference;
+                    // mainValue = ex.valueReference.reference;
                     break;
                 case "pulse":
-                    // infoValue = ex.valueReference.reference;
+                    // mainValue = ex.valueReference.reference;
                     break;
                 case "temperature":
-                    // infoValue = ex.valueReference.reference;
+                    // mainValue = ex.valueReference.reference;
                     break;
                 case "chief-complaint":
-                    // infoValue = ex.valueReference.reference;
+                    // mainValue = ex.valueReference.reference;
                     break;
                 case "oxygen-saturation":
-                    // infoValue = ex.valueReference.reference;
+                    // mainValue = ex.valueReference.reference;
                     break;
                 case "respiratory-rate":
-                    // infoValue = ex.valueReference.reference;
+                    // mainValue = ex.valueReference.reference;
                     break;
                 case "admission-weight":
-                    // infoValue = ex.valueReference.reference;
+                    // mainValue = ex.valueReference.reference;
                     break;
                 case "estimated-Length-of-Stay":
-                    // infoValue = ex.valueReference.reference;
+                    // mainValue = ex.valueReference.reference;
                     break;
                 case "patient-history":
-                    // infoValue = ex.valueReference.reference;
+                    // mainValue = ex.valueReference.reference;
                     break;
                 case "investigation-result":
-                    // infoValue = ex.valueReference.reference;
+                    // mainValue = ex.valueReference.reference;
                     break;
                 case "treatment-plan":
-                    // infoValue = ex.valueReference.reference;
+                    // mainValue = ex.valueReference.reference;
                     break;
                 case "physical-examination":
-                    // infoValue = ex.valueReference.reference;
+                    // mainValue = ex.valueReference.reference;
                     break;
                 case "history-of-present-illness":
-                    // infoValue = ex.valueReference.reference;
+                    // mainValue = ex.valueReference.reference;
                     break;
                 default:
-                    infoValue = "Under Development (Pls notify Ashwaq)"
+                    mainValue = "Under Development (Pls notify Ashwaq)";
+
             }
-            // addExtensionToList(el, infoType, infoValue, index);
+            addSuppInfoToList(index, noOfData, infoType, mainValue, thirdValue);
         });
     }
+}
+function addSuppInfoToList(index, noOfParams, catTitle, mainValue, thirdInfo) {
+
+    let extractedValue;
+    if (mainValue) {
+        extractedValue = mainValue.value + " " + mainValue.code;
+    } else {
+        extractedValue = "Undefined";
+    }
+
+    let extractedThirdVal;
+    if (thirdInfo && thirdInfo.start && thirdInfo.end) {
+        extractedThirdVal = thirdInfo.start + " → " + thirdInfo.end;
+    } else {
+        extractedThirdVal = "Undefined";
+    }
+
+    console.log("thirdInfo ", thirdInfo);
+
+    const newEl = document.createElement('li');
+    newEl.className = 'info-item';
+    newEl.id = `${catTitle}Li-${index}`;
+
+    newEl.innerHTML = `
+    <div class="info-content">
+    <div class="d-flex flex-row w-100">
+        <div class="info-index">#${index+1}</div>
+        <div class="d-flex flex-column flex-grow-1">
+            <div class="d-flex flex-grow-1 flex-row justify-content-between">
+                <div class="info-label">${catTitle.replaceAll("-", " ")}</div>
+                <div class="info-value">${extractedValue}</div>
+            </div>
+            <div class="d-flex flex-grow-1 flex-row justify-content-between">
+                <div class="info-label second-info text-secondary-emphasis opacity-50">${noOfParams == 2 ? "No Other Data" : "Timing Period"}</div>
+                <div class="info-value second-info text-secondary-emphasis opacity-${noOfParams==3 ? "50" : "0"}">${extractedThirdVal}</div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <button class="btn btn-outline-secondary info-copy-btn" type="button">
+    <i class="ph ph-copy phicon-container"></i>
+    </button>
+    `;
+    supportingInfoUL.appendChild(newEl);
 }
 function clearSuppInfoLists() {
     supportingInfoUL.innerHTML = `
