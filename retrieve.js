@@ -170,7 +170,6 @@ requestBodyTxtArea.addEventListener('change', () => {
 
     // Extract Supporting info
     extractedInfo = entryOfInfo?.resource.supportingInfo ?? null;
-    console.log("SuppInfo ", extractedInfo);
     extractSupportingInfo(extractedInfo);
 
     // Extract data for Coverage resource type ==========================
@@ -472,89 +471,81 @@ function extractSupportingInfo(x) {
         clearSuppInfoLists();
     } else {
         supportingInfoUL.innerHTML = '';
+        let supp = Object.values(x);
+
+
+        let extractedCateg;
+        let extractedVal;
+        let extractedSecVal;
         x.forEach((info, index) => {
-            let infoType = info.category.coding[0].code;
-            console.log("infoType ", infoType);
+            // Map each key and its value
+            let suppInf = Object.entries(info).map(([key, val]) => ({
+                key, val
+            }));
+            console.log("suppInf ", suppInf);
+
+            // 0 below is random, not important here
+            extractedCateg = findSuppKey(suppInf, 0, "category");
+            let infoType = extractedCateg.val.coding[0].code;
+            let noOfData = suppInf.length;
+            console.log("noOfData: ", noOfData);
+
             let mainValue;
-            let thirdValue = null;
-            let noOfData = 2;
+            let thirdValue;
+            if (noOfData == 4) {
+                extractedVal = findSuppKey(suppInf, noOfData, "valueQuantity");
+                extractedSecVal = findSuppKey(suppInf, noOfData, "timingPeriod");
+                mainValue = extractedVal.val.value + " " + extractedVal.val.code;
+                thirdValue = extractedSecVal.val.start + " → " + extractedSecVal.val.end;
+                console.log("mainValue 4: ", mainValue);
+                console.log("thirdValue: ", thirdValue);
+            } else if (noOfData == 3) {
+                let possibleKeys = ["valueQuantity", "valueString", "code"];
+                let keyTypeIndex = 0;
 
-            switch (infoType) {
-                case "vital-sign-systolic":
-                    mainValue = info.valueQuantity;
-                    thirdValue = info.timingPeriod;
-                    noOfData = 3;
-                    break;
-                case "vital-sign-diastolic":
-                    // mainValue = ex.valueReference.reference;
-                    break;
-                case "vital-sign-height":
-                    // mainValue = ex.valueReference.reference;
-                    break;
-                case "vital-sign-weight":
-                    // mainValue = ex.valueReference.reference;
-                    break;
-                case "pulse":
-                    // mainValue = ex.valueReference.reference;
-                    break;
-                case "temperature":
-                    // mainValue = ex.valueReference.reference;
-                    break;
-                case "chief-complaint":
-                    // mainValue = ex.valueReference.reference;
-                    break;
-                case "oxygen-saturation":
-                    // mainValue = ex.valueReference.reference;
-                    break;
-                case "respiratory-rate":
-                    // mainValue = ex.valueReference.reference;
-                    break;
-                case "admission-weight":
-                    // mainValue = ex.valueReference.reference;
-                    break;
-                case "estimated-Length-of-Stay":
-                    // mainValue = ex.valueReference.reference;
-                    break;
-                case "patient-history":
-                    // mainValue = ex.valueReference.reference;
-                    break;
-                case "investigation-result":
-                    // mainValue = ex.valueReference.reference;
-                    break;
-                case "treatment-plan":
-                    // mainValue = ex.valueReference.reference;
-                    break;
-                case "physical-examination":
-                    // mainValue = ex.valueReference.reference;
-                    break;
-                case "history-of-present-illness":
-                    // mainValue = ex.valueReference.reference;
-                    break;
-                default:
-                    mainValue = "Under Development (Pls notify Ashwaq)";
+                for (let i = 0; i < possibleKeys.length; i++) {
+                    extractedVal = findSuppKey(suppInf, noOfData, possibleKeys[i]);
+                    if (extractedVal != null) {
+                        keyTypeIndex = i;
+                        break;
+                    }
+                }
 
+                switch (keyTypeIndex) {
+                    case 0: //valueQuantity
+                        mainValue = extractedVal.val.value + " " + extractedVal.val.code;
+                        break;
+                    case 1: //valueString
+                        mainValue = extractedVal.val;
+                        break;
+                    case 2: //code
+                        mainValue = extractedVal.val.coding[0].code;
+                        let isDisplay = extractedVal.val.coding[0].display;
+                        if (isDisplay) { mainValue = mainValue + " | " + isDisplay; }
+                        break;
+                    default:
+                        mainValue = "Not Found.";
+                }
+                console.log("mainValue 3: ", mainValue);
+            } else {
+                mainValue = "Undefined";
+                thirdValue = "Undefined";
             }
+
             addSuppInfoToList(index, noOfData, infoType, mainValue, thirdValue);
         });
     }
 }
+
+function findSuppKey(suppInfo, noOfVals, keyName) {
+    const found = suppInfo.find(inf => inf.key == keyName);
+    if (found) {
+        return found;
+    } else {
+        return null;
+    }
+}
 function addSuppInfoToList(index, noOfParams, catTitle, mainValue, thirdInfo) {
-
-    let extractedValue;
-    if (mainValue) {
-        extractedValue = mainValue.value + " " + mainValue.code;
-    } else {
-        extractedValue = "Undefined";
-    }
-
-    let extractedThirdVal;
-    if (thirdInfo && thirdInfo.start && thirdInfo.end) {
-        extractedThirdVal = thirdInfo.start + " → " + thirdInfo.end;
-    } else {
-        extractedThirdVal = "Undefined";
-    }
-
-    console.log("thirdInfo ", thirdInfo);
 
     const newEl = document.createElement('li');
     newEl.className = 'info-item';
@@ -563,15 +554,15 @@ function addSuppInfoToList(index, noOfParams, catTitle, mainValue, thirdInfo) {
     newEl.innerHTML = `
     <div class="info-content">
     <div class="d-flex flex-row w-100">
-        <div class="info-index">#${index+1}</div>
+        <div class="info-index">#${index + 1}</div>
         <div class="d-flex flex-column flex-grow-1">
             <div class="d-flex flex-grow-1 flex-row justify-content-between">
                 <div class="info-label">${catTitle.replaceAll("-", " ")}</div>
-                <div class="info-value">${extractedValue}</div>
+                <div class="info-value">${mainValue}</div>
             </div>
             <div class="d-flex flex-grow-1 flex-row justify-content-between">
-                <div class="info-label second-info text-secondary-emphasis opacity-50">${noOfParams == 2 ? "No Other Data" : "Timing Period"}</div>
-                <div class="info-value second-info text-secondary-emphasis opacity-${noOfParams==3 ? "50" : "0"}">${extractedThirdVal}</div>
+                <div class="info-label second-info text-secondary-emphasis opacity-50">${noOfParams == 3 ? "No Other Data" : "Timing Period"}</div>
+                <div class="info-value second-info text-secondary-emphasis opacity-${noOfParams == 4 ? "50" : "0"}">${thirdInfo}</div>
             </div>
         </div>
     </div>

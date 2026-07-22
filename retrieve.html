@@ -298,17 +298,22 @@
                                                     <table class="table table-sm table-borderless">
                                                         <thead>
                                                             <tr>
-                                                                <th class="fw-normal text-nowrap text-secondary" scope="col"></th>
-                                                                <th class="fw-normal text-nowrap text-secondary" scope="col">ICD Code</th>
-                                                                <th class="fw-normal text-nowrap text-secondary" scope="col">Type</th>
+                                                                <th class="fw-normal text-nowrap text-secondary"
+                                                                    scope="col"></th>
+                                                                <th class="fw-normal text-nowrap text-secondary"
+                                                                    scope="col">ICD Code</th>
+                                                                <th class="fw-normal text-nowrap text-secondary"
+                                                                    scope="col">Type</th>
                                                             </tr>
                                                         </thead>
-    
+
                                                         <tbody id="ICDtableList">
                                                             <tr>
-                                                                <th class="text-secondary fw-normal align-middle" scope="row">1</th>
+                                                                <th class="text-secondary fw-normal align-middle"
+                                                                    scope="row">1</th>
                                                                 <td><input class="form-control"></td>
-                                                                <td style="width: 55%;"><input class="form-control"></td>
+                                                                <td style="width: 55%;"><input class="form-control">
+                                                                </td>
                                                             </tr>
                                                         </tbody>
                                                     </table>
@@ -319,7 +324,9 @@
                                                 <p class="fs-6 mb-2 fw-semibold">Supporting Info</p>
                                                 <ul class="list-group overflow-auto" id="supportingInfoUL">
                                                     <li class="info-item d-flex w-100 h-100">
-                                                        <div class="info-content justify-content-center align-items-center">Empty</div>
+                                                        <div
+                                                            class="info-content justify-content-center align-items-center">
+                                                            Empty</div>
                                                     </li>
                                                     <!-- <li class="info-item">
                                                         <div class="info-content">
@@ -364,6 +371,111 @@
                                                 </ul>
                                             </div>
 
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row row-gap-4">
+                                <div class="col" style="min-width: 535px;">
+                                    <div class="card">
+                                        <div class="card-header fw-semibold">
+                                            <div class="d-flex flex-row gap-2 align-items-center">
+                                                <i class="ph ph-clipboard-text"></i>
+                                                Insurer Data
+                                            </div>
+                                        </div>
+
+                                        <div class="card-body">
+                                            <div
+                                                class="container list-container d-flex flex-column flex-grow-1 overflow-hidden">
+                                                <div class="row gap-2 mb-3">
+                                                    <div class="col p-1">
+                                                        <label for="reqInput"
+                                                            class="form-label text-secondary">Name</label>
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control" id="reqTypeInput"
+                                                                aria-describedby="basic-addon3 basic-addon4">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row gap-2 mb-3">
+                                                    <div class="col p-1">
+                                                        <label for="reqTypeInput"
+                                                            class="form-label text-secondary">City</label>
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control" id="reqTypeInput"
+                                                                aria-describedby="basic-addon3 basic-addon4">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col p-1">
+                                                        <label for="reqSubtypeInput"
+                                                            class="form-label text-secondary">Country</label>
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control" id="reqSubtypeInput"
+                                                                aria-describedby="basic-addon3 basic-addon4">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col" style="min-width: 535px;">
+                                    <div class="card">
+                                        <div class="card-header fw-semibold">
+                                            <div class="d-flex flex-row gap-2 align-items-center">
+                                                <i class="ph ph-clipboard-text"></i>
+                                                Provider Data
+                                            </div>
+                                        </div>
+
+                                        <div class="card-body">
+                                            <div
+                                                class="container list-container d-flex flex-column flex-grow-1 overflow-hidden">
+                                                <div class="row gap-2 mb-3">
+                                                    <div class="col p-1">
+                                                        <label for="reqInput"
+                                                            class="form-label text-secondary">Name</label>
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control" id="reqTypeInput"
+                                                                aria-describedby="basic-addon3 basic-addon4">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row gap-2 mb-3">
+                                                    <div class="col p-1">
+                                                        <label for="reqTypeInput"
+                                                            class="form-label text-secondary">City</label>
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control" id="reqTypeInput"
+                                                                aria-describedby="basic-addon3 basic-addon4">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col p-1">
+                                                        <label for="reqSubtypeInput"
+                                                            class="form-label text-secondary">Country</label>
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control" id="reqSubtypeInput"
+                                                                aria-describedby="basic-addon3 basic-addon4">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row gap-2 mb-3">
+                                                    <div class="col p-1">
+                                                        <h6 class="p-1">Extensions</h6>
+                                                        <ul id="claimExtensionsUL"
+                                                            class="list-group px-1 flex-grow-1 overflow-auto"
+                                                            style="font-size: 0.78rem">
+                                                            <li class="list-group-item-ex gap-5 h-100 d-flex">
+                                                                <div
+                                                                    class="align-items-center justify-content-center h-100 w-100 fs-6">
+                                                                    No Extensions</div>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
