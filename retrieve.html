@@ -24,6 +24,13 @@
 
 <body class="vh-100 d-flex flex-column pb-3" data-bs-theme="dark">
 
+    <!-- Toast for Error Messages -->
+    <div class="toast-container position-static">
+        <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastStack">
+            <!-- toasts will be dynamically appended here -->
+        </div>
+    </div>
+
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg bg-body-tertiary px-2">
         <div class="container-fluid">
@@ -376,7 +383,8 @@
                                 </div>
                             </div>
 
-                            <div class="row row-gap-4">
+                            <!-- Provider and Insurer -->
+                            <!-- <div class="row row-gap-4">
                                 <div class="col" style="min-width: 535px;">
                                     <div class="card">
                                         <div class="card-header fw-semibold">
@@ -479,7 +487,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
 

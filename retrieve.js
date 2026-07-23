@@ -124,7 +124,7 @@ requestBodyTxtArea.addEventListener('change', () => {
         clearExtensionLists(benefitiaryExtensionsUL);
         clearICDList();
         clearSuppInfoLists();
-        showErrorFooter('Please paste JSON request.', 'warning');
+        showToast('Please paste JSON request.', 'warning');
         return;
     } else {
         errorFooter.classList.add('hidden');
@@ -132,7 +132,7 @@ requestBodyTxtArea.addEventListener('change', () => {
 
     let parsed;
     try { parsed = JSON.parse(input); } catch (e) {
-        showErrorFooter('Invalid JSON: ' + e.message, 'error');
+        showToast('Invalid JSON: ' + e.message, 'danger');
         return;
     }
 
@@ -216,7 +216,7 @@ function splitString(str) {
     if (str && str !== '') {
         return str.split("/");
     } else {
-        showErrorFooter(`Error: Could not split ${str}.`, 'error');
+        showToast(`Error: Could not split ${str}.`, 'danger');
         return null;
     }
 }
@@ -226,24 +226,29 @@ function findResource(entriesList, resourceName, resourceVal) {
 
     let entURL;
     let segment;
-    for (let index = 0; index < entriesList.length; index++) {
-        const entry = entriesList[index];
-        const entURL = entry.fullUrl;
-        if (!entURL || entURL === '') {
-            showErrorFooter(`Error in findResource: Unable to find the entry [${resourceName}]`, 'error');
-            continue;
-        }
-
-        const splittedURL = new URL(entURL).pathname.split("/");
-        // length-1 = the value, length-2 = the resource type
-        const segment = [splittedURL[splittedURL.length - 2], splittedURL[splittedURL.length - 1]];
-        if (resourceVal && resourceVal !== '') {
-            if (segment[0] == resourceName && segment[1] == resourceVal) {
-                return entriesList[index];
+    console.log("Resource Here ", resourceName);
+    if (entriesList == undefined || entriesList == null || entriesList.length == 0) {
+        showToast('Error: Could not find the Entries list to extract the resource.', 'danger');
+    } else {
+        for (let index = 0; index < entriesList.length; index++) {
+            const entry = entriesList[index];
+            const entURL = entry.fullUrl;
+            if (!entURL || entURL === '') {
+                showToast(`Error in findResource: Unable to find the entry [${resourceName}]`, 'danger');
+                continue;
             }
-        } else {
-            if (segment[0] == resourceName) {
-                return entriesList[index];
+
+            const splittedURL = new URL(entURL).pathname.split("/");
+            // length-1 = the value, length-2 = the resource type
+            const segment = [splittedURL[splittedURL.length - 2], splittedURL[splittedURL.length - 1]];
+            if (resourceVal && resourceVal !== '') {
+                if (segment[0] == resourceName && segment[1] == resourceVal) {
+                    return entriesList[index];
+                }
+            } else {
+                if (segment[0] == resourceName) {
+                    return entriesList[index];
+                }
             }
         }
     }
@@ -252,30 +257,34 @@ function findResource(entriesList, resourceName, resourceVal) {
 }
 
 function extractReqCat(x) {
-    if (!('system' in x)) {
-        showErrorFooter(
-            // parsed.entry[1].resource.identifier[0].system
-            'Request category not found in JSON.',
-            'error'
-        );
-        return;
-    }
-    const reqCategory = x.system.split('/').pop();
-    if (reqCategory === 'authorization') {
-        reqInput.value = 'authorization';
-    } else if (reqCategory === 'claim') {
-        reqInput.value = 'claim';
-    } else {
-        reqInput.value = '';
+    try {
+        if (!('system' in x)) {
+            showToast(
+                // parsed.entry[1].resource.identifier[0].system
+                'Request category not found in JSON.',
+                'danger'
+            );
+            return;
+        }
+        const reqCategory = x.system.split('/').pop();
+        if (reqCategory === 'authorization') {
+            reqInput.value = 'authorization';
+        } else if (reqCategory === 'claim') {
+            reqInput.value = 'claim';
+        } else {
+            reqInput.value = '';
+        }
+    } catch (e) {
+        showToast(`Error: Could not extract the request category. (${e.message})`, 'danger');
     }
 }
 
 function extractReqType(x) {
     if (!('code' in x)) {
-        showErrorFooter(
+        showToast(
             // parsed.entry[1].resource.type.coding[0].code
             'Request type not found in JSON.',
-            'error'
+            'danger'
         );
         return;
     }
@@ -284,10 +293,10 @@ function extractReqType(x) {
 
 function extractReqSubtype(x) {
     if (!('code' in x)) {
-        showErrorFooter(
+        showToast(
             // Key "parsed.entry[1].resource.subType.coding[0].code" 
             'Request subtype not found in JSON.',
-            'error'
+            'danger'
         );
         console.log('teettete');
         return;
@@ -307,9 +316,9 @@ function extractReqSubtype(x) {
 
 function extractReqPriority(x) {
     if (!('code' in x)) {
-        showErrorFooter(
+        showToast(
             'Key "parsed.entry[1].resource.priority.coding[0].code" not found in JSON.',
-            'error'
+            'danger'
         );
         return;
     }
@@ -319,9 +328,9 @@ function extractReqPriority(x) {
 
 function extractClaimID(x) {
     if (!('value' in x)) {
-        showErrorFooter(
+        showToast(
             'Key "parsed.entry[1].resource.identifier[0].value" not found in JSON.',
-            'error'
+            'danger'
         );
         return;
     }
@@ -576,7 +585,7 @@ function addSuppInfoToList(index, noOfParams, catTitle, mainValue, thirdInfo) {
 function clearSuppInfoLists() {
     supportingInfoUL.innerHTML = `
     <li class="info-item d-flex w-100 h-100">
-        <div class="info-content justify-content-center">Empty</div>
+        <div class="info-content justify-content-center align-items-center">Empty</div>
     </li>
     `;
 }
@@ -614,10 +623,10 @@ function clearICDList() {
 
 function extracReqMembership(x) {
     if (!x || !('value' in x)) {
-        showErrorFooter(
+        showToast(
             // Key "entry[Coverage].resource.identifier[0].value" not found in JSON.
             'Membership No. not found in JSON.',
-            'error'
+            'danger'
         );
         return;
     }
@@ -627,10 +636,10 @@ function extracReqMembership(x) {
 function extractMemberName(x) {
     // reqMemNameInput
     if (!x || !('text' in x)) {
-        showErrorFooter(
+        showToast(
             // Key "entry[..].resource.name[0].text" not found in JSON.
             'Member Name not found in JSON.',
-            'error'
+            'danger'
         );
         return;
     }
@@ -639,10 +648,10 @@ function extractMemberName(x) {
 
 function extractBenifitiaryIdType(x) {
     if (!x || !('system' in x)) {
-        showErrorFooter(
+        showToast(
             // Key "entry[..].resource.identifier[0].system" not found in JSON.
             'Patient ID Type not found in JSON.',
-            'error'
+            'danger'
         );
         return;
     }
@@ -652,10 +661,10 @@ function extractBenifitiaryIdType(x) {
 
 function extractBenifitiaryId(x) {
     if (!x || !('value' in x)) {
-        showErrorFooter(
+        showToast(
             // Key "entry[..].resource.identifier[0].value" not found in JSON.
             'Patient ID not found in JSON.',
-            'error'
+            'danger'
         );
         return;
     }
@@ -664,10 +673,10 @@ function extractBenifitiaryId(x) {
 
 function extractBenifitiaryPhoneNum(x) {
     if (!x || !('value' in x)) {
-        showErrorFooter(
+        showToast(
             // Key "entry[..].resource.telecom[0].value" not found in JSON.
             'Beneficiary phone number not found in JSON.',
-            'error'
+            'danger'
         );
         return;
     }
@@ -676,10 +685,10 @@ function extractBenifitiaryPhoneNum(x) {
 
 function extractBenifitiaryBD(x) {
     if (!x) {
-        showErrorFooter(
+        showToast(
             // Key "entry[..].resource.birthDate" not found in JSON.
             'Beneficiary birthdate not found in JSON.',
-            'error'
+            'danger'
         );
         return;
     }
@@ -688,10 +697,10 @@ function extractBenifitiaryBD(x) {
 
 function extractBenifitiaryGender(x) {
     if (!x) {
-        showErrorFooter(
+        showToast(
             // Key "entry[..].resource.gender" not found in JSON.
             'Beneficiary gender not found in JSON.',
-            'error'
+            'danger'
         );
         return;
     }
@@ -733,7 +742,7 @@ function changeReqValue(paths, reqBody, newValue) {
         try {
             parsed = JSON.parse(reqBody);
         } catch (e) {
-            showErrorFooter('Invalid JSON: ' + e.message, 'error');
+            showToast('Invalid JSON: ' + e.message, 'danger');
             return;
         }
 
@@ -742,7 +751,7 @@ function changeReqValue(paths, reqBody, newValue) {
                 setValueByPath(parsed, path, newValue);
             });
         } catch (e) {
-            showErrorFooter('Failed to update value: ' + e.message, 'error');
+            showToast('Failed to update value: ' + e.message, 'danger');
             return;
         }
 
@@ -803,7 +812,7 @@ claimExtensionsUL.addEventListener('click', (event) => {
             parsed = JSON.parse(userInputJSON);
             copyToClipboardExtension(parsed.entry[1].resource.extension[extValElement.textContent[1]]);
         } catch (e) {
-            showErrorFooter('Error in extension copy: ' + e.message, 'error');
+            showToast('Error in extension copy: ' + e.message, 'danger');
             return;
         }
     }
@@ -830,7 +839,7 @@ benefitiaryExtensionsUL.addEventListener('click', (event) => {
             parsed = JSON.parse(userInputJSON);
             copyToClipboardExtension(benefEntry.resource.extension[extValElement.textContent[1]]);
         } catch (e) {
-            showErrorFooter('Error in extension copy: ' + e.message, 'error');
+            showToast('Error in extension copy: ' + e.message, 'danger');
             return;
         }
     }
@@ -838,7 +847,7 @@ benefitiaryExtensionsUL.addEventListener('click', (event) => {
 
 function copyToClipboard(val) {
     if (!val || typeof val.value !== 'string') {
-        showErrorFooter('Error: Unable to copy' + val, 'error'); return;
+        showToast('Error: Unable to copy' + val, 'danger'); return;
     }
 
     const text = val.value;
@@ -850,12 +859,12 @@ function copyToClipboard(val) {
 }
 function copyToClipboardExtension(val) {
     if (!val) {
-        showErrorFooter('Error: Unable to copy extension', 'error'); return;
+        showToast('Error: Unable to copy extension', 'danger'); return;
     }
 
     navigator.clipboard.writeText(JSON.stringify(val, null, 4))
         .then(() => console.log("Copied extension"))
-        .catch(err => console.error('Navigator copy extension failed:', err));
+        .catch(err => console.danger('Navigator copy extension failed:', err));
 }
 function fallbackCopy(val) {
     val.select();
@@ -878,7 +887,7 @@ function showErrorFooter(msg, type) {
         "text-white"
     );
 
-    if (type == 'error') {
+    if (type == 'danger') {
         errorFooter.classList.add("bg-danger");
         errorFooter.classList.add("text-white");
     } else if (type == 'warning') {
@@ -888,4 +897,32 @@ function showErrorFooter(msg, type) {
         // Nothing
     }
     errorFooter.classList.remove('hidden');
+}
+
+// Show Toast
+function showToast(message, variant = "danger") {
+    const toastStack = document.getElementById("toastStack");
+
+    const toastEl = document.createElement("div");
+    toastEl.className = `toast text-bg-${variant} bg-opacity-75`;
+    toastEl.setAttribute("role", "alert");
+    toastEl.setAttribute("aria-live", "assertive");
+    toastEl.setAttribute("aria-atomic", "true");
+
+    toastEl.innerHTML = `
+        <div class="d-flex">
+            <div class="toast-body">${message}</div>
+            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    `;
+
+    toastStack.appendChild(toastEl);
+
+    const bsToast = new bootstrap.Toast(toastEl);
+    bsToast.show();
+
+    // Clean up the DOM node once it's done hiding
+    toastEl.addEventListener("hidden.bs.toast", () => {
+        toastEl.remove();
+    });
 }
