@@ -62,7 +62,6 @@ selectEnv.addEventListener('change', (e) => {
 
 // elements ==========================================================
 const requestBodyTxtArea = el('requestBodyTxtArea');
-const errorFooter = el('errorFooter');
 const reqInput = el('reqInput');
 const reqTypeInput = el('reqTypeInput');
 const reqSubtypeInput = el('reqSubtypeInput');
@@ -91,7 +90,6 @@ window.addEventListener('load', () => {
 
 function init() {
     console.log('Request Initialized');
-    errorFooter.classList.add('hidden');
     displayedEnvURL.value = ENVIRONMENTS.uat.URL;
 }
 
@@ -126,8 +124,6 @@ requestBodyTxtArea.addEventListener('change', () => {
         clearSuppInfoLists();
         showToast('Please paste JSON request.', 'warning');
         return;
-    } else {
-        errorFooter.classList.add('hidden');
     }
 
     let parsed;
@@ -873,32 +869,6 @@ function fallbackCopy(val) {
 }
 
 // Error Handling ===========================================
-function showErrorFooter(msg, type) {
-    console.log("Error displayed");
-    errorFooter.textContent = msg;
-    errorFooter.classList.remove(
-        "bg-danger",
-        "bg-success",
-        "bg-primary",
-        "bg-secondary",
-        "bg-info",
-        "bg-warning",
-        "text-black",
-        "text-white"
-    );
-
-    if (type == 'danger') {
-        errorFooter.classList.add("bg-danger");
-        errorFooter.classList.add("text-white");
-    } else if (type == 'warning') {
-        errorFooter.classList.add("bg-warning");
-        errorFooter.classList.add("text-black");
-    } else {
-        // Nothing
-    }
-    errorFooter.classList.remove('hidden');
-}
-
 // Show Toast
 function showToast(message, variant = "danger") {
     const toastStack = document.getElementById("toastStack");

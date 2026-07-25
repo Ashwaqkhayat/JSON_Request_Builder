@@ -82,260 +82,250 @@
     <main class="container-fluid px-4 py-3 flex-grow-1 overflow-auto">
         <div class="row gap-3 h-100">
             <!-- Request Information Col -->
-            <div class="col-7 px-0 shadow control-input-disable">
-                <div class="card h-100">
-                    <!-- Card Header -->
-                    <div class="card-header" style="height: 3rem;">
-                        <div class="fs-6 fw-medium">Request Information</div>
-                        <span class="fs-small">Recieved Date: 2026-07-03T23:12:19+03:00</span>
-                    </div>
+            <div class="col-7 px-0 control-input-disable">
+                <div class="container d-flex flex-column row-gap-3 p-0 overflow-x-hidden">
+                    <div class="row column-gap-3">
+                        <div class="col" style="min-width: 535px; padding-right: 0px;">
+                            <div class="card h-100" style="padding-right: 0px;">
 
-                    <!-- Card Body -->
-                    <div class="card-body p-4">
-                        <div class="container d-flex flex-column row-gap-4 p-0 overflow-x-hidden">
-
-                            <div class="row row-gap-4">
-                                <div class="col" style="min-width: 535px;">
-                                    <div class="card h-100" style="padding-right: 0px;">
-
-                                        <div class="card-header fw-semibold">
-                                            <div class="d-flex flex-row gap-2 align-items-center">
-                                                <i class="ph ph-clipboard-text"></i>
-                                                Request Data
-                                            </div>
-                                        </div>
-
-                                        <div class="card-body d-flex flex-column overflow-hidden"
-                                            style="height: 450px;">
-                                            <div
-                                                class="container list-container d-flex flex-column flex-grow-1 overflow-hidden">
-                                                <div class="row gap-2 mb-3">
-                                                    <div class="col p-1">
-                                                        <label for="reqInput"
-                                                            class="form-label text-secondary">Request</label>
-                                                        <div class="input-group">
-                                                            <select class="form-select" id="reqInput"
-                                                                aria-label="Default select example">
-                                                                <option value="authorization">Preauth</option>
-                                                                <option value="claim">Claim</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col p-1">
-                                                        <label for="reqTypeInput"
-                                                            class="form-label text-secondary">Type</label>
-                                                        <div class="input-group">
-                                                            <input type="text" class="form-control" id="reqTypeInput"
-                                                                aria-describedby="basic-addon3 basic-addon4">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col p-1">
-                                                        <label for="reqSubtypeInput"
-                                                            class="form-label text-secondary">Subtype</label>
-                                                        <div class="input-group">
-                                                            <input type="text" class="form-control" id="reqSubtypeInput"
-                                                                aria-describedby="basic-addon3 basic-addon4">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row gap-2 mb-4">
-                                                    <div class="col p-1">
-                                                        <label for="reqPriorityInput"
-                                                            class="form-label text-secondary">Priority</label>
-                                                        <div class="input-group">
-                                                            <input type="text" class="form-control"
-                                                                id="reqPriorityInput"
-                                                                aria-describedby="basic-addon3 basic-addon4">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-9 p-1">
-                                                        <label for="reqClaimIDInput"
-                                                            class="form-label text-secondary">Claim ID</label>
-                                                        <div class="input-group">
-                                                            <input type="text" class="form-control" id="reqClaimIDInput"
-                                                                aria-describedby="basic-addon3 basic-addon4">
-                                                            <button class="btn btn-outline-secondary copy-btn"
-                                                                type="button" data-bs-target="reqClaimIDInput"><i
-                                                                    class="ph ph-copy phicon-container"></i></button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row d-flex flex-column flex-grow-1 overflow-hidden">
-                                                    <h6 class="p-1">Extensions</h6>
-                                                    <ul id="claimExtensionsUL"
-                                                        class="list-group px-1 flex-grow-1 overflow-auto"
-                                                        style="font-size: 0.78rem">
-                                                        <li class="list-group-item-ex gap-5 h-100 d-flex">
-                                                            <div
-                                                                class="align-items-center justify-content-center h-100 w-100 fs-6">
-                                                                No Extensions</div>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-
-                                <div class="col" style="min-width: 535px;">
-                                    <div class="card h-100" style="padding-left: 0px;">
-
-                                        <div class="card-header fw-semibold">
-                                            <div class="d-flex flex-row gap-2 align-items-center">
-                                                <i class="ph ph-user-list"></i>
-                                                Beneficiary Information
-                                            </div>
-                                        </div>
-
-                                        <div class="card-body d-flex flex-column overflow-hidden"
-                                            style="height: 450px;">
-                                            <div
-                                                class="container list-container d-flex flex-column flex-grow-1 overflow-hidden">
-                                                <div class="row gap-2 mb-3">
-                                                    <div class="col-4 p-1">
-                                                        <label for="reqMembershipInput"
-                                                            class="form-label text-secondary">Membership No.</label>
-                                                        <div class="input-group">
-                                                            <input type="text" class="form-control"
-                                                                id="reqMembershipInput"
-                                                                aria-describedby="basic-addon3 basic-addon4">
-                                                            <button class="btn btn-outline-secondary copy-btn"
-                                                                data-bs-target="reqMembershipInput" type="button"
-                                                                id="copyBtn"><i
-                                                                    class="ph ph-copy phicon-container"></i></button>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col p-1">
-                                                        <label for="reqMemNameInput"
-                                                            class="form-label text-secondary">Name</label>
-                                                        <div class="input-group">
-                                                            <input type="text" class="form-control" id="reqMemNameInput"
-                                                                aria-describedby="basic-addon3 basic-addon4">
-                                                            <button class="btn btn-outline-secondary copy-btn"
-                                                                type="button" id="copyBtn"
-                                                                data-bs-target="reqMemNameInput"><i
-                                                                    class="ph ph-copy phicon-container"></i></button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row gap-2 mb-3">
-                                                    <div class="col-4 p-1">
-                                                        <label for="reqIDTypeInput"
-                                                            class="form-label text-secondary">Identifier Type</label>
-                                                        <div class="input-group">
-                                                            <input type="text" class="form-control" id="reqIDTypeInput"
-                                                                aria-describedby="basic-addon3 basic-addon4">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col p-1">
-                                                        <label for="reqIDNumInput" class="form-label text-secondary">ID
-                                                            Number</label>
-                                                        <div class="input-group">
-                                                            <input type="text" class="form-control" id="reqIDNumInput"
-                                                                aria-describedby="basic-addon3 basic-addon4">
-                                                            <button class="btn btn-outline-secondary copy-btn"
-                                                                type="button" id="copyBtn"
-                                                                data-bs-target="reqIDNumInput"><i
-                                                                    class="ph ph-copy phicon-container"></i></button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row gap-2 mb-3">
-                                                    <div class="col-4 p-1">
-                                                        <label for="reqPhoneNumInput"
-                                                            class="form-label text-secondary">Phone Number</label>
-                                                        <div class="input-group">
-                                                            <input type="tel" class="form-control" id="reqPhoneNumInput"
-                                                                aria-describedby="basic-addon3 basic-addon4">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col p-1">
-                                                        <label for="reqBDateInput"
-                                                            class="form-label text-secondary">Birthdate</label>
-                                                        <div class="input-group">
-                                                            <input type="date" class="form-control" id="reqBDateInput"
-                                                                aria-describedby="basic-addon3 basic-addon4">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col p-1">
-                                                        <label for="reqGenderInput"
-                                                            class="form-label text-secondary">Gender</label>
-                                                        <div class="input-group">
-                                                            <input type="text" class="form-control" id="reqGenderInput"
-                                                                aria-describedby="basic-addon3 basic-addon4">
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="row d-flex flex-column flex-grow-1 overflow-hidden">
-                                                    <h6 class="p-1">Extensions</h6>
-                                                    <ul id="benefitiaryExtensionsUL"
-                                                        class="list-group px-1 flex-grow-1 overflow-auto"
-                                                        style="font-size: 0.78rem">
-                                                        <li class="list-group-item-ex gap-5 h-100 d-flex">
-                                                            <div
-                                                                class="align-items-center justify-content-center h-100 w-100 fs-6">
-                                                                No Extensions</div>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="card">
                                 <div class="card-header fw-semibold">
                                     <div class="d-flex flex-row gap-2 align-items-center">
-                                        <i class="ph ph-pulse"></i>
-                                        Diagnosis & Supporting Info
+                                        <i class="ph ph-clipboard-text"></i>
+                                        Request Data
                                     </div>
                                 </div>
 
-                                <div class="card-body overflow-hidden" style="height: 280px;">
-                                    <div class="container h-100">
-                                        <div class="row gap-3 h-100">
-                                            <div class="col col-xl-12 col-xxl-3 p-0 h-100">
-                                                <p class="fs-6 mb-2 fw-semibold">Diagnosis Code</p>
-                                                <div class="h-85 overflow-y-auto">
-                                                    <table class="table table-sm table-borderless">
-                                                        <thead>
-                                                            <tr>
-                                                                <th class="fw-normal text-nowrap text-secondary"
-                                                                    scope="col"></th>
-                                                                <th class="fw-normal text-nowrap text-secondary"
-                                                                    scope="col">ICD Code</th>
-                                                                <th class="fw-normal text-nowrap text-secondary"
-                                                                    scope="col">Type</th>
-                                                            </tr>
-                                                        </thead>
-
-                                                        <tbody id="ICDtableList">
-                                                            <tr>
-                                                                <th class="text-secondary fw-normal align-middle"
-                                                                    scope="row">1</th>
-                                                                <td><input class="form-control"></td>
-                                                                <td style="width: 55%;"><input class="form-control">
-                                                                </td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
+                                <div class="card-body d-flex flex-column overflow-hidden"
+                                    style="height: 450px;">
+                                    <div
+                                        class="container list-container d-flex flex-column flex-grow-1 overflow-hidden">
+                                        <div class="row gap-2 mb-3">
+                                            <div class="col p-1">
+                                                <label for="reqInput"
+                                                    class="form-label text-secondary">Request</label>
+                                                <div class="input-group">
+                                                    <select class="form-select" id="reqInput"
+                                                        aria-label="Default select example">
+                                                        <option value="authorization">Preauth</option>
+                                                        <option value="claim">Claim</option>
+                                                    </select>
                                                 </div>
                                             </div>
+                                            <div class="col p-1">
+                                                <label for="reqTypeInput"
+                                                    class="form-label text-secondary">Type</label>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="reqTypeInput"
+                                                        aria-describedby="basic-addon3 basic-addon4">
+                                                </div>
+                                            </div>
+                                            <div class="col p-1">
+                                                <label for="reqSubtypeInput"
+                                                    class="form-label text-secondary">Subtype</label>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="reqSubtypeInput"
+                                                        aria-describedby="basic-addon3 basic-addon4">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row gap-2 mb-4">
+                                            <div class="col p-1">
+                                                <label for="reqPriorityInput"
+                                                    class="form-label text-secondary">Priority</label>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control"
+                                                        id="reqPriorityInput"
+                                                        aria-describedby="basic-addon3 basic-addon4">
+                                                </div>
+                                            </div>
+                                            <div class="col-9 p-1">
+                                                <label for="reqClaimIDInput"
+                                                    class="form-label text-secondary">Claim ID</label>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="reqClaimIDInput"
+                                                        aria-describedby="basic-addon3 basic-addon4">
+                                                    <button class="btn btn-outline-secondary copy-btn"
+                                                        type="button" data-bs-target="reqClaimIDInput"><i
+                                                            class="ph ph-copy phicon-container"></i></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row d-flex flex-column flex-grow-1 overflow-hidden">
+                                            <h6 class="p-1">Extensions</h6>
+                                            <ul id="claimExtensionsUL"
+                                                class="list-group px-1 flex-grow-1 overflow-auto"
+                                                style="font-size: 0.78rem">
+                                                <li class="list-group-item-ex gap-5 h-100 d-flex">
+                                                    <div
+                                                        class="align-items-center justify-content-center h-100 w-100 fs-6">
+                                                        No Extensions</div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
 
-                                            <div class="col d-flex flex-column w-100 h-100">
-                                                <p class="fs-6 mb-2 fw-semibold">Supporting Info</p>
-                                                <ul class="list-group overflow-auto" id="supportingInfoUL">
-                                                    <li class="info-item d-flex w-100 h-100">
-                                                        <div
-                                                            class="info-content justify-content-center align-items-center">
-                                                            Empty</div>
-                                                    </li>
-                                                    <!-- <li class="info-item">
+                            </div>
+                        </div>
+
+                        <div class="col" style="min-width: 535px; padding-left: 0px;">
+                            <div class="card h-100" style="padding-left: 0px;">
+
+                                <div class="card-header fw-semibold">
+                                    <div class="d-flex flex-row gap-2 align-items-center">
+                                        <i class="ph ph-user-list"></i>
+                                        Beneficiary Information
+                                    </div>
+                                </div>
+
+                                <div class="card-body d-flex flex-column overflow-hidden"
+                                    style="height: 450px;">
+                                    <div
+                                        class="container list-container d-flex flex-column flex-grow-1 overflow-hidden">
+                                        <div class="row gap-2 mb-3">
+                                            <div class="col-4 p-1">
+                                                <label for="reqMembershipInput"
+                                                    class="form-label text-secondary">Membership No.</label>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control"
+                                                        id="reqMembershipInput"
+                                                        aria-describedby="basic-addon3 basic-addon4">
+                                                    <button class="btn btn-outline-secondary copy-btn"
+                                                        data-bs-target="reqMembershipInput" type="button"
+                                                        id="copyBtn"><i
+                                                            class="ph ph-copy phicon-container"></i></button>
+                                                </div>
+                                            </div>
+                                            <div class="col p-1">
+                                                <label for="reqMemNameInput"
+                                                    class="form-label text-secondary">Name</label>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="reqMemNameInput"
+                                                        aria-describedby="basic-addon3 basic-addon4">
+                                                    <button class="btn btn-outline-secondary copy-btn"
+                                                        type="button" id="copyBtn"
+                                                        data-bs-target="reqMemNameInput"><i
+                                                            class="ph ph-copy phicon-container"></i></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row gap-2 mb-3">
+                                            <div class="col-4 p-1">
+                                                <label for="reqIDTypeInput"
+                                                    class="form-label text-secondary">Identifier Type</label>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="reqIDTypeInput"
+                                                        aria-describedby="basic-addon3 basic-addon4">
+                                                </div>
+                                            </div>
+                                            <div class="col p-1">
+                                                <label for="reqIDNumInput" class="form-label text-secondary">ID
+                                                    Number</label>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="reqIDNumInput"
+                                                        aria-describedby="basic-addon3 basic-addon4">
+                                                    <button class="btn btn-outline-secondary copy-btn"
+                                                        type="button" id="copyBtn"
+                                                        data-bs-target="reqIDNumInput"><i
+                                                            class="ph ph-copy phicon-container"></i></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row gap-2 mb-3">
+                                            <div class="col-4 p-1">
+                                                <label for="reqPhoneNumInput"
+                                                    class="form-label text-secondary">Phone Number</label>
+                                                <div class="input-group">
+                                                    <input type="tel" class="form-control" id="reqPhoneNumInput"
+                                                        aria-describedby="basic-addon3 basic-addon4">
+                                                </div>
+                                            </div>
+                                            <div class="col p-1">
+                                                <label for="reqBDateInput"
+                                                    class="form-label text-secondary">Birthdate</label>
+                                                <div class="input-group">
+                                                    <input type="date" class="form-control" id="reqBDateInput"
+                                                        aria-describedby="basic-addon3 basic-addon4">
+                                                </div>
+                                            </div>
+                                            <div class="col p-1">
+                                                <label for="reqGenderInput"
+                                                    class="form-label text-secondary">Gender</label>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="reqGenderInput"
+                                                        aria-describedby="basic-addon3 basic-addon4">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row d-flex flex-column flex-grow-1 overflow-hidden">
+                                            <h6 class="p-1">Extensions</h6>
+                                            <ul id="benefitiaryExtensionsUL"
+                                                class="list-group px-1 flex-grow-1 overflow-auto"
+                                                style="font-size: 0.78rem">
+                                                <li class="list-group-item-ex gap-5 h-100 d-flex">
+                                                    <div
+                                                        class="align-items-center justify-content-center h-100 w-100 fs-6">
+                                                        No Extensions</div>
+                                                </li>
+                                            </ul>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header fw-semibold">
+                            <div class="d-flex flex-row gap-2 align-items-center">
+                                <i class="ph ph-pulse"></i>
+                                Diagnosis & Supporting Info
+                            </div>
+                        </div>
+
+                        <div class="card-body overflow-hidden" style="height: 280px;">
+                            <div class="container h-100">
+                                <div class="row gap-3 h-100">
+                                    <div class="col col-xl-12 col-xxl-3 p-0 h-100">
+                                        <p class="fs-6 mb-2 fw-semibold">Diagnosis Code</p>
+                                        <div class="h-85 overflow-y-auto">
+                                            <table class="table table-sm table-borderless">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="fw-normal text-nowrap text-secondary"
+                                                            scope="col"></th>
+                                                        <th class="fw-normal text-nowrap text-secondary"
+                                                            scope="col">ICD Code</th>
+                                                        <th class="fw-normal text-nowrap text-secondary"
+                                                            scope="col">Type</th>
+                                                    </tr>
+                                                </thead>
+
+                                                <tbody id="ICDtableList">
+                                                    <tr>
+                                                        <th class="text-secondary fw-normal align-middle"
+                                                            scope="row">1</th>
+                                                        <td><input class="form-control"></td>
+                                                        <td style="width: 55%;"><input class="form-control">
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <div class="col d-flex flex-column w-100 h-100">
+                                        <p class="fs-6 mb-2 fw-semibold">Supporting Info</p>
+                                        <ul class="list-group overflow-auto" id="supportingInfoUL">
+                                            <li class="info-item d-flex w-100 h-100">
+                                                <div
+                                                    class="info-content justify-content-center align-items-center">
+                                                    Empty</div>
+                                            </li>
+                                            <!-- <li class="info-item">
                                                         <div class="info-content">
                                                             <div class="d-flex flex-row w-100">
                                                                 <div class="info-index">#1</div>
@@ -375,16 +365,16 @@
                                                             <i class="ph ph-copy phicon-container"></i>
                                                         </button>
                                                     </li> -->
-                                                </ul>
-                                            </div>
-
-                                        </div>
+                                        </ul>
                                     </div>
+
                                 </div>
                             </div>
+                        </div>
+                    </div>
 
-                            <!-- Provider and Insurer -->
-                            <!-- <div class="row row-gap-4">
+                    <!-- Provider and Insurer -->
+                    <!-- <div class="row row-gap-4">
                                 <div class="col" style="min-width: 535px;">
                                     <div class="card">
                                         <div class="card-header fw-semibold">
@@ -488,18 +478,13 @@
                                     </div>
                                 </div>
                             </div> -->
-                        </div>
-                    </div>
-
-                    <!-- Card Footer -->
-                    <div class="card-footer" id="errorFooter"></div>
                 </div>
             </div>
 
             <!-- Request JSON Col -->
             <div class="col px-0 shadow">
                 <div class="card h-100">
-                    <div class="card-header" style="height: 3rem;">
+                    <div class="card-header">
                         <div class="fs-6 fw-medium">JSON Request Body</div>
                     </div>
                     <div class="card-body p-0 overflow-x-auto">
