@@ -219,3 +219,60 @@ body, html {
 .h-85 {
     height: 80% !important;
 }
+
+
+/* Items Section */
+.items-header {
+    display: grid;
+    grid-template-columns: 0.5fr 1fr 3fr 1fr 1fr 0.5fr 1fr 1.5fr 0.5fr;
+    align-items: center;
+    padding: 10px 20px;
+    color: var(--bs-secondary);
+}
+
+.accordion-item .custom-item {
+    background-color: #313131;
+    border: none;
+    border-radius: 10px !important;
+    margin-bottom: 12px;
+    overflow: hidden;
+}
+
+.custom-item .accordion-button {
+    background-color: #313131;
+    display: grid;
+    grid-template-columns: 0.5fr 1fr 3fr 1fr 1fr 0.5fr 1fr 1.5fr 0.5fr;
+    align-items: center;
+    padding: 16px 20px;
+    border: none;
+}
+
+.custom-item .accordion-button:not(.collapsed) {
+    background-color: #313131;
+    color: var(--text-primary);
+    box-shadow: none;
+}
+
+.custom-item .accordion-button:focus {
+    box-shadow: none;
+}
+
+.row-cell {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Expanded body */
+.custom-item .accordion-body {
+    background-color: #313131;
+    padding: 8px 20px 22px 20px;
+    border-top: 1px solid #3d3d3d;
+}
+
+.field-group {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 14px;
+    margin-top: 14px;
+}
