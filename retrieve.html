@@ -85,6 +85,7 @@
             <div class="col-7 px-0 control-input-disable">
                 <div class="container d-flex flex-column row-gap-3 p-0 overflow-x-hidden">
 
+                    <!-- Request and Benefitiary -->
                     <div class="row column-gap-3">
                         <div class="col" style="min-width: 535px; padding-right: 0px;">
                             <div class="card h-100" style="padding-right: 0px;">
@@ -279,6 +280,7 @@
                         </div>
                     </div>
 
+                    <!-- Diagnosis & SuppInfo -->
                     <div class="card">
                         <div class="card-header fw-semibold">
                             <div class="d-flex flex-row gap-2 align-items-center">
@@ -287,7 +289,7 @@
                             </div>
                         </div>
 
-                        <div class="card-body overflow-hidden" style="height: 280px;">
+                        <div class="card-body overflow-y-auto" style="height: 270px;">
                             <div class="container h-100">
                                 <div class="row gap-3 h-100">
                                     <div class="col col-xl-12 col-xxl-3 p-0 h-100">
@@ -326,46 +328,6 @@
                                                     class="info-content justify-content-center align-items-center">
                                                     Empty</div>
                                             </li>
-                                            <!-- <li class="info-item">
-                                                        <div class="info-content">
-                                                            <div class="d-flex flex-row w-100">
-                                                                <div class="info-index">#1</div>
-                                                                <div class="d-flex flex-column flex-grow-1">
-                                                                    <div class="d-flex flex-grow-1 flex-row justify-content-between">
-                                                                        <div class="info-label">vital sign systolic</div>
-                                                                        <div class="info-value">120 mm[Hg]</div>
-                                                                    </div>
-                                                                    <div class="d-flex flex-grow-1 flex-row justify-content-between">
-                                                                        <div class="info-label second-info text-secondary-emphasis opacity-50">Timing Period</div>
-                                                                        <div class="info-value second-info text-secondary-emphasis opacity-50">2023-12-04T10:00 → 2023-12-04T11:00</div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <button class="btn btn-outline-secondary info-copy-btn" type="button">
-                                                            <i class="ph ph-copy phicon-container"></i>
-                                                        </button>
-                                                    </li>
-                                                    <li class="info-item">
-                                                        <div class="info-content">
-                                                            <div class="d-flex flex-row w-100">
-                                                                <div class="info-index">#1</div>
-                                                                <div class="d-flex flex-column flex-grow-1">
-                                                                    <div class="d-flex flex-grow-1 flex-row justify-content-between">
-                                                                        <div class="info-label">vital sign systolic</div>
-                                                                        <div class="info-value">120 mm[Hg]</div>
-                                                                    </div>
-                                                                    <div class="d-flex flex-grow-1 flex-row justify-content-between">
-                                                                        <div class="info-label second-info text-secondary-emphasis opacity-50">No other data</div>
-                                                                        <div class="info-value second-info text-secondary-emphasis opacity-0">2023-12-04T10:00 → 2023-12-04T11:00</div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <button class="btn btn-outline-secondary info-copy-btn" type="button">
-                                                            <i class="ph ph-copy phicon-container"></i>
-                                                        </button>
-                                                    </li> -->
                                         </ul>
                                     </div>
 
@@ -374,6 +336,7 @@
                         </div>
                     </div>
 
+                    <!-- Line Items -->
                     <div class="card">
                         <div class="card-header fw-semibold">
                             <div class="d-flex flex-row gap-2 align-items-center">
@@ -396,8 +359,7 @@
                             </div>
 
                             <div class="accordion d-flex flex-column row-gap-2" id="itemsAccordion">
-
-                                <div class="accordion-item custom-item">
+                                <div class="accordion-item custom-item" style="border: none;">
                                     <h2 class="accordion-header" id="heading-1">
                                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-1" aria-expanded="false" aria-controls="collapse-1">
                                             <span class="row-cell">3</span>
@@ -410,126 +372,200 @@
                                             <span class="row-cell">25-07-2026</span>
                                         </button>
                                     </h2>
-
-                                    <div id="collapse-1" class="accordion-collapse collapse" aria-labelledby="heading-1" data-bs-parent="#itemsAccordion">
-                                        <div class="accordion-body">
-                                            <div class="field-group">
-                                                
+                                    <div id="collapse-1" class="accordion-collapse collapse" aria-labelledby="heading-1">
+                                        <div class="accordion-body container">
+                                            <div class="row row-gap-3 mb-3">
+                                                <div class="col px-2">
+                                                    <label for="nphiesCode-1" class="form-label itemLabel">Nphies Code</label>
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control" id="nphiesCode-1" aria-describedby="basic-addon3 basic-addon4">
+                                                    </div>
+                                                </div>
+                                                <div class="col px-2">
+                                                    <label for="serviceCode-1" class="form-label itemLabel">Service Code</label>
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control" id="serviceCode-1" aria-describedby="basic-addon3 basic-addon4">
+                                                    </div>
+                                                </div>
+                                                <div class="col px-2">
+                                                    <label for="careTeam-1" class="form-label itemLabel">Care Team</label>
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control" id="careTeam-1" aria-describedby="basic-addon3 basic-addon4">
+                                                    </div>
+                                                </div>
+                                                <div class="col px-2">
+                                                    <label for="servFrom-1" class="form-label itemLabel">Serviced From</label>
+                                                    <div class="input-group">
+                                                        <input type="date" class="form-control" id="servFrom-1" aria-describedby="basic-addon3 basic-addon4">
+                                                    </div>
+                                                </div>
+                                                <div class="col px-2">
+                                                    <label for="servTo-1" class="form-label itemLabel">Serviced To</label>
+                                                    <div class="input-group">
+                                                        <input type="date" class="form-control" id="servTo-1" aria-describedby="basic-addon3 basic-addon4">
+                                                    </div>
+                                                </div>
+                                                <div class="col-3 px-2">
+                                                    <label for="info-1" class="form-label itemLabel">Information</label>
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control" id="info-1" aria-describedby="basic-addon3 basic-addon4">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row row-gap-3" style="height: fit-content;">
+                                                <div class="col px-2 text-nowrap" style="flex-grow: 0;">
+                                                    <p class="text-secondary mb-0">Extensions</p>
+                                                </div>
+                                                <div class="col px-2 text-nowrap">
+                                                    <div class="itemExt-badge">
+                                                        <p>Maternity</p>
+                                                        <p>Yes</p>
+                                                    </div>
+                                                </div>
+                                                <div class="col px-2 text-nowrap">
+                                                    <div class="itemExt-badge">
+                                                        <p>Package</p>
+                                                        <p>No</p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-2 px-2 text-nowrap">
+                                                    <div class="itemExt-badge">
+                                                        <p>Patient Share</p>
+                                                        <p>1000</p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-2 px-2 text-nowrap">
+                                                    <div class="itemExt-badge">
+                                                        <p>Payer Share</p>
+                                                        <p>1000</p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-2 px-2 text-nowrap">
+                                                    <div class="itemExt-badge">
+                                                        <p>Patient Invoice</p>
+                                                        <p>1000</p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-2 px-2 text-nowrap">
+                                                    <div class="itemExt-badge">
+                                                        <p>Tax</p>
+                                                        <p>1000</p>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
                             </div>
 
                         </div>
                     </div>
 
                     <!-- Provider and Insurer -->
-                    <!-- <div class="row row-gap-4">
-                                <div class="col" style="min-width: 535px;">
-                                    <div class="card">
-                                        <div class="card-header fw-semibold">
-                                            <div class="d-flex flex-row gap-2 align-items-center">
-                                                <i class="ph ph-clipboard-text"></i>
-                                                Insurer Data
+                    <div class="row column-gap-3">
+                        <div class="col" style="min-width: 535px; padding-right: 0px;">
+                            <div class="card">
+                                <div class="card-header fw-semibold">
+                                    <div class="d-flex flex-row gap-2 align-items-center">
+                                        <i class="ph ph-clipboard-text"></i>
+                                        Insurer Data
+                                    </div>
+                                </div>
+
+                                <div class="card-body">
+                                    <div
+                                        class="container list-container d-flex flex-column flex-grow-1 overflow-hidden">
+                                        <div class="row gap-2 mb-3">
+                                            <div class="col p-1">
+                                                <label for="reqInput"
+                                                    class="form-label text-secondary">Name</label>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="reqTypeInput"
+                                                        aria-describedby="basic-addon3 basic-addon4">
+                                                </div>
                                             </div>
                                         </div>
-
-                                        <div class="card-body">
-                                            <div
-                                                class="container list-container d-flex flex-column flex-grow-1 overflow-hidden">
-                                                <div class="row gap-2 mb-3">
-                                                    <div class="col p-1">
-                                                        <label for="reqInput"
-                                                            class="form-label text-secondary">Name</label>
-                                                        <div class="input-group">
-                                                            <input type="text" class="form-control" id="reqTypeInput"
-                                                                aria-describedby="basic-addon3 basic-addon4">
-                                                        </div>
-                                                    </div>
+                                        <div class="row gap-2 mb-3">
+                                            <div class="col p-1">
+                                                <label for="reqTypeInput"
+                                                    class="form-label text-secondary">City</label>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="reqTypeInput"
+                                                        aria-describedby="basic-addon3 basic-addon4">
                                                 </div>
-                                                <div class="row gap-2 mb-3">
-                                                    <div class="col p-1">
-                                                        <label for="reqTypeInput"
-                                                            class="form-label text-secondary">City</label>
-                                                        <div class="input-group">
-                                                            <input type="text" class="form-control" id="reqTypeInput"
-                                                                aria-describedby="basic-addon3 basic-addon4">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col p-1">
-                                                        <label for="reqSubtypeInput"
-                                                            class="form-label text-secondary">Country</label>
-                                                        <div class="input-group">
-                                                            <input type="text" class="form-control" id="reqSubtypeInput"
-                                                                aria-describedby="basic-addon3 basic-addon4">
-                                                        </div>
-                                                    </div>
+                                            </div>
+                                            <div class="col p-1">
+                                                <label for="reqSubtypeInput"
+                                                    class="form-label text-secondary">Country</label>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="reqSubtypeInput"
+                                                        aria-describedby="basic-addon3 basic-addon4">
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col" style="min-width: 535px;">
-                                    <div class="card">
-                                        <div class="card-header fw-semibold">
-                                            <div class="d-flex flex-row gap-2 align-items-center">
-                                                <i class="ph ph-clipboard-text"></i>
-                                                Provider Data
+                            </div>
+                        </div>
+                        <div class="col" style="min-width: 535px; padding-left: 0px;">
+                            <div class="card">
+                                <div class="card-header fw-semibold">
+                                    <div class="d-flex flex-row gap-2 align-items-center">
+                                        <i class="ph ph-clipboard-text"></i>
+                                        Provider Data
+                                    </div>
+                                </div>
+
+                                <div class="card-body">
+                                    <div
+                                        class="container list-container d-flex flex-column flex-grow-1 overflow-hidden">
+                                        <div class="row gap-2 mb-3">
+                                            <div class="col p-1">
+                                                <label for="reqInput"
+                                                    class="form-label text-secondary">Name</label>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="reqTypeInput"
+                                                        aria-describedby="basic-addon3 basic-addon4">
+                                                </div>
                                             </div>
                                         </div>
-
-                                        <div class="card-body">
-                                            <div
-                                                class="container list-container d-flex flex-column flex-grow-1 overflow-hidden">
-                                                <div class="row gap-2 mb-3">
-                                                    <div class="col p-1">
-                                                        <label for="reqInput"
-                                                            class="form-label text-secondary">Name</label>
-                                                        <div class="input-group">
-                                                            <input type="text" class="form-control" id="reqTypeInput"
-                                                                aria-describedby="basic-addon3 basic-addon4">
-                                                        </div>
-                                                    </div>
+                                        <div class="row gap-2 mb-3">
+                                            <div class="col p-1">
+                                                <label for="reqTypeInput"
+                                                    class="form-label text-secondary">City</label>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="reqTypeInput"
+                                                        aria-describedby="basic-addon3 basic-addon4">
                                                 </div>
-                                                <div class="row gap-2 mb-3">
-                                                    <div class="col p-1">
-                                                        <label for="reqTypeInput"
-                                                            class="form-label text-secondary">City</label>
-                                                        <div class="input-group">
-                                                            <input type="text" class="form-control" id="reqTypeInput"
-                                                                aria-describedby="basic-addon3 basic-addon4">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col p-1">
-                                                        <label for="reqSubtypeInput"
-                                                            class="form-label text-secondary">Country</label>
-                                                        <div class="input-group">
-                                                            <input type="text" class="form-control" id="reqSubtypeInput"
-                                                                aria-describedby="basic-addon3 basic-addon4">
-                                                        </div>
-                                                    </div>
+                                            </div>
+                                            <div class="col p-1">
+                                                <label for="reqSubtypeInput"
+                                                    class="form-label text-secondary">Country</label>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="reqSubtypeInput"
+                                                        aria-describedby="basic-addon3 basic-addon4">
                                                 </div>
-                                                <div class="row gap-2 mb-3">
-                                                    <div class="col p-1">
-                                                        <h6 class="p-1">Extensions</h6>
-                                                        <ul id="claimExtensionsUL"
-                                                            class="list-group px-1 flex-grow-1 overflow-auto"
-                                                            style="font-size: 0.78rem">
-                                                            <li class="list-group-item-ex gap-5 h-100 d-flex">
-                                                                <div
-                                                                    class="align-items-center justify-content-center h-100 w-100 fs-6">
-                                                                    No Extensions</div>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row gap-2 mb-3">
+                                            <div class="col p-1">
+                                                <h6 class="p-1">Extensions</h6>
+                                                <ul id="claimExtensionsUL"
+                                                    class="list-group px-1 flex-grow-1 overflow-auto"
+                                                    style="font-size: 0.78rem">
+                                                    <li class="list-group-item-ex gap-5 h-100 d-flex">
+                                                        <div
+                                                            class="align-items-center justify-content-center h-100 w-100 fs-6">
+                                                            No Extensions</div>
+                                                    </li>
+                                                </ul>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div> -->
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
