@@ -52,7 +52,6 @@ themeSwitchBtn.addEventListener("click", () => {
 const selectEnv = el("selectEnv");
 const displayedEnvURL = el("endpointUrl");
 selectEnv.addEventListener('change', (e) => {
-    console.log(e.target.value);
     if (e.target.value === "uat") {
         displayedEnvURL.value = ENVIRONMENTS.uat.URL;
     } else {
@@ -80,10 +79,14 @@ const benefitiaryExtensionsUL = el('benefitiaryExtensionsUL');
 const ICDtableList = el('ICDtableList');
 const supportingInfoUL = el('supportingInfoUL');
 
+// Storage Arrays ====================================================
+var arrayofItems = [];
+var arrayofICD = [];
+
 // for copy func
 let benefEntry = null;
 
-// Init =============================================================
+// Init ==============================================================
 window.addEventListener('load', () => {
     init();
 });
@@ -168,6 +171,10 @@ requestBodyTxtArea.addEventListener('change', () => {
     extractedInfo = entryOfInfo?.resource.supportingInfo ?? null;
     extractSupportingInfo(extractedInfo);
 
+    // Extract Line Items ========================
+    arrayofItems = entryOfInfo?.resource.item ?? null;
+    extractLineItems(arrayofItems);
+
     // Extract data for Coverage resource type ==========================
     // Extract Req Membership
     entryOfInfo = findResource(parsed.entry, 'Coverage', null);
@@ -222,7 +229,6 @@ function findResource(entriesList, resourceName, resourceVal) {
 
     let entURL;
     let segment;
-    console.log("Resource Here ", resourceName);
     if (entriesList == undefined || entriesList == null || entriesList.length == 0) {
         showToast('Error: Could not find the Entries list to extract the resource.', 'danger');
     } else {
@@ -294,7 +300,6 @@ function extractReqSubtype(x) {
             'Request subtype not found in JSON.',
             'danger'
         );
-        console.log('teettete');
         return;
     }
 
@@ -470,6 +475,167 @@ function clearExtensionLists(el) {
     `;
 }
 
+function extractLineItems(x) {
+    // Get the accordion container
+    const mainAccordion = document.getElementById('itemsAccordion');
+    if (!mainAccordion) {
+        showToast('Code Error: could not find the accordion container.', 'danger');
+        return;
+    }
+
+    // Handle missing items data
+    if (x === null || x.length == 0) {
+        showToast('Items array is empty or not found.', 'danger');
+        // Show empty state
+        clearItemsLists(mainAccordion);
+        return;
+    }
+
+    // Map array items to HTML strings
+    const accordionHTML = x.map((item, index) => {
+        // Generate unique IDs for dynamic Bootstrap targeting
+        const collapseId = `collapse_${index}`;
+        const headingId = `heading_${index}`;
+        const isFirst = index === 0;
+
+        // Get item info
+        const seqID = item.sequence;
+        let findICD = arrayofICD.find(i => i[0] === item.diagnosisSequence[0]);
+        const itemICD = findICD?.[1] ?? "?"; // index 1 is the ICD code
+        const itemDesc = item.productOrService.coding[0].display;
+        if (itemDesc === null) {itemDesc = 'Empty Description'}
+        const itemQTY = item.quantity.value;
+        const itemUnitPrice = item.unitPrice.value;
+        const itemFactor = 1; // item.factor.value << could be unavailable, check 
+        const itemNetPrice = item.net.value; 
+        const itemServdDate = item.servicedDate; 
+
+        // Create the logic to check if servicedDate or servicedPeriod
+
+        return `
+        <div class="accordion-item custom-item" style="border: none;">
+            <h2 class="accordion-header" id="${headingId}">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#${collapseId}" aria-expanded="${isFirst ? 'true' : 'false'}" aria-controls="${collapseId}">
+                    <span class="row-cell">${seqID}</span>
+                    <span class="row-cell">${itemICD}</span>
+                    <span class="row-cell">${itemDesc}</span>
+                    <span class="row-cell">${itemQTY}</span>
+                    <span class="row-cell">${itemUnitPrice}</span>
+                    <span class="row-cell">${itemFactor}</span>
+                    <span class="row-cell">${itemNetPrice}</span>
+                    <span class="row-cell">${itemServdDate}</span>
+                </button>
+            </h2>
+            <div id="${collapseId}" class="accordion-collapse collapse" aria-labelledby="${headingId}">
+                <div class="accordion-body container">
+                    <div class="row row-gap-3 mb-3">
+                        <div class="col px-2">
+                            <label for="nphiesCode-1" class="form-label itemLabel">Nphies Code</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="nphiesCode-1" aria-describedby="basic-addon3 basic-addon4">
+                            </div>
+                        </div>
+                        <div class="col px-2">
+                            <label for="serviceCode-1" class="form-label itemLabel">Service Code</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="serviceCode-1" aria-describedby="basic-addon3 basic-addon4">
+                            </div>
+                        </div>
+                        <div class="col px-2">
+                            <label for="careTeam-1" class="form-label itemLabel">Care Team</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="careTeam-1" aria-describedby="basic-addon3 basic-addon4">
+                            </div>
+                        </div>
+                        <div class="col px-2">
+                            <label for="servFrom-1" class="form-label itemLabel">Serviced From</label>
+                            <div class="input-group">
+                                <input type="date" class="form-control" id="servFrom-1" aria-describedby="basic-addon3 basic-addon4">
+                            </div>
+                        </div>
+                        <div class="col px-2">
+                            <label for="servTo-1" class="form-label itemLabel">Serviced To</label>
+                            <div class="input-group">
+                                <input type="date" class="form-control" id="servTo-1" aria-describedby="basic-addon3 basic-addon4">
+                            </div>
+                        </div>
+                        <div class="col-3 px-2">
+                            <label for="info-1" class="form-label itemLabel">Information</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="info-1" aria-describedby="basic-addon3 basic-addon4">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-gap-3" style="height: fit-content;">
+                        <div class="col px-2 text-nowrap" style="flex-grow: 0;">
+                            <p class="text-secondary mb-0">Extensions</p>
+                        </div>
+                        <div class="col px-2 text-nowrap">
+                            <div class="itemExt-badge">
+                                <p>Maternity</p>
+                                <p>Yes</p>
+                            </div>
+                        </div>
+                        <div class="col px-2 text-nowrap">
+                            <div class="itemExt-badge">
+                                <p>Package</p>
+                                <p>No</p>
+                            </div>
+                        </div>
+                        <div class="col-2 px-2 text-nowrap">
+                            <div class="itemExt-badge">
+                                <p>Patient Share</p>
+                                <p>1000</p>
+                            </div>
+                        </div>
+                        <div class="col-2 px-2 text-nowrap">
+                            <div class="itemExt-badge">
+                                <p>Payer Share</p>
+                                <p>1000</p>
+                            </div>
+                        </div>
+                        <div class="col-2 px-2 text-nowrap">
+                            <div class="itemExt-badge">
+                                <p>Patient Invoice</p>
+                                <p>1000</p>
+                            </div>
+                        </div>
+                        <div class="col-2 px-2 text-nowrap">
+                            <div class="itemExt-badge">
+                                <p>Tax</p>
+                                <p>1000</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
+    }).join('');
+
+    // Inject the dynamically built items into the container
+    mainAccordion.innerHTML = accordionHTML;
+
+}
+function clearItemsLists(el) {
+    el.innerHTML = `
+    <div class="accordion-item custom-item" style="border: none;">
+        <h2 class="accordion-header" id="heading-1">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-1" aria-expanded="false" aria-controls="collapse-1">
+                <span class="row-cell"></span>
+                <span class="row-cell"></span>
+                <span class="row-cell"></span>
+                <span class="row-cell"></span>
+                <span class="row-cell"></span>
+                <span class="row-cell"></span>
+                <span class="row-cell"></span>
+                <span class="row-cell"></span>
+            </button>
+        </h2>
+    </div>
+    `;
+}
+
 function extractSupportingInfo(x) {
     // X is the list of SupportingInfo
     if (!x || x.length == 0) {
@@ -487,13 +653,11 @@ function extractSupportingInfo(x) {
             let suppInf = Object.entries(info).map(([key, val]) => ({
                 key, val
             }));
-            console.log("suppInf ", suppInf);
 
             // 0 below is random, not important here
             extractedCateg = findSuppKey(suppInf, 0, "category");
             let infoType = extractedCateg.val.coding[0].code;
             let noOfData = suppInf.length;
-            console.log("noOfData: ", noOfData);
 
             let mainValue;
             let thirdValue;
@@ -502,8 +666,6 @@ function extractSupportingInfo(x) {
                 extractedSecVal = findSuppKey(suppInf, noOfData, "timingPeriod");
                 mainValue = extractedVal.val.value + " " + extractedVal.val.code;
                 thirdValue = extractedSecVal.val.start + " → " + extractedSecVal.val.end;
-                console.log("mainValue 4: ", mainValue);
-                console.log("thirdValue: ", thirdValue);
             } else if (noOfData == 3) {
                 let possibleKeys = ["valueQuantity", "valueString", "code"];
                 let keyTypeIndex = 0;
@@ -531,7 +693,6 @@ function extractSupportingInfo(x) {
                     default:
                         mainValue = "Not Found.";
                 }
-                console.log("mainValue 3: ", mainValue);
             } else {
                 mainValue = "Undefined";
                 thirdValue = "Undefined";
@@ -541,7 +702,6 @@ function extractSupportingInfo(x) {
         });
     }
 }
-
 function findSuppKey(suppInfo, noOfVals, keyName) {
     const found = suppInfo.find(inf => inf.key == keyName);
     if (found) {
@@ -593,8 +753,12 @@ function extractICDCodes(x) {
     } else {
         ICDtableList.innerHTML = '';
         x.forEach((icd, index) => {
+            let icdSeq = icd.sequence;
             let icdCode = icd.diagnosisCodeableConcept.coding[0].code ?? null;
             let icdType = icd.type[0].coding[0].code ?? null;
+
+            // Add ICD to global ICD array
+            arrayofICD.push([icdSeq, icdCode]);
 
             const newICDRow = document.createElement('tr');
 
@@ -732,7 +896,6 @@ reqClaimIDInput.addEventListener('change', () => {
 // });
 
 function changeReqValue(paths, reqBody, newValue) {
-    console.log("entered the func: ", paths, newValue);
     if (reqBody && reqBody !== '') {
         let parsed;
         try {
@@ -859,8 +1022,8 @@ function copyToClipboardExtension(val) {
     }
 
     navigator.clipboard.writeText(JSON.stringify(val, null, 4))
-        .then(() => console.log("Copied extension"))
-        .catch(err => console.danger('Navigator copy extension failed:', err));
+        .then(() => showToast("Copied extension", "success"))
+        .catch(err => showToast('Navigator copy extension failed:', 'danger'));
 }
 function fallbackCopy(val) {
     val.select();

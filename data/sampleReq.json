@@ -473,7 +473,7 @@
                         }
                     },
                     {
-                        "sequence": 1,
+                        "sequence": 2,
                         "diagnosisCodeableConcept": {
                             "coding": [
                                 {
@@ -503,7 +503,7 @@
                         }
                     },
                     {
-                        "sequence": 1,
+                        "sequence": 3,
                         "diagnosisCodeableConcept": {
                             "coding": [
                                 {
@@ -581,6 +581,85 @@
                         ],
                         "diagnosisSequence": [
                             1
+                        ],
+                        "informationSequence": [
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            6,
+                            7,
+                            8,
+                            9,
+                            10,
+                            11,
+                            12,
+                            13,
+                            14,
+                            15,
+                            16
+                        ],
+                        "productOrService": {
+                            "coding": [
+                                {
+                                    "system": "http://nphies.sa/terminology/CodeSystem/procedures",
+                                    "code": "30571-00-00",
+                                    "display": "Appendicectomy"
+                                }
+                            ]
+                        },
+                        "servicedDate": "2023-12-04",
+                        "quantity": {
+                            "value": 1
+                        },
+                        "unitPrice": {
+                            "value": 300,
+                            "currency": "SAR"
+                        },
+                        "net": {
+                            "value": 400,
+                            "currency": "SAR"
+                        }
+                    },
+                    {
+                        "extension": [
+                            {
+                                "url": "http://nphies.sa/fhir/ksa/nphies-fs/StructureDefinition/extension-package",
+                                "valueBoolean": false
+                            },
+                            {
+                                "url": "http://nphies.sa/fhir/ksa/nphies-fs/StructureDefinition/extension-patient-share",
+                                "valueMoney": {
+                                    "value": 0,
+                                    "currency": "SAR"
+                                }
+                            },
+                            {
+                                "url": "http://nphies.sa/fhir/ksa/nphies-fs/StructureDefinition/extension-payer-share",
+                                "valueMoney": {
+                                    "value": 400,
+                                    "currency": "SAR"
+                                }
+                            },
+                            {
+                                "url": "http://nphies.sa/fhir/ksa/nphies-fs/StructureDefinition/extension-maternity",
+                                "valueBoolean": false
+                            },
+                            {
+                                "url": "http://nphies.sa/fhir/ksa/nphies-fs/StructureDefinition/extension-tax",
+                                "valueMoney": {
+                                    "value": 100,
+                                    "currency": "SAR"
+                                }
+                            }
+                        ],
+                        "sequence": 2,
+                        "careTeamSequence": [
+                            1
+                        ],
+                        "diagnosisSequence": [
+                            2
                         ],
                         "informationSequence": [
                             1,
