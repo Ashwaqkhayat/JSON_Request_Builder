@@ -507,7 +507,7 @@ function extractLineItems(x) {
         let findICD = arrayofICD.find(i => i[0] === item.diagnosisSequence[0]);
         const itemICD = findICD?.[1] ?? "?"; // index 1 is the ICD code
         const itemDesc = item.productOrService.coding[0].display;
-        if (itemDesc === null) {itemDesc = 'Empty Description'}
+        if (itemDesc === null) { itemDesc = 'Empty Description' }
         const itemQTY = item.quantity.value;
         const itemUnitPrice = item.unitPrice.value;
         const itemFactor = item.factor ?? 1;
@@ -648,36 +648,38 @@ function extractSupportingInfo(x) {
         clearSuppInfoLists();
     } else {
         supportingInfoUL.innerHTML = '';
-        let supp = Object.values(x);
-
 
         let extractedCateg;
-        let extractedVal;
-        let extractedSecVal;
+
+        let extractedVal; //////////////////////////
+        let extractedSecVal; // max info for each supp info is 2: [seq, category, val1, val2]
+
         x.forEach((info, index) => {
             // Map each key and its value
-            let suppInf = Object.entries(info).map(([key, val]) => ({
-                key, val
-            }));
+            // Object.entries() converts an object into an array of its own key-value pairs.
+            // [[seq, val], [category, val], [val1, val], [val2, val]]
+            let suppInf = Object.entries(info).map(([key, val]) => ({ key, val }));
 
             // 0 below is random, not important here
-            extractedCateg = findSuppKey(suppInf, 0, "category");
+            extractedCateg = findSuppKey(suppInf, "category");
             let infoType = extractedCateg.val.coding[0].code;
             let noOfData = suppInf.length;
 
             let mainValue;
             let thirdValue;
+            
             if (noOfData == 4) {
-                extractedVal = findSuppKey(suppInf, noOfData, "valueQuantity");
-                extractedSecVal = findSuppKey(suppInf, noOfData, "timingPeriod");
-                mainValue = extractedVal.val.value + " " + extractedVal.val.code;
-                thirdValue = extractedSecVal.val.start + " → " + extractedSecVal.val.end;
+                let possibleKeys = ["valueQuantity", "timingPeriod", "code", "timingDate"];
+
+                mainValue = getSuppInfo(possibleKeys, suppInf);
+                thirdValue = getSuppInfo(possibleKeys, suppInf);
+
             } else if (noOfData == 3) {
                 let possibleKeys = ["valueQuantity", "valueString", "code"];
                 let keyTypeIndex = 0;
 
                 for (let i = 0; i < possibleKeys.length; i++) {
-                    extractedVal = findSuppKey(suppInf, noOfData, possibleKeys[i]);
+                    extractedVal = findSuppKey(suppInf, possibleKeys[i]);
                     if (extractedVal != null) {
                         keyTypeIndex = i;
                         break;
@@ -708,7 +710,43 @@ function extractSupportingInfo(x) {
         });
     }
 }
-function findSuppKey(suppInfo, noOfVals, keyName) {
+
+function getSuppInfo(possibKeys, suppInfo) {
+    let extractedVal;
+    let keyTypeIndex = 0;
+    for (let i = 0; i < possibKeys.length; i++) {
+        extractedVal = findSuppKey(suppInfo, possibKeys[i]);
+        if (extractedVal != null) {
+            keyTypeIndex = i;
+            break;
+        }
+    }
+
+    let processedValue = "undefined";
+    switch (keyTypeIndex) {
+        case 0: //valueQuantity
+            processedValue = extractedVal.val.value + " " + extractedVal.val.code ?? "";
+            break;
+        case 1: //timingPeriod
+            processedValue = extractedVal.val.start + " → " + extractedVal.val.end;
+            break;
+        case 2: //code
+            console.log("extractedVal ", extractedVal);
+            processedValue = extractedVal.val.coding?.[0].code ?? "Unknown";
+            let isDisplay = extractedVal.val.text ?? false;
+            if (isDisplay) { processedValue = processedValue + " | " + isDisplay; }
+            break;
+        case 3: //timingDate
+            processedValue = extractedVal.val;
+            break;
+        default:
+            processedValue = "Not Found.";
+    }
+
+    return processedValue;
+}
+
+function findSuppKey(suppInfo, keyName) {
     const found = suppInfo.find(inf => inf.key == keyName);
     if (found) {
         return found;
