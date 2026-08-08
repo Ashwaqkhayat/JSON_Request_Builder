@@ -116,6 +116,10 @@ requestBodyTxtArea.addEventListener('paste', function (e) {
 requestBodyTxtArea.addEventListener('change', () => {
     const input = userInputJSON;
 
+    // Empty the arrays
+    arrayofItems = [];
+    arrayofICD = [];
+
     if (!input || input === '') {
         // Clear all the input fields
         document.querySelectorAll('.form-control').forEach(function (input) {
@@ -506,11 +510,13 @@ function extractLineItems(x) {
         if (itemDesc === null) {itemDesc = 'Empty Description'}
         const itemQTY = item.quantity.value;
         const itemUnitPrice = item.unitPrice.value;
-        const itemFactor = 1; // item.factor.value << could be unavailable, check 
-        const itemNetPrice = item.net.value; 
-        const itemServdDate = item.servicedDate; 
-
-        // Create the logic to check if servicedDate or servicedPeriod
+        const itemFactor = item.factor ?? 1;
+        const itemNetPrice = item.net.value;
+        let itemServdDateFrom = item.servicedPeriod?.start ?? false;
+        if (!itemServdDateFrom) {
+            itemServdDateFrom = item.servicedDate;
+        }
+        let itemServdDateTo = item.servicedPeriod?.end ?? null;
 
         return `
         <div class="accordion-item custom-item" style="border: none;">
@@ -523,7 +529,7 @@ function extractLineItems(x) {
                     <span class="row-cell">${itemUnitPrice}</span>
                     <span class="row-cell">${itemFactor}</span>
                     <span class="row-cell">${itemNetPrice}</span>
-                    <span class="row-cell">${itemServdDate}</span>
+                    <span class="row-cell">${itemServdDateFrom}</span>
                 </button>
             </h2>
             <div id="${collapseId}" class="accordion-collapse collapse" aria-labelledby="${headingId}">
@@ -686,8 +692,8 @@ function extractSupportingInfo(x) {
                         mainValue = extractedVal.val;
                         break;
                     case 2: //code
-                        mainValue = extractedVal.val.coding[0].code;
-                        let isDisplay = extractedVal.val.coding[0].display;
+                        mainValue = extractedVal.val.coding?.[0].code;
+                        let isDisplay = extractedVal.val.coding?.[0].display;
                         if (isDisplay) { mainValue = mainValue + " | " + isDisplay; }
                         break;
                     default:
