@@ -648,11 +648,7 @@ function extractSupportingInfo(x) {
         clearSuppInfoLists();
     } else {
         supportingInfoUL.innerHTML = '';
-
         let extractedCateg;
-
-        let extractedVal; //////////////////////////
-        let extractedSecVal; // max info for each supp info is 2: [seq, category, val1, val2]
 
         x.forEach((info, index) => {
             // Map each key and its value
@@ -660,61 +656,30 @@ function extractSupportingInfo(x) {
             // [[seq, val], [category, val], [val1, val], [val2, val]]
             let suppInf = Object.entries(info).map(([key, val]) => ({ key, val }));
 
-            // 0 below is random, not important here
             extractedCateg = findSuppKey(suppInf, "category");
             let infoType = extractedCateg.val.coding[0].code;
             let noOfData = suppInf.length;
 
-            let mainValue;
-            let thirdValue;
-            
-            if (noOfData == 4) {
-                let possibleKeys = ["valueQuantity", "timingPeriod", "code", "timingDate"];
+            let mainValue = ["Undefined", -1];
+            let thirdValue = ["Undefined", -1];
+            mainValue = getSuppInfo(suppInf);
 
-                mainValue = getSuppInfo(possibleKeys, suppInf);
-                thirdValue = getSuppInfo(possibleKeys, suppInf);
-
-            } else if (noOfData == 3) {
-                let possibleKeys = ["valueQuantity", "valueString", "code"];
-                let keyTypeIndex = 0;
-
-                for (let i = 0; i < possibleKeys.length; i++) {
-                    extractedVal = findSuppKey(suppInf, possibleKeys[i]);
-                    if (extractedVal != null) {
-                        keyTypeIndex = i;
-                        break;
-                    }
-                }
-
-                switch (keyTypeIndex) {
-                    case 0: //valueQuantity
-                        mainValue = extractedVal.val.value + " " + extractedVal.val.code;
-                        break;
-                    case 1: //valueString
-                        mainValue = extractedVal.val;
-                        break;
-                    case 2: //code
-                        mainValue = extractedVal.val.coding?.[0].code;
-                        let isDisplay = extractedVal.val.coding?.[0].display;
-                        if (isDisplay) { mainValue = mainValue + " | " + isDisplay; }
-                        break;
-                    default:
-                        mainValue = "Not Found.";
-                }
-            } else {
-                mainValue = "Undefined";
-                thirdValue = "Undefined";
+            if (noOfData === 4) {
+                thirdValue = getSuppInfo(suppInf, mainValue[1]);
+                // main/thirdVal are an array of [the value, keyIndex]
             }
 
-            addSuppInfoToList(index, noOfData, infoType, mainValue, thirdValue);
+            addSuppInfoToList(index, noOfData, infoType, mainValue[0], thirdValue[0]);
         });
     }
 }
 
-function getSuppInfo(possibKeys, suppInfo) {
+function getSuppInfo(suppInfo, skippedKey = null) {
+    const possibKeys = ["valueQuantity", "timingPeriod", "code", "timingDate", "valueString"];
     let extractedVal;
-    let keyTypeIndex = 0;
+    let keyTypeIndex = -1;
     for (let i = 0; i < possibKeys.length; i++) {
+        if (i == skippedKey) { continue; } // Skip the founded info
         extractedVal = findSuppKey(suppInfo, possibKeys[i]);
         if (extractedVal != null) {
             keyTypeIndex = i;
@@ -722,25 +687,27 @@ function getSuppInfo(possibKeys, suppInfo) {
         }
     }
 
-    let processedValue = "undefined";
+    let processedValue = ["undefined", keyTypeIndex];
     switch (keyTypeIndex) {
         case 0: //valueQuantity
-            processedValue = extractedVal.val.value + " " + extractedVal.val.code ?? "";
+            processedValue[0] = extractedVal.val.value + " " + extractedVal.val.code ?? "";
             break;
         case 1: //timingPeriod
-            processedValue = extractedVal.val.start + " → " + extractedVal.val.end;
+            processedValue[0] = extractedVal.val.start + " → " + extractedVal.val.end;
             break;
         case 2: //code
-            console.log("extractedVal ", extractedVal);
-            processedValue = extractedVal.val.coding?.[0].code ?? "Unknown";
-            let isDisplay = extractedVal.val.text ?? false;
-            if (isDisplay) { processedValue = processedValue + " | " + isDisplay; }
+            processedValue[0] = extractedVal.val.coding?.[0].code ?? "Unknown";
+            let isDisplay = extractedVal.val.text ?? extractedVal.val.coding?.[0].display ?? false;
+            if (isDisplay) { processedValue[0] = processedValue[0] + " | " + isDisplay; }
             break;
         case 3: //timingDate
-            processedValue = extractedVal.val;
+            processedValue[0] = extractedVal.val;
+            break;
+        case 4: //valueString
+            processedValue[0] = extractedVal.val;
             break;
         default:
-            processedValue = "Not Found.";
+            processedValue[0] = "Not Found.";
     }
 
     return processedValue;
@@ -770,7 +737,7 @@ function addSuppInfoToList(index, noOfParams, catTitle, mainValue, thirdInfo) {
                 <div class="info-value">${mainValue}</div>
             </div>
             <div class="d-flex flex-grow-1 flex-row justify-content-between">
-                <div class="info-label second-info text-secondary-emphasis opacity-50">${noOfParams == 3 ? "No Other Data" : "Timing Period"}</div>
+                <div class="info-label second-info text-secondary-emphasis opacity-50">${noOfParams == 3 ? "    " : "Timing Date/Period"}</div>
                 <div class="info-value second-info text-secondary-emphasis opacity-${noOfParams == 4 ? "50" : "0"}">${thirdInfo}</div>
             </div>
         </div>
