@@ -80,10 +80,33 @@ const ICDtableList = el('ICDtableList');
 const supportingInfoUL = el('supportingInfoUL');
 const totalItems = el('totalItems');
 const addItemBtn = el('addItemBtn');
+const insurerNameInput = el('insurerNameInput');
+const insurerCityInput = el('insurerCityInput');
+const insurerCountryInput = el('insurerCountryInput');
+const providerNameInput = el('providerNameInput');
+const providerCityInput = el('providerCityInput');
+const providerContryInput = el('providerContryInput');
+const providerTypeInput = el('providerTypeInput');
+const careTeamTBody = el('careTeamTBody');
+const itemsAccordion = el('itemsAccordion');
 
 // Storage Arrays ====================================================
 var arrayofItems = [];
 var arrayofICD = [];
+var arrayofCareTeam = [];
+const arrayofProviderTypes = [
+    ["1", "Hospital"],
+    ["2", "General Medical Complex"],
+    ["3", "Specialized Medical Complex"],
+    ["4", "Diagnostic Center"],
+    ["5", "Clinic"],
+    ["6", "Pharmacy"],
+    ["7", "Laboratory"],
+    ["8", "Physiotherapy Center"],
+    ["9", "Radiotherapy Center"],
+    ["other", "other provider types"]
+]
+
 
 // for copy func
 let benefEntry = null;
@@ -100,9 +123,15 @@ function init() {
 }
 
 // Extract input JSON ===============================================
-let userInputJSON;
+var userInputJSON;
+var parsed;
 requestBodyTxtArea.addEventListener('change', () => {
     userInputJSON = requestBodyTxtArea.value.trim();
+
+    try { parsed = JSON.parse(userInputJSON); } catch (e) {
+        showToast('Error: unable to parse the input JSON.' + e.message, 'danger');
+        return;
+    }
 })
 
 
@@ -122,6 +151,9 @@ requestBodyTxtArea.addEventListener('change', () => {
     // Empty the arrays
     arrayofItems = [];
     arrayofICD = [];
+    arrayofCareTeam = [];
+
+    addItemBtn.disabled = true;
 
     if (!input || input === '') {
         // Clear all the input fields
@@ -132,21 +164,16 @@ requestBodyTxtArea.addEventListener('change', () => {
         clearExtensionLists(benefitiaryExtensionsUL);
         clearICDList();
         clearSuppInfoLists();
+        clearItemsLists();
         showToast('Please paste JSON request.', 'warning');
         return;
     }
 
-    // Enable the add button
     addItemBtn.disabled = false;
-
-    let parsed;
-    try { parsed = JSON.parse(input); } catch (e) {
-        showToast('Invalid JSON: ' + e.message, 'danger');
-        return;
-    }
 
     let extractedInfo;
     let entryOfInfo;
+    let extractedTypeVal;
 
     // Extract data for Claim resource type ==============================
     entryOfInfo = findResource(parsed.entry, 'Claim', null);
@@ -181,7 +208,7 @@ requestBodyTxtArea.addEventListener('change', () => {
     extractedInfo = entryOfInfo?.resource.supportingInfo ?? null;
     extractSupportingInfo(extractedInfo);
 
-    // Extract Line Items ========================
+    // Extract Line Items 
     arrayofItems = entryOfInfo?.resource.item ?? null;
     extractLineItems(arrayofItems);
 
@@ -191,7 +218,26 @@ requestBodyTxtArea.addEventListener('change', () => {
         showToast("Error: Items total is not found.", "danger");
     }
 
+    // Extract Insurer Data
+    let InsurerResource = entryOfInfo?.resource.insurer.reference ?? null;
+    extractedTypeVal = splitString(InsurerResource);
+    let InsurerEntry = findResource(parsed.entry, extractedTypeVal[0], extractedTypeVal[1]);
+    extractedInfo = InsurerEntry?.resource ?? null;
+    extractInsurerData(extractedInfo);
+
+    // Extract Provider Data
+    let providerResource = entryOfInfo?.resource.provider.reference ?? null;
+    extractedTypeVal = splitString(providerResource);
+    let providerEntry = findResource(parsed.entry, extractedTypeVal[0], extractedTypeVal[1]);
+    extractedInfo = providerEntry?.resource ?? null;
+    extractProviderData(extractedInfo);
+
+    // Extract Care Team data
+    const careTeamResource = entryOfInfo?.resource.careTeam ?? null; // Array
+    extractPractitioners(parsed.entry, careTeamResource);
+
     // Extract data for Coverage resource type ==========================
+
     // Extract Req Membership
     entryOfInfo = findResource(parsed.entry, 'Coverage', null);
     extractedInfo = entryOfInfo?.resource.identifier[0] ?? null;
@@ -200,9 +246,8 @@ requestBodyTxtArea.addEventListener('change', () => {
     // Extract data for Patient (benefitiary) resource type ============
     // Extract Req Member Name
     let beneficiaryResource = entryOfInfo?.resource.beneficiary.reference ?? null;
-    let extractedTypeVal = splitString(beneficiaryResource);
-    // extractedTypeVal = Array of [resourceType, resourceVal]
-    benefEntry = findResource(parsed.entry, extractedTypeVal[0], extractedTypeVal[1]);
+    extractedTypeVal = splitString(beneficiaryResource);
+    let benefEntry = findResource(parsed.entry, extractedTypeVal[0], extractedTypeVal[1]);
     extractedInfo = benefEntry?.resource.name[0] ?? null;
     extractMemberName(extractedInfo);
 
@@ -492,9 +537,7 @@ function clearExtensionLists(el) {
 }
 
 function extractLineItems(x) {
-    // Get the accordion container
-    const mainAccordion = document.getElementById('itemsAccordion');
-    if (!mainAccordion) {
+    if (!itemsAccordion) {
         showToast('Code Error: could not find the accordion container.', 'danger');
         return;
     }
@@ -503,7 +546,7 @@ function extractLineItems(x) {
     if (x === null || x.length == 0) {
         showToast('Items array is empty or not found.', 'danger');
         // Show empty state
-        clearItemsLists(mainAccordion);
+        clearItemsLists();
         return;
     }
 
@@ -604,7 +647,7 @@ function extractLineItems(x) {
     }).join('');
 
     // Inject the dynamically built items into the container
-    mainAccordion.innerHTML = accordionHTML;
+    itemsAccordion.innerHTML = accordionHTML;
 
 }
 
@@ -643,8 +686,8 @@ function generateItemExtension(ex) {
     return htmlContent;
 }
 
-function clearItemsLists(el) {
-    el.innerHTML = `
+function clearItemsLists() {
+    itemsAccordion.innerHTML = `
     <div class="accordion-item custom-item" style="border: none;">
         <h2 class="accordion-header" id="heading-1">
             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-1" aria-expanded="false" aria-controls="collapse-1">
@@ -896,79 +939,159 @@ function extractBenifitiaryGender(x) {
     reqGenderInput.value = x;
 }
 
+function extractInsurerData(resource) {
+    if (!resource || resource === null) {
+        showToast('Error: could not extract Insurer data', 'danger');
+    } else {
+        try {
+            insurerNameInput.value = resource.name;
+            insurerCityInput.value = resource.address?.[0].city;
+            insurerCountryInput.value = resource.address?.[0].country;
+        } catch (e) {
+            showToast('Error: something went wrong during Insurer data extraction', 'danger');
+            console.warn(e);
+            return;
+        }
+    }
+}
+
+function extractProviderData(resource) {
+    if (!resource || resource === null) {
+        showToast('Error: could not extract Provider data', 'danger');
+    } else {
+        try {
+            providerNameInput.value = resource.name;
+            providerCityInput.value = resource.address?.[0].city;
+            providerContryInput.value = resource.address?.[0].country;
+            let searchProvType = arrayofProviderTypes.find(t => t[0] == resource.extension?.[0].valueCodeableConcept.coding?.[0].code);
+            providerTypeInput.value = searchProvType[1];
+        } catch (e) {
+            showToast('Error: something went wrong during Provider data extraction, open the log for more details.', 'danger');
+            console.warn(e);
+            return;
+        }
+    }
+}
+
+function extractPractitioners(entry, careTeamArr) {
+    if (careTeamArr == null || careTeamArr.length == 0) {
+        showToast('Error: unable to find the care team array.', 'danger');
+        return;
+    } else {
+        try {
+
+            careTeamTBody.innerHTML = ``;
+            let ref;
+            let resource;
+            let practPersonalInfo;
+            let role;
+            let qual;
+            for (i = 0; i < careTeamArr.length; i++) {
+                ref = splitString(careTeamArr[i].provider.reference);
+                res = findResource(entry, ref[0], ref[1]);
+
+                // [License, Name]
+                practPersonalInfo = [
+                    res.resource.identifier?.[0].value ?? "-", res.resource.name?.[0].text ?? 'Unknown'
+                ]
+
+                // [License, Name, Role, Qualification]
+                role = careTeamArr[i].role.coding?.[0].code ?? "Unknown";
+                qual = careTeamArr[i].qualification.coding?.[0].code ?? "Unknown";
+                let CareTeamMember = [practPersonalInfo[0], practPersonalInfo[1], role, qual];
+                arrayofCareTeam.push(CareTeamMember);
+
+
+                // Add to HTML
+                const newEl = document.createElement('tr');
+
+                newEl.innerHTML = `
+                <th scope="row">${i + 1}</th>
+                <td>${practPersonalInfo[0]}</td>
+                <td>${practPersonalInfo[1]}</td>
+                <td>${role}</td>
+                <td>${qual}</td>
+                `;
+                careTeamTBody.appendChild(newEl);
+            }
+
+
+        } catch (e) {
+            showToast('Error upon extracting the Care Team data, please check the logs.', 'danger');
+            console.warn(e);
+            return;
+        }
+    }
+}
 
 // User Modifications =======================================
-reqClaimIDInput.addEventListener('change', () => {
-    const input = userInputJSON;
-    const paths = [
-        'entry[1].resource.identifier[0].value'
-    ];
-    changeReqValue(paths, input, reqClaimIDInput.value);
+
+reqClaimIDInput.addEventListener('change', (e) => {
+    let newValue = e.target.value;
+    // let targetKey = parsed.entry
+    // 1. Ensure input is a string
+    const jsonString = JSON.stringify(userInputJSON);
+
+    // 2. Perform global string replacement
+    const modifiedString = jsonString.replaceAll("req_3085", newValue);
+
+    // 3. Return parsed JSON object
+
 });
 
-// reqInput.addEventListener('change', () => {
+// reqClaimIDInput.addEventListener('change', () => {
 //     const input = userInputJSON;
 //     const paths = [
-//         'entry[1].resource.identifier[0].system'
+//         'entry[1].resource.identifier[0].value'
 //     ];
-
-//     let reqT;
-//     if (reqInput.value == 'preauth') {
-//         reqT = 'authorization'
-//     } else {
-//         reqT = 'claim'
-//     }
-
-//     // I need to keep the URL and only change the last url/....
-//     let newValue = JSON.parse(input).entry[1].resource.identifier[0].system;
-//     changeReqValue(paths, input, );
+//     changeReqValue(paths, input, reqClaimIDInput.value);
 // });
 
-function changeReqValue(paths, reqBody, newValue) {
-    if (reqBody && reqBody !== '') {
-        let parsed;
-        try {
-            parsed = JSON.parse(reqBody);
-        } catch (e) {
-            showToast('Invalid JSON: ' + e.message, 'danger');
-            return;
-        }
+// function changeReqValue(paths, reqBody, newValue) {
+//     if (reqBody && reqBody !== '') {
+//         let parsed;
+//         try {
+//             parsed = JSON.parse(reqBody);
+//         } catch (e) {
+//             showToast('Invalid JSON: ' + e.message, 'danger');
+//             return;
+//         }
 
-        try {
-            paths.forEach(path => {
-                setValueByPath(parsed, path, newValue);
-            });
-        } catch (e) {
-            showToast('Failed to update value: ' + e.message, 'danger');
-            return;
-        }
+//         try {
+//             paths.forEach(path => {
+//                 setValueByPath(parsed, path, newValue);
+//             });
+//         } catch (e) {
+//             showToast('Failed to update value: ' + e.message, 'danger');
+//             return;
+//         }
 
-        requestBodyTxtArea.value = JSON.stringify(parsed, null, 4);
-    }
-}
+//         requestBodyTxtArea.value = JSON.stringify(parsed, null, 4);
+//     }
+// }
 
-function setValueByPath(obj, path, value) {
-    const keys = path
-        .replace(/\[(\d+)\]/g, '.$1') // convert [1] -> .1
-        .split('.')
-        .filter(k => k !== '');
+// function setValueByPath(obj, path, value) {
+//     const keys = path
+//         .replace(/\[(\d+)\]/g, '.$1') // convert [1] -> .1
+//         .split('.')
+//         .filter(k => k !== '');
 
-    let target = obj;
-    for (let i = 0; i < keys.length - 1; i++) {
-        const key = keys[i];
-        if (target[key] === undefined) {
-            throw new Error(`Path "${path}" is invalid: "${key}" does not exist at this level.`);
-        }
-        target = target[key];
-    }
+//     let target = obj;
+//     for (let i = 0; i < keys.length - 1; i++) {
+//         const key = keys[i];
+//         if (target[key] === undefined) {
+//             throw new Error(`Path "${path}" is invalid: "${key}" does not exist at this level.`);
+//         }
+//         target = target[key];
+//     }
 
-    const lastKey = keys[keys.length - 1];
-    if (target[lastKey] === undefined) {
-        throw new Error(`Path "${path}" is invalid: final key "${lastKey}" does not exist.`);
-    }
+//     const lastKey = keys[keys.length - 1];
+//     if (target[lastKey] === undefined) {
+//         throw new Error(`Path "${path}" is invalid: final key "${lastKey}" does not exist.`);
+//     }
 
-    target[lastKey] = value;
-}
+//     target[lastKey] = value;
+// }
 
 // Copy to clipboard ========================================
 document.querySelectorAll('.copy-btn').forEach(btn => {

@@ -417,28 +417,28 @@
                                         class="container list-container d-flex flex-column flex-grow-1 overflow-hidden">
                                         <div class="row gap-2 mb-3">
                                             <div class="col p-1">
-                                                <label for="reqInput"
+                                                <label for="insurerNameInput"
                                                     class="form-label text-secondary">Name</label>
                                                 <div class="input-group">
-                                                    <input type="text" class="form-control" id="reqTypeInput"
+                                                    <input type="text" class="form-control" id="insurerNameInput"
                                                         aria-describedby="basic-addon3 basic-addon4">
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row gap-2 mb-3">
                                             <div class="col p-1">
-                                                <label for="reqTypeInput"
+                                                <label for="insurerCityInput"
                                                     class="form-label text-secondary">City</label>
                                                 <div class="input-group">
-                                                    <input type="text" class="form-control" id="reqTypeInput"
+                                                    <input type="text" class="form-control" id="insurerCityInput"
                                                         aria-describedby="basic-addon3 basic-addon4">
                                                 </div>
                                             </div>
                                             <div class="col p-1">
-                                                <label for="reqSubtypeInput"
+                                                <label for="insurerCountryInput"
                                                     class="form-label text-secondary">Country</label>
                                                 <div class="input-group">
-                                                    <input type="text" class="form-control" id="reqSubtypeInput"
+                                                    <input type="text" class="form-control" id="insurerCountryInput"
                                                         aria-describedby="basic-addon3 basic-addon4">
                                                 </div>
                                             </div>
@@ -461,47 +461,78 @@
                                         class="container list-container d-flex flex-column flex-grow-1 overflow-hidden">
                                         <div class="row gap-2 mb-3">
                                             <div class="col p-1">
-                                                <label for="reqInput"
+                                                <label for="providerNameInput"
                                                     class="form-label text-secondary">Name</label>
                                                 <div class="input-group">
-                                                    <input type="text" class="form-control" id="reqTypeInput"
+                                                    <input type="text" class="form-control" id="providerNameInput"
+                                                        aria-describedby="basic-addon3 basic-addon4">
+                                                </div>
+                                            </div>
+                                            <div class="col p-1">
+                                                <label for="providerTypeInput"
+                                                    class="form-label text-secondary">Type</label>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="providerTypeInput"
                                                         aria-describedby="basic-addon3 basic-addon4">
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row gap-2 mb-3">
                                             <div class="col p-1">
-                                                <label for="reqTypeInput"
+                                                <label for="providerCityInput"
                                                     class="form-label text-secondary">City</label>
                                                 <div class="input-group">
-                                                    <input type="text" class="form-control" id="reqTypeInput"
+                                                    <input type="text" class="form-control" id="providerCityInput"
                                                         aria-describedby="basic-addon3 basic-addon4">
                                                 </div>
                                             </div>
                                             <div class="col p-1">
-                                                <label for="reqSubtypeInput"
+                                                <label for="providerContryInput"
                                                     class="form-label text-secondary">Country</label>
                                                 <div class="input-group">
-                                                    <input type="text" class="form-control" id="reqSubtypeInput"
+                                                    <input type="text" class="form-control" id="providerContryInput"
                                                         aria-describedby="basic-addon3 basic-addon4">
                                                 </div>
-                                            </div>
-                                        </div>
-                                        <div class="row gap-2 mb-3">
-                                            <div class="col p-1">
-                                                <h6 class="p-1">Extensions</h6>
-                                                <ul id="claimExtensionsUL"
-                                                    class="list-group px-1 flex-grow-1 overflow-auto"
-                                                    style="font-size: 0.78rem">
-                                                    <li class="list-group-item-ex gap-5 h-100 d-flex">
-                                                        <div
-                                                            class="align-items-center justify-content-center h-100 w-100 fs-6">
-                                                            No Extensions</div>
-                                                    </li>
-                                                </ul>
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Care Team -->
+                    <div class="row column-gap-3">
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header fw-semibold">
+                                    <div class="d-flex flex-row gap-2 align-items-center">
+                                        <i class="ph ph-clipboard-text"></i>
+                                        Care Team Data
+                                    </div>
+                                </div>
+
+                                <div class="card-body">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col" class="text-secondary">#</th>
+                                                <th scope="col" class="text-secondary">license</th>
+                                                <th scope="col" class="text-secondary">Name</th>
+                                                <th scope="col" class="text-secondary">Role</th>
+                                                <th scope="col" class="text-secondary">Qualification</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="careTeamTBody">
+                                            <tr>
+                                                <th scope="row">1</th>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -513,13 +544,13 @@
             <div class="col px-0 shadow">
                 <div class="card h-100">
                     <div class="card-header">
-                        <div class="fs-6 fw-medium">JSON Request Body</div>
+                        <div class="fw-medium">JSON Request Body</div>
                     </div>
-                    <div class="card-body p-0 overflow-x-auto">
+                    <div class="card-body p-0 overflow-x-auto" style="background-color: #0c0c0c59">
                         <div class="form-floating h-100">
                             <textarea class="form-control border-0 h-100 text-nowrap font-monospace"
                                 placeholder="Leave a comment here" id="requestBodyTxtArea"
-                                spellcheck="false"></textarea>
+                                spellcheck="false" style="background-color: transparent"></textarea>
                             <label for="requestBodyTxtArea">Paste your request body here.</label>
                         </div>
                     </div>

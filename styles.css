@@ -66,6 +66,7 @@ body, html {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    font-size: larger;
 }
 
 .copy-trans {
@@ -129,8 +130,6 @@ body, html {
     margin-top: 0.2rem !important;
     margin-bottom: 0.2rem !important;
     border-radius: var(--bs-border-radius) !important;
-}
-.list-group-item-suppInf {
 }
 
 .list-group-item-ex > div {
