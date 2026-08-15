@@ -25,6 +25,7 @@
   --bs-gray-800: rgb(63, 63, 62);
   --bs-gray-900: rgb(39, 39, 39);
   --bs-primary: rgb(9, 114, 206);
+  --bs-primary-lighter: rgb(192, 216, 238);
   --bs-secondary: rgb(125, 126, 124);
   --bs-success: #198754;
   --bs-info: rgb(189, 201, 228);
@@ -122,6 +123,7 @@
 
 [data-bs-theme=dark] {
   color-scheme: dark;
+  --bs-primary-lighter: rgb(45, 64, 81);
   --bs-body-color: rgb(231, 231, 228);
   --bs-body-color-rgb: 231, 231, 228;
   --bs-body-bg: rgb(39, 39, 39);

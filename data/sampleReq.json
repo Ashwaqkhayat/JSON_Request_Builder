@@ -573,17 +573,6 @@
                     {
                         "extension": [
                             {
-                                "url": "http://nphies.sa/fhir/ksa/nphies-fs/StructureDefinition/extension-package",
-                                "valueBoolean": false
-                            },
-                            {
-                                "url": "http://nphies.sa/fhir/ksa/nphies-fs/StructureDefinition/extension-tax",
-                                "valueMoney": {
-                                    "value": 750,
-                                    "currency": "SAR"
-                                }
-                            },
-                            {
                                 "url": "http://nphies.sa/fhir/ksa/nphies-fs/StructureDefinition/extension-patient-share",
                                 "valueMoney": {
                                     "value": 0,
@@ -634,10 +623,18 @@
                                     "system": "http://nphies.sa/terminology/CodeSystem/procedures",
                                     "code": "38287-02-00",
                                     "display": "Catheter ablation of arrhythmia circuit or focus involving left atrial chamber"
+                                },
+                                {
+                                    "system": "http://fsdgdsrg.sa/terminology/CodeSystem/procedures",
+                                    "code": "123134234",
+                                    "display": "Catheter"
                                 }
                             ]
                         },
-                        "servicedDate": "2023-12-05",
+                        "servicedPeriod": {
+                            "start": "2023-12-05",
+                            "end": "2023-12-09"
+                        },
                         "quantity": {
                             "value": 1
                         },
@@ -1156,10 +1153,6 @@
                     "profile": [
                         "http://nphies.sa/fhir/ksa/nphies-fs/StructureDefinition/practitioner|1.0.0"
                     ]
-                },
-                "text": {
-                    "status": "generated",
-                    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"Practitioner_1\"> </a><p class=\"res-header-id\"><b>Generated Narrative: Practitioner 1</b></p><a name=\"1\"> </a><a name=\"hc1\"> </a><div style=\"display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%\"><p style=\"margin-bottom: 0px\"/><p style=\"margin-bottom: 0px\">Profile: <a href=\"StructureDefinition-practitioner.html\">Nphies Practitionerversion: null1.0.0)</a></p></div><p><b>identifier</b>: Provider number/N-P-00001</p><p><b>active</b>: true</p><p><b>name</b>: Dr. Ameera Hassan(Official)</p></div>"
                 },
                 "identifier": [
                     {

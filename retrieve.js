@@ -78,6 +78,8 @@ const reqGenderInput = el('reqGenderInput');
 const benefitiaryExtensionsUL = el('benefitiaryExtensionsUL');
 const ICDtableList = el('ICDtableList');
 const supportingInfoUL = el('supportingInfoUL');
+const totalItems = el('totalItems');
+const addItemBtn = el('addItemBtn');
 
 // Storage Arrays ====================================================
 var arrayofItems = [];
@@ -94,6 +96,7 @@ window.addEventListener('load', () => {
 function init() {
     console.log('Request Initialized');
     displayedEnvURL.value = ENVIRONMENTS.uat.URL;
+    addItemBtn.disabled = true;
 }
 
 // Extract input JSON ===============================================
@@ -132,6 +135,9 @@ requestBodyTxtArea.addEventListener('change', () => {
         showToast('Please paste JSON request.', 'warning');
         return;
     }
+
+    // Enable the add button
+    addItemBtn.disabled = false;
 
     let parsed;
     try { parsed = JSON.parse(input); } catch (e) {
@@ -178,6 +184,12 @@ requestBodyTxtArea.addEventListener('change', () => {
     // Extract Line Items ========================
     arrayofItems = entryOfInfo?.resource.item ?? null;
     extractLineItems(arrayofItems);
+
+    if (totalItems) {
+        totalItems.innerText = "| Total: " + entryOfInfo?.resource.total.value + " " + entryOfInfo?.resource.total.currency;
+    } else {
+        showToast("Error: Items total is not found.", "danger");
+    }
 
     // Extract data for Coverage resource type ==========================
     // Extract Req Membership
@@ -512,11 +524,18 @@ function extractLineItems(x) {
         const itemUnitPrice = item.unitPrice.value;
         const itemFactor = item.factor ?? 1;
         const itemNetPrice = item.net.value;
-        let itemServdDateFrom = item.servicedPeriod?.start ?? false;
-        if (!itemServdDateFrom) {
-            itemServdDateFrom = item.servicedDate;
-        }
-        let itemServdDateTo = item.servicedPeriod?.end ?? null;
+        const itemServdDateFrom = item.servicedPeriod?.start ?? item.servicedDate ?? null;
+        const itemServdDateTo = item.servicedPeriod?.end ?? "";
+
+        const nphiesCodeObj = item.productOrService.coding.find(code => code.system && code.system.startsWith("http://nphies.sa"));
+        const itemNphiesCode = nphiesCodeObj ? nphiesCodeObj.code : null;
+        const serviceCodeObj = item.productOrService.coding.find(code => code.system && !code.system.startsWith("http://nphies.sa"));
+        const itemServiceCode = serviceCodeObj ? serviceCodeObj.code : "";
+
+        const itemCareTeam = item.careTeamSequence;
+        const itemInfoSeq = item.informationSequence;
+
+        const itemExtensions = generateItemExtension(item.extension);
 
         return `
         <div class="accordion-item custom-item" style="border: none;">
@@ -536,39 +555,39 @@ function extractLineItems(x) {
                 <div class="accordion-body container">
                     <div class="row row-gap-3 mb-3">
                         <div class="col px-2">
-                            <label for="nphiesCode-1" class="form-label itemLabel">Nphies Code</label>
+                            <label for="nphiesCode-${index}" class="form-label itemLabel">Nphies Code</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" id="nphiesCode-1" aria-describedby="basic-addon3 basic-addon4">
+                                <input type="text" class="form-control" id="nphiesCode-${index}" value="${itemNphiesCode}" aria-describedby="basic-addon3 basic-addon4">
                             </div>
                         </div>
                         <div class="col px-2">
-                            <label for="serviceCode-1" class="form-label itemLabel">Service Code</label>
+                            <label for="serviceCode-${index}" class="form-label itemLabel">Service Code</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" id="serviceCode-1" aria-describedby="basic-addon3 basic-addon4">
+                                <input type="text" class="form-control" id="serviceCode-${index}" value="${itemServiceCode}" aria-describedby="basic-addon3 basic-addon4">
                             </div>
                         </div>
                         <div class="col px-2">
-                            <label for="careTeam-1" class="form-label itemLabel">Care Team</label>
+                            <label for="careTeam-${index}" class="form-label itemLabel">Care Team</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" id="careTeam-1" aria-describedby="basic-addon3 basic-addon4">
+                                <input type="text" class="form-control" id="careTeam-${index}" value="${itemCareTeam}" aria-describedby="basic-addon3 basic-addon4">
                             </div>
                         </div>
                         <div class="col px-2">
-                            <label for="servFrom-1" class="form-label itemLabel">Serviced From</label>
+                            <label for="servFrom-${index}" class="form-label itemLabel">Serviced From</label>
                             <div class="input-group">
-                                <input type="date" class="form-control" id="servFrom-1" aria-describedby="basic-addon3 basic-addon4">
+                                <input type="date" class="form-control" id="servFrom-${index}" value=${itemServdDateFrom} aria-describedby="basic-addon3 basic-addon4">
                             </div>
                         </div>
                         <div class="col px-2">
-                            <label for="servTo-1" class="form-label itemLabel">Serviced To</label>
+                            <label for="servTo-${index}" class="form-label itemLabel">Serviced To</label>
                             <div class="input-group">
-                                <input type="date" class="form-control" id="servTo-1" aria-describedby="basic-addon3 basic-addon4">
+                                <input type="date" class="form-control" id="servTo-${index}" value=${itemServdDateTo} aria-describedby="basic-addon3 basic-addon4" disabled="${itemServdDateTo !== "" ? false : true}">
                             </div>
                         </div>
                         <div class="col-3 px-2">
-                            <label for="info-1" class="form-label itemLabel">Information</label>
+                            <label for="info-${index}" class="form-label itemLabel">Information</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" id="info-1" aria-describedby="basic-addon3 basic-addon4">
+                                <input type="text" class="form-control" id="info-${index}" value="${itemInfoSeq}" aria-describedby="basic-addon3 basic-addon4">
                             </div>
                         </div>
                     </div>
@@ -576,42 +595,7 @@ function extractLineItems(x) {
                         <div class="col px-2 text-nowrap" style="flex-grow: 0;">
                             <p class="text-secondary mb-0">Extensions</p>
                         </div>
-                        <div class="col px-2 text-nowrap">
-                            <div class="itemExt-badge">
-                                <p>Maternity</p>
-                                <p>Yes</p>
-                            </div>
-                        </div>
-                        <div class="col px-2 text-nowrap">
-                            <div class="itemExt-badge">
-                                <p>Package</p>
-                                <p>No</p>
-                            </div>
-                        </div>
-                        <div class="col-2 px-2 text-nowrap">
-                            <div class="itemExt-badge">
-                                <p>Patient Share</p>
-                                <p>1000</p>
-                            </div>
-                        </div>
-                        <div class="col-2 px-2 text-nowrap">
-                            <div class="itemExt-badge">
-                                <p>Payer Share</p>
-                                <p>1000</p>
-                            </div>
-                        </div>
-                        <div class="col-2 px-2 text-nowrap">
-                            <div class="itemExt-badge">
-                                <p>Patient Invoice</p>
-                                <p>1000</p>
-                            </div>
-                        </div>
-                        <div class="col-2 px-2 text-nowrap">
-                            <div class="itemExt-badge">
-                                <p>Tax</p>
-                                <p>1000</p>
-                            </div>
-                        </div>
+                        ${itemExtensions}
                     </div>
                 </div>
             </div>
@@ -623,6 +607,42 @@ function extractLineItems(x) {
     mainAccordion.innerHTML = accordionHTML;
 
 }
+
+function generateItemExtension(ex) {
+    let htmlContent = '';
+
+    ex.forEach(item => {
+        const itemTitle = item.url.substring(item.url.lastIndexOf('/') + 1).replace('extension-', '');
+        let extractedValue = '';
+        // Find the dynamic key (the one that is not 'url')
+        const dynamicKey = Object.keys(item).find(key => key !== 'url');
+
+        if (dynamicKey) {
+            const rawValue = item[dynamicKey];
+
+            // Check if the value is an object (like valueMoney or valueIdentifier)
+            if (typeof rawValue === 'object' && rawValue !== null) {
+                // Extract the nested 'value'
+                extractedValue = rawValue.value !== undefined ? rawValue.value : '';
+            } else {
+                // If it's a primitive (like boolean or string), convert directly to string
+                extractedValue = String(rawValue);
+            }
+        }
+
+        // 3. Construct the HTML template
+        htmlContent += `
+        <div class="col-auto px-2 text-nowrap" style="max-width: 300px; overflow: hidden;">
+            <div class="itemExt-badge">
+                <span>${itemTitle}</span>
+                <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${extractedValue}</span>
+            </div>
+        </div>`;
+    });
+
+    return htmlContent;
+}
+
 function clearItemsLists(el) {
     el.innerHTML = `
     <div class="accordion-item custom-item" style="border: none;">
@@ -649,6 +669,7 @@ function extractSupportingInfo(x) {
     } else {
         supportingInfoUL.innerHTML = '';
         let extractedCateg;
+        const possibKeys = ["valueQuantity", "timingPeriod", "code", "timingDate", "valueString"];
 
         x.forEach((info, index) => {
             // Map each key and its value
@@ -662,10 +683,10 @@ function extractSupportingInfo(x) {
 
             let mainValue = ["Undefined", -1];
             let thirdValue = ["Undefined", -1];
-            mainValue = getSuppInfo(suppInf);
+            mainValue = getSuppInfo(possibKeys, suppInf);
 
             if (noOfData === 4) {
-                thirdValue = getSuppInfo(suppInf, mainValue[1]);
+                thirdValue = getSuppInfo(possibKeys, suppInf, mainValue[1]);
                 // main/thirdVal are an array of [the value, keyIndex]
             }
 
@@ -673,9 +694,7 @@ function extractSupportingInfo(x) {
         });
     }
 }
-
-function getSuppInfo(suppInfo, skippedKey = null) {
-    const possibKeys = ["valueQuantity", "timingPeriod", "code", "timingDate", "valueString"];
+function getSuppInfo(possibKeys, suppInfo, skippedKey = null) {
     let extractedVal;
     let keyTypeIndex = -1;
     for (let i = 0; i < possibKeys.length; i++) {
@@ -712,7 +731,6 @@ function getSuppInfo(suppInfo, skippedKey = null) {
 
     return processedValue;
 }
-
 function findSuppKey(suppInfo, keyName) {
     const found = suppInfo.find(inf => inf.key == keyName);
     if (found) {
@@ -987,7 +1005,6 @@ claimExtensionsUL.addEventListener('click', (event) => {
         }
     }
 });
-
 
 benefitiaryExtensionsUL.addEventListener('click', (event) => {
     // Check if the clicked element (or its parent, like the <i> icon) is the button

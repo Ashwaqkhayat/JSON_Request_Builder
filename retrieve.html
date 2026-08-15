@@ -31,6 +31,24 @@
         </div>
     </div>
 
+    <!-- Modal for add Item -->
+    <div class="modal fade" id="newItemModal" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Line Item</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Modal body text goes here.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg bg-body-tertiary px-2">
         <div class="container-fluid">
@@ -342,6 +360,11 @@
                             <div class="d-flex flex-row gap-2 align-items-center">
                                 <i class="ph ph-package"></i>
                                 Items
+                                <p id="totalItems" class="mb-0 me-4">| Total: 0.00 SAR</p>
+                            </div>
+
+                            <div class="d-flex align-items-center column-gap-2">
+                                <button id="addItemBtn" class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#newItemModal">Add Item</button>
                             </div>
                         </div>
 
