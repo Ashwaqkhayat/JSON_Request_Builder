@@ -19,10 +19,6 @@
                         "http://nphies.sa/fhir/ksa/nphies-fs/StructureDefinition/message-header|1.0.0"
                     ]
                 },
-                "text": {
-                    "status": "generated",
-                    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"MessageHeader_a7e4caf2-0441-40e5-97d2-5ae1802730af\"> </a><p class=\"res-header-id\"><b>Generated Narrative: MessageHeader a7e4caf2-0441-40e5-97d2-5ae1802730af</b></p><a name=\"a7e4caf2-0441-40e5-97d2-5ae1802730af\"> </a><a name=\"hca7e4caf2-0441-40e5-97d2-5ae1802730af\"> </a><div style=\"display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%\"><p style=\"margin-bottom: 0px\"/><p style=\"margin-bottom: 0px\">Profile: <a href=\"StructureDefinition-message-header.html\">Nphies MessageHeaderversion: null1.0.0)</a></p></div><p><b>event</b>: <a href=\"CodeSystem-ksa-message-events.html#ksa-message-events-claim-request\">KSA Message Events: claim-request</a> (Claim Request)</p><h3>Destinations</h3><table class=\"grid\"><tr><td style=\"display: none\">-</td><td><b>Endpoint</b></td><td><b>Receiver</b></td></tr><tr><td style=\"display: none\">*</td><td><a href=\"https://nphies.sa/fhir/$process-message\">https://nphies.sa/fhir/$process-message</a></td><td>Identifier: <code>http://nphies.sa/license/payer-license</code>/INS-FHIR</td></tr></table><p><b>sender</b>: Identifier: <code>http://nphies.sa/license/provider-license</code>/PR-FHIR</p><h3>Sources</h3><table class=\"grid\"><tr><td style=\"display: none\">-</td><td><b>Endpoint</b></td></tr><tr><td style=\"display: none\">*</td><td><a href=\"http://saudigeneralhospital.com.sa\">http://saudigeneralhospital.com.sa</a></td></tr></table><p><b>focus</b>: <a href=\"Bundle-a84aabfa-1163-407d-aa38-f8119a0b8888.html#http-//saudigeneralhospital.com.sa/Claim/483070\">Claim: extension = -&gt;Encounter: extension = Mycoplasma infection, unspecified; identifier = http://saudigeneralhospital.com.sa/identifiers/encounter#AB00030; status = finished; class = inpatient encounter (ActCode#IMP); serviceType = Acute Care; period = 2023-12-04 06:38:00+0300 --&gt; 2023-12-06 11:38:00+0300,EligResp-31212432,2023-12-05,http://saudigeneralhospital.com.sa/identifiers/episode#provider_EpisodeID_48903211; identifier = http://saudigeneralhospital.com.sa/identifiers/claim#req_3085; status = active; type = Institutional; subType = InPatient; use = claim; created = 2023-12-05 12:30:15+0300; priority = Normal</a></p></div>"
-                },
                 "eventCoding": {
                     "system": "http://nphies.sa/terminology/CodeSystem/ksa-message-events",
                     "code": "claim-request"
@@ -91,7 +87,7 @@
                 ],
                 "identifier": [
                     {
-                        "system": "http://saudigeneralhospital.com.sa/identifiers/claim",
+                        "system": "http://saudigeneralhospital.com.sa/identifiers/authorization",
                         "value": "req_3085"
                     }
                 ],
@@ -112,7 +108,7 @@
                         }
                     ]
                 },
-                "use": "claim",
+                "use": "preauthorization",
                 "patient": {
                     "reference": "Patient/173826788"
                 },
@@ -831,10 +827,6 @@
                     "profile": [
                         "http://nphies.sa/fhir/ksa/nphies-fs/StructureDefinition/policyholder-organization|1.0.0"
                     ]
-                },
-                "text": {
-                    "status": "generated",
-                    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"Organization_13\"> </a><p class=\"res-header-id\"><b>Generated Narrative: Organization 13</b></p><a name=\"13\"> </a><a name=\"hc13\"> </a><div style=\"display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%\"><p style=\"margin-bottom: 0px\"/><p style=\"margin-bottom: 0px\">Profile: <a href=\"StructureDefinition-policyholder-organization.html\">Nphies Policy Holder Organizationversion: null1.0.0)</a></p></div><p><b>identifier</b>: <code>http://nphies.sa/identifiers/organization</code>/5009</p><p><b>active</b>: true</p><p><b>name</b>: Policy Holder Organization</p></div>"
                 },
                 "identifier": [
                     {

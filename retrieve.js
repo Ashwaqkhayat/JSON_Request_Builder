@@ -85,10 +85,42 @@ const insurerCityInput = el('insurerCityInput');
 const insurerCountryInput = el('insurerCountryInput');
 const providerNameInput = el('providerNameInput');
 const providerCityInput = el('providerCityInput');
-const providerContryInput = el('providerContryInput');
+const providerCountryInput = el('providerCountryInput');
 const providerTypeInput = el('providerTypeInput');
 const careTeamTBody = el('careTeamTBody');
 const itemsAccordion = el('itemsAccordion');
+
+// Values Storage ====================================================
+var REQUEST_DETAILS = {
+    reqInput: "",
+    reqTypeInput: "",
+    reqSubtypeInput: "",
+    reqPriorityInput: "",
+    reqClaimIDInput: "",
+    claimExtensionsUL: "",
+
+    reqMembershipInput: "",
+    reqMemNameInput: "",
+    reqIDTypeInput: "",
+    reqIDNumInput: "",
+    reqPhoneNumInput: "",
+    reqBDateInput: "",
+    reqGenderInput: "",
+    benefitiaryExtensionsUL: "",
+    ICDtableList: "",
+    supportingInfoUL: "",
+    totalItems: "",
+    addItemBtn: "",
+    insurerNameInput: "",
+    insurerCityInput: "",
+    insurerCountryInput: "",
+    providerNameInput: "",
+    providerCityInput: "",
+    providerCountryInput: "",
+    providerTypeInput: "",
+    careTeamTBody: "",
+    itemsAccordion: ""
+}
 
 // Storage Arrays ====================================================
 var arrayofItems = [];
@@ -120,22 +152,49 @@ function init() {
     console.log('Request Initialized');
     displayedEnvURL.value = ENVIRONMENTS.uat.URL;
     addItemBtn.disabled = true;
+    // Empty the arrays
+    arrayofItems = [];
+    arrayofICD = [];
+    arrayofCareTeam = [];
+
+    addItemBtn.disabled = true;
+
+    REQUEST_DETAILS = {
+        reqInput: "",
+        reqTypeInput: "",
+        reqSubtypeInput: "",
+        reqPriorityInput: "",
+        reqClaimIDInput: "",
+        claimExtensionsUL: "",
+
+        reqMembershipInput: "",
+        reqMemNameInput: "",
+        reqIDTypeInput: "",
+        reqIDNumInput: "",
+        reqPhoneNumInput: "",
+        reqBDateInput: "",
+        reqGenderInput: "",
+        benefitiaryExtensionsUL: "",
+        ICDtableList: "",
+        supportingInfoUL: "",
+        totalItems: "",
+        addItemBtn: "",
+        insurerNameInput: "",
+        insurerCityInput: "",
+        insurerCountryInput: "",
+        providerNameInput: "",
+        providerCityInput: "",
+        providerCountryInput: "",
+        providerTypeInput: "",
+        careTeamTBody: "",
+        itemsAccordion: ""
+    }
 }
 
-// Extract input JSON ===============================================
+
+// Extract input JSON & Data ========================================
 var userInputJSON;
 var parsed;
-requestBodyTxtArea.addEventListener('change', () => {
-    userInputJSON = requestBodyTxtArea.value.trim();
-
-    try { parsed = JSON.parse(userInputJSON); } catch (e) {
-        showToast('Error: unable to parse the input JSON.' + e.message, 'danger');
-        return;
-    }
-})
-
-
-// Extract Data =====================================================
 
 requestBodyTxtArea.addEventListener('paste', function (e) {
     const scrollTop = this.scrollTop;
@@ -146,14 +205,10 @@ requestBodyTxtArea.addEventListener('paste', function (e) {
 });
 
 requestBodyTxtArea.addEventListener('change', () => {
+    userInputJSON = requestBodyTxtArea.value.trim();
     const input = userInputJSON;
 
-    // Empty the arrays
-    arrayofItems = [];
-    arrayofICD = [];
-    arrayofCareTeam = [];
-
-    addItemBtn.disabled = true;
+    init();
 
     if (!input || input === '') {
         // Clear all the input fields
@@ -166,6 +221,11 @@ requestBodyTxtArea.addEventListener('change', () => {
         clearSuppInfoLists();
         clearItemsLists();
         showToast('Please paste JSON request.', 'warning');
+        return;
+    }
+
+    try { parsed = JSON.parse(userInputJSON); } catch (e) {
+        showToast('Error: unable to parse the input JSON.' + e.message, 'danger');
         return;
     }
 
@@ -332,8 +392,10 @@ function extractReqCat(x) {
         const reqCategory = x.system.split('/').pop();
         if (reqCategory === 'authorization') {
             reqInput.value = 'authorization';
+            REQUEST_DETAILS.reqInput = 'authorization';
         } else if (reqCategory === 'claim') {
             reqInput.value = 'claim';
+            REQUEST_DETAILS.reqInput = 'claim';
         } else {
             reqInput.value = '';
         }
@@ -396,6 +458,7 @@ function extractClaimID(x) {
         );
         return;
     }
+    REQUEST_DETAILS.reqClaimIDInput = x.value;
     reqClaimIDInput.value = x.value;
 }
 
@@ -962,7 +1025,7 @@ function extractProviderData(resource) {
         try {
             providerNameInput.value = resource.name;
             providerCityInput.value = resource.address?.[0].city;
-            providerContryInput.value = resource.address?.[0].country;
+            providerCountryInput.value = resource.address?.[0].country;
             let searchProvType = arrayofProviderTypes.find(t => t[0] == resource.extension?.[0].valueCodeableConcept.coding?.[0].code);
             providerTypeInput.value = searchProvType[1];
         } catch (e) {
@@ -1026,74 +1089,45 @@ function extractPractitioners(entry, careTeamArr) {
 
 // User Modifications =======================================
 
-reqClaimIDInput.addEventListener('change', (e) => {
-    let newValue = e.target.value;
-    // let targetKey = parsed.entry
-    // 1. Ensure input is a string
-    const jsonString = JSON.stringify(userInputJSON);
+reqClaimIDInput.addEventListener('change', (event) => {
+    const newVal = event.target.value;
+    let currentVal = REQUEST_DETAILS.reqClaimIDInput
 
-    // 2. Perform global string replacement
-    const modifiedString = jsonString.replaceAll("req_3085", newValue);
+    replaceAllModification(currentVal, newVal);
 
-    // 3. Return parsed JSON object
-
+    // Update the tracker variable so the next keystroke replaces the correct string
+    REQUEST_DETAILS.reqClaimIDInput = newVal;
 });
 
-// reqClaimIDInput.addEventListener('change', () => {
-//     const input = userInputJSON;
-//     const paths = [
-//         'entry[1].resource.identifier[0].value'
-//     ];
-//     changeReqValue(paths, input, reqClaimIDInput.value);
+// ما ينفع أغير كل مكان!!
+// reqInput.addEventListener('change', (event) => {
+//     const newVal = event.target.value;
+//     let currentVal = REQUEST_DETAILS.reqInput
+
+//     replaceAllModification(currentVal, newVal);
+
+//     // Update the tracker variable so the next keystroke replaces the correct string
+//     REQUEST_DETAILS.reqInput = newVal;
 // });
 
-// function changeReqValue(paths, reqBody, newValue) {
-//     if (reqBody && reqBody !== '') {
-//         let parsed;
-//         try {
-//             parsed = JSON.parse(reqBody);
-//         } catch (e) {
-//             showToast('Invalid JSON: ' + e.message, 'danger');
-//             return;
-//         }
+function replaceAllModification(currentVal, newVal) {
+    // Prevent unnecessary processing if the input is empty or unchanged
+    if (!newVal || newVal === currentVal) return;
 
-//         try {
-//             paths.forEach(path => {
-//                 setValueByPath(parsed, path, newValue);
-//             });
-//         } catch (e) {
-//             showToast('Failed to update value: ' + e.message, 'danger');
-//             return;
-//         }
+    // Convert the entire JSON object to a string
+    const jsonString = JSON.stringify(parsed, null, 4);
 
-//         requestBodyTxtArea.value = JSON.stringify(parsed, null, 4);
-//     }
-// }
+    // Replace all occurrences of the old val with the new val
+    const updatedJsonString = jsonString.replaceAll(currentVal, newVal);
 
-// function setValueByPath(obj, path, value) {
-//     const keys = path
-//         .replace(/\[(\d+)\]/g, '.$1') // convert [1] -> .1
-//         .split('.')
-//         .filter(k => k !== '');
+    // Stringify back to the textarea
+    requestBodyTxtArea.value = updatedJsonString;
 
-//     let target = obj;
-//     for (let i = 0; i < keys.length - 1; i++) {
-//         const key = keys[i];
-//         if (target[key] === undefined) {
-//             throw new Error(`Path "${path}" is invalid: "${key}" does not exist at this level.`);
-//         }
-//         target = target[key];
-//     }
+    // Parse it back into a JavaScript object
+    parsed = JSON.parse(updatedJsonString);
+}
 
-//     const lastKey = keys[keys.length - 1];
-//     if (target[lastKey] === undefined) {
-//         throw new Error(`Path "${path}" is invalid: final key "${lastKey}" does not exist.`);
-//     }
-
-//     target[lastKey] = value;
-// }
-
-// Copy to clipboard ========================================
+// Copy to Clipboard ========================================
 document.querySelectorAll('.copy-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         const targetID = btn.getAttribute('data-bs-target');
