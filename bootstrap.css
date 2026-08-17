@@ -1,6 +1,7 @@
 @charset "UTF-8";
 :root,
 [data-bs-theme=light] {
+  --bs-bg-deep: #e3e3e3;
   --bs-blue: rgb(84, 113, 187);
   --bs-indigo: #6610f2;
   --bs-purple: #6f42c1;
@@ -123,6 +124,7 @@
 
 [data-bs-theme=dark] {
   color-scheme: dark;
+  --bs-bg-deep: #1d1d1d;
   --bs-primary-lighter: rgb(45, 64, 81);
   --bs-body-color: rgb(231, 231, 228);
   --bs-body-color-rgb: 231, 231, 228;

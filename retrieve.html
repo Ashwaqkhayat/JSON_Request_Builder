@@ -20,9 +20,18 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap"
         rel="stylesheet">
+
+    <!-- Line numbering -->
+    <link rel="stylesheet" type="text/css"
+        href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css">
+    </link>
+    <link rel="stylesheet" type="text/css"
+        href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/abbott.min.css">
+    </link>
+
 </head>
 
-<body class="vh-100 d-flex flex-column pb-3" data-bs-theme="dark">
+<body class="h-auto min-vh-100 d-flex flex-column" data-bs-theme="dark">
 
     <!-- Toast for Error Messages -->
     <div class="toast-container position-static">
@@ -50,7 +59,7 @@
     </div>
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg bg-body-tertiary px-2">
+    <nav class="navbar navbar-expand-lg px-2">
         <div class="container-fluid">
             <a class="navbar-brand fw-medium" href="#">Request Builder</a>
 
@@ -97,15 +106,15 @@
         </div>
     </nav>
 
-    <main class="container-fluid px-4 py-3 flex-grow-1 overflow-auto">
-        <div class="row gap-3 h-100">
+    <main class="container d-flex justify-content-center h-100 px-4 py-4" style="background-color: var(--bs-bg-deep)">
+        <div class="row gap-4 h-100 w-100">
             <!-- Request Information Col -->
             <div class="col-7 px-0 control-input-disable">
-                <div class="container d-flex flex-column row-gap-3 p-0 overflow-x-hidden">
+                <div class="container d-flex flex-column row-gap-4 p-0 overflow-x-hidden">
 
                     <!-- Request and Benefitiary -->
-                    <div class="row column-gap-3">
-                        <div class="col" style="min-width: 535px; padding-right: 0px;">
+                    <div class="row row-gap-4">
+                        <div class="col" style="min-width: 535px;">
                             <div class="card h-100" style="padding-right: 0px;">
 
                                 <div class="card-header fw-semibold">
@@ -183,7 +192,7 @@
                             </div>
                         </div>
 
-                        <div class="col" style="min-width: 535px; padding-left: 0px;">
+                        <div class="col" style="min-width: 535px;">
                             <div class="card h-100" style="padding-left: 0px;">
 
                                 <div class="card-header fw-semibold">
@@ -290,113 +299,126 @@
                     </div>
 
                     <!-- Diagnosis & SuppInfo -->
-                    <div class="card">
-                        <div class="card-header fw-semibold">
-                            <div class="d-flex flex-row gap-2 align-items-center">
-                                <i class="ph ph-pulse"></i>
-                                Diagnosis & Supporting Info
-                            </div>
-                        </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header fw-semibold">
+                                    <div class="d-flex flex-row gap-2 align-items-center">
+                                        <i class="ph ph-pulse"></i>
+                                        Diagnosis & Supporting Info
+                                    </div>
+                                </div>
 
-                        <div class="card-body overflow-y-auto" style="height: 270px;">
-                            <div class="container h-100">
-                                <div class="row gap-3 h-100">
-                                    <div class="col col-xl-12 col-xxl-3 p-0 h-100">
-                                        <p class="fs-6 mb-2 fw-semibold">Diagnosis Code</p>
-                                        <div class="h-85 overflow-y-auto">
-                                            <table class="table table-sm table-borderless">
-                                                <thead>
-                                                    <tr>
-                                                        <th class="fw-normal text-nowrap text-secondary" scope="col">
-                                                        </th>
-                                                        <th class="fw-normal text-nowrap text-secondary" scope="col">ICD
-                                                            Code</th>
-                                                        <th class="fw-normal text-nowrap text-secondary" scope="col">
-                                                            Type</th>
-                                                    </tr>
-                                                </thead>
+                                <div class="card-body overflow-y-auto" style="height: 270px;">
+                                    <div class="container h-100">
+                                        <div class="row gap-3 h-100">
+                                            <div class="col col-xl-12 col-xxl-3 p-0 h-100">
+                                                <p class="fs-6 mb-2 fw-semibold">Diagnosis Code</p>
+                                                <div class="h-85 overflow-y-auto">
+                                                    <table class="table table-sm table-borderless">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="fw-normal text-nowrap text-secondary"
+                                                                    scope="col">
+                                                                </th>
+                                                                <th class="fw-normal text-nowrap text-secondary"
+                                                                    scope="col">ICD
+                                                                    Code</th>
+                                                                <th class="fw-normal text-nowrap text-secondary"
+                                                                    scope="col">
+                                                                    Type</th>
+                                                            </tr>
+                                                        </thead>
 
-                                                <tbody id="ICDtableList">
-                                                    <tr>
-                                                        <th class="text-secondary fw-normal align-middle" scope="row">1
-                                                        </th>
-                                                        <td><input class="form-control"></td>
-                                                        <td style="width: 55%;"><input class="form-control">
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
+                                                        <tbody id="ICDtableList">
+                                                            <tr>
+                                                                <th class="text-secondary fw-normal align-middle"
+                                                                    scope="row">1
+                                                                </th>
+                                                                <td><input class="form-control"></td>
+                                                                <td style="width: 55%;"><input class="form-control">
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+
+                                            <div class="col d-flex flex-column w-100 h-100">
+                                                <p class="fs-6 mb-2 fw-semibold">Supporting Info</p>
+                                                <ul class="list-group overflow-auto" id="supportingInfoUL">
+                                                    <li class="info-item d-flex w-100 h-100">
+                                                        <div
+                                                            class="info-content justify-content-center align-items-center">
+                                                            Empty</div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+
                                         </div>
                                     </div>
-
-                                    <div class="col d-flex flex-column w-100 h-100">
-                                        <p class="fs-6 mb-2 fw-semibold">Supporting Info</p>
-                                        <ul class="list-group overflow-auto" id="supportingInfoUL">
-                                            <li class="info-item d-flex w-100 h-100">
-                                                <div class="info-content justify-content-center align-items-center">
-                                                    Empty</div>
-                                            </li>
-                                        </ul>
-                                    </div>
-
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Line Items -->
-                    <div class="card">
-                        <div class="card-header fw-semibold">
-                            <div class="d-flex flex-row gap-2 align-items-center">
-                                <i class="ph ph-package"></i>
-                                Items
-                                <p id="totalItems" class="mb-0 me-4">| Total: 0.00 SAR</p>
-                            </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header fw-semibold">
+                                    <div class="d-flex flex-row gap-2 align-items-center">
+                                        <i class="ph ph-package"></i>
+                                        Items
+                                        <p id="totalItems" class="mb-0 me-4">| Total: 0.00 SAR</p>
+                                    </div>
 
-                            <div class="d-flex align-items-center column-gap-2">
-                                <button id="addItemBtn" class="btn btn-light btn-sm" data-bs-toggle="modal"
-                                    data-bs-target="#newItemModal">Add Item</button>
-                            </div>
-                        </div>
+                                    <div class="d-flex align-items-center column-gap-2">
+                                        <button id="addItemBtn" class="btn btn-light btn-sm" data-bs-toggle="modal"
+                                            data-bs-target="#newItemModal">Add Item</button>
+                                    </div>
+                                </div>
 
-                        <div class="card-body overflow-hidden" style="height: auto;">
-                            <div class="items-header">
-                                <span class="text-nowrap">#</span>
-                                <span class="text-nowrap">ICD</span>
-                                <span class="text-nowrap">Service Description</span>
-                                <span class="text-nowrap">QTY</span>
-                                <span class="text-nowrap">Unit Price</span>
-                                <span class="text-nowrap">Factor</span>
-                                <span class="text-nowrap">Net</span>
-                                <span class="text-nowrap">Serviced Date</span>
-                                <span class="text-nowrap"></span>
-                            </div>
+                                <div class="card-body overflow-hidden" style="height: auto;">
+                                    <div class="items-header">
+                                        <span class="text-nowrap">#</span>
+                                        <span class="text-nowrap">ICD</span>
+                                        <span class="text-nowrap">Service Description</span>
+                                        <span class="text-nowrap">QTY</span>
+                                        <span class="text-nowrap">Unit Price</span>
+                                        <span class="text-nowrap">Factor</span>
+                                        <span class="text-nowrap">Net</span>
+                                        <span class="text-nowrap">Serviced Date</span>
+                                        <span class="text-nowrap"></span>
+                                    </div>
 
-                            <div class="accordion d-flex flex-column row-gap-2" id="itemsAccordion">
-                                <div class="accordion-item custom-item" style="border: none;">
-                                    <h2 class="accordion-header" id="heading-1">
-                                        <button class="accordion-button collapsed" type="button"
-                                            data-bs-toggle="collapse" data-bs-target="#collapse-1" aria-expanded="false"
-                                            aria-controls="collapse-1">
-                                            <span class="row-cell"></span>
-                                            <span class="row-cell"></span>
-                                            <span class="row-cell"></span>
-                                            <span class="row-cell"></span>
-                                            <span class="row-cell"></span>
-                                            <span class="row-cell"></span>
-                                            <span class="row-cell"></span>
-                                            <span class="row-cell"></span>
-                                        </button>
-                                    </h2>
+                                    <div class="accordion d-flex flex-column row-gap-2" id="itemsAccordion">
+                                        <div class="accordion-item custom-item" style="border: none;">
+                                            <h2 class="accordion-header" id="heading-1">
+                                                <button class="accordion-button collapsed" type="button"
+                                                    data-bs-toggle="collapse" data-bs-target="#collapse-1"
+                                                    aria-expanded="false" aria-controls="collapse-1">
+                                                    <span class="row-cell"></span>
+                                                    <span class="row-cell"></span>
+                                                    <span class="row-cell"></span>
+                                                    <span class="row-cell"></span>
+                                                    <span class="row-cell"></span>
+                                                    <span class="row-cell"></span>
+                                                    <span class="row-cell"></span>
+                                                    <span class="row-cell"></span>
+                                                </button>
+                                            </h2>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
-
                         </div>
                     </div>
 
                     <!-- Provider and Insurer -->
-                    <div class="row column-gap-3">
-                        <div class="col" style="min-width: 535px; padding-right: 0px;">
+                    <div class="row row-gap-4">
+                        <div class="col" style="min-width: 535px;">
                             <div class="card">
                                 <div class="card-header fw-semibold">
                                     <div class="d-flex flex-row gap-2 align-items-center">
@@ -440,7 +462,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col" style="min-width: 535px; padding-left: 0px;">
+                        <div class="col" style="min-width: 535px;">
                             <div class="card">
                                 <div class="card-header fw-semibold">
                                     <div class="d-flex flex-row gap-2 align-items-center">
@@ -495,37 +517,41 @@
                     </div>
 
                     <!-- Care Team -->
-                    <div class="row column-gap-3">
+                    <div class="row">
                         <div class="col">
-                            <div class="card">
-                                <div class="card-header fw-semibold">
-                                    <div class="d-flex flex-row gap-2 align-items-center">
-                                        <i class="ph ph-stethoscope"></i>
-                                        Care Team Data
-                                    </div>
-                                </div>
+                            <div class="row column-gap-3">
+                                <div class="col">
+                                    <div class="card">
+                                        <div class="card-header fw-semibold">
+                                            <div class="d-flex flex-row gap-2 align-items-center">
+                                                <i class="ph ph-stethoscope"></i>
+                                                Care Team Data
+                                            </div>
+                                        </div>
 
-                                <div class="card-body">
-                                    <table class="table table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col" class="text-secondary">#</th>
-                                                <th scope="col" class="text-secondary">license</th>
-                                                <th scope="col" class="text-secondary">Name</th>
-                                                <th scope="col" class="text-secondary">Role</th>
-                                                <th scope="col" class="text-secondary">Qualification</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="careTeamTBody">
-                                            <tr>
-                                                <th scope="row">1</th>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                        <div class="card-body">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col" class="text-secondary">#</th>
+                                                        <th scope="col" class="text-secondary">license</th>
+                                                        <th scope="col" class="text-secondary">Name</th>
+                                                        <th scope="col" class="text-secondary">Role</th>
+                                                        <th scope="col" class="text-secondary">Qualification</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="careTeamTBody">
+                                                    <tr>
+                                                        <th scope="row">1</th>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -539,7 +565,7 @@
                     <div class="card-header">
                         <div class="fw-medium">JSON Request Body</div>
                     </div>
-                    <div class="card-body p-0 overflow-x-auto" style="background-color: #0c0c0c59">
+                    <div class="card-body p-0 overflow-x-auto" style="background-color: var(--bs-bg-deep)">
                         <div class="form-floating h-100">
                             <textarea class="form-control border-0 h-100 text-nowrap font-monospace"
                                 placeholder="Leave a comment here" id="requestBodyTxtArea" spellcheck="false"

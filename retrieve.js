@@ -91,36 +91,8 @@ const careTeamTBody = el('careTeamTBody');
 const itemsAccordion = el('itemsAccordion');
 
 // Values Storage ====================================================
-var REQUEST_DETAILS = {
-    reqInput: "",
-    reqTypeInput: "",
-    reqSubtypeInput: "",
-    reqPriorityInput: "",
-    reqClaimIDInput: "",
-    claimExtensionsUL: "",
-
-    reqMembershipInput: "",
-    reqMemNameInput: "",
-    reqIDTypeInput: "",
-    reqIDNumInput: "",
-    reqPhoneNumInput: "",
-    reqBDateInput: "",
-    reqGenderInput: "",
-    benefitiaryExtensionsUL: "",
-    ICDtableList: "",
-    supportingInfoUL: "",
-    totalItems: "",
-    addItemBtn: "",
-    insurerNameInput: "",
-    insurerCityInput: "",
-    insurerCountryInput: "",
-    providerNameInput: "",
-    providerCityInput: "",
-    providerCountryInput: "",
-    providerTypeInput: "",
-    careTeamTBody: "",
-    itemsAccordion: ""
-}
+// To store all the extracted values
+var REQ_VALUEPATHS;
 
 // Storage Arrays ====================================================
 var arrayofItems = [];
@@ -157,44 +129,126 @@ function init() {
     arrayofICD = [];
     arrayofCareTeam = [];
 
-    addItemBtn.disabled = true;
+    // Reset the Extracted Values
+    REQ_VALUEPATHS = {
+        reqInput: {
+            value: "",
+            paths: [],
+        },
+        reqTypeInput: {
+            value: "",
+            paths: [],
+        },
+        reqSubtypeInput: {
+            value: "",
+            paths: [],
+        },
+        reqPriorityInput: {
+            value: "",
+            paths: [],
+        },
+        reqClaimIDInput: {
+            value: "",
+            paths: [],
+        },
+        claimExtensionsUL: {
+            value: "",
+            paths: [],
+        },
 
-    REQUEST_DETAILS = {
-        reqInput: "",
-        reqTypeInput: "",
-        reqSubtypeInput: "",
-        reqPriorityInput: "",
-        reqClaimIDInput: "",
-        claimExtensionsUL: "",
-
-        reqMembershipInput: "",
-        reqMemNameInput: "",
-        reqIDTypeInput: "",
-        reqIDNumInput: "",
-        reqPhoneNumInput: "",
-        reqBDateInput: "",
-        reqGenderInput: "",
-        benefitiaryExtensionsUL: "",
-        ICDtableList: "",
-        supportingInfoUL: "",
-        totalItems: "",
-        addItemBtn: "",
-        insurerNameInput: "",
-        insurerCityInput: "",
-        insurerCountryInput: "",
-        providerNameInput: "",
-        providerCityInput: "",
-        providerCountryInput: "",
-        providerTypeInput: "",
-        careTeamTBody: "",
-        itemsAccordion: ""
+        reqMembershipInput: {
+            value: "",
+            paths: [],
+        },
+        reqMemNameInput: {
+            value: "",
+            paths: [],
+        },
+        reqIDTypeInput: {
+            value: "",
+            paths: [],
+        },
+        reqIDNumInput: {
+            value: "",
+            paths: [],
+        },
+        reqPhoneNumInput: {
+            value: "",
+            paths: [],
+        },
+        reqBDateInput: {
+            value: "",
+            paths: [],
+        },
+        reqGenderInput: {
+            value: "",
+            paths: [],
+        },
+        benefitiaryExtensionsUL: {
+            value: "",
+            paths: [],
+        },
+        ICDtableList: {
+            value: "",
+            paths: [],
+        },
+        supportingInfoUL: {
+            value: "",
+            paths: [],
+        },
+        totalItems: {
+            value: "",
+            paths: [],
+        },
+        addItemBtn: {
+            value: "",
+            paths: [],
+        },
+        insurerNameInput: {
+            value: "",
+            paths: [],
+        },
+        insurerCityInput: {
+            value: "",
+            paths: [],
+        },
+        insurerCountryInput: {
+            value: "",
+            paths: [],
+        },
+        providerNameInput: {
+            value: "",
+            paths: [],
+        },
+        providerCityInput: {
+            value: "",
+            paths: [],
+        },
+        providerCountryInput: {
+            value: "",
+            paths: [],
+        },
+        providerTypeInput: {
+            value: "",
+            paths: [],
+        },
+        careTeamTBody: {
+            value: "",
+            paths: [],
+        },
+        itemsAccordion: {
+            value: "",
+            paths: [],
+        }
     }
+
+    addItemBtn.disabled = true;
 }
 
 
 // Extract input JSON & Data ========================================
-var userInputJSON;
-var parsed;
+let userInputJSON;
+let parsed;
 
 requestBodyTxtArea.addEventListener('paste', function (e) {
     const scrollTop = this.scrollTop;
@@ -392,10 +446,8 @@ function extractReqCat(x) {
         const reqCategory = x.system.split('/').pop();
         if (reqCategory === 'authorization') {
             reqInput.value = 'authorization';
-            REQUEST_DETAILS.reqInput = 'authorization';
         } else if (reqCategory === 'claim') {
             reqInput.value = 'claim';
-            REQUEST_DETAILS.reqInput = 'claim';
         } else {
             reqInput.value = '';
         }
@@ -458,7 +510,6 @@ function extractClaimID(x) {
         );
         return;
     }
-    REQUEST_DETAILS.reqClaimIDInput = x.value;
     reqClaimIDInput.value = x.value;
 }
 
@@ -1087,46 +1138,6 @@ function extractPractitioners(entry, careTeamArr) {
     }
 }
 
-// User Modifications =======================================
-
-reqClaimIDInput.addEventListener('change', (event) => {
-    const newVal = event.target.value;
-    let currentVal = REQUEST_DETAILS.reqClaimIDInput
-
-    replaceAllModification(currentVal, newVal);
-
-    // Update the tracker variable so the next keystroke replaces the correct string
-    REQUEST_DETAILS.reqClaimIDInput = newVal;
-});
-
-// ما ينفع أغير كل مكان!!
-// reqInput.addEventListener('change', (event) => {
-//     const newVal = event.target.value;
-//     let currentVal = REQUEST_DETAILS.reqInput
-
-//     replaceAllModification(currentVal, newVal);
-
-//     // Update the tracker variable so the next keystroke replaces the correct string
-//     REQUEST_DETAILS.reqInput = newVal;
-// });
-
-function replaceAllModification(currentVal, newVal) {
-    // Prevent unnecessary processing if the input is empty or unchanged
-    if (!newVal || newVal === currentVal) return;
-
-    // Convert the entire JSON object to a string
-    const jsonString = JSON.stringify(parsed, null, 4);
-
-    // Replace all occurrences of the old val with the new val
-    const updatedJsonString = jsonString.replaceAll(currentVal, newVal);
-
-    // Stringify back to the textarea
-    requestBodyTxtArea.value = updatedJsonString;
-
-    // Parse it back into a JavaScript object
-    parsed = JSON.parse(updatedJsonString);
-}
-
 // Copy to Clipboard ========================================
 document.querySelectorAll('.copy-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -1244,3 +1255,135 @@ function showToast(message, variant = "danger") {
         toastEl.remove();
     });
 }
+
+// AI Assist
+
+// ============================================================
+// Two-way binding: push edits made in the extracted-value inputs
+// back into `parsed`, then re-serialize `parsed` into the textarea.
+// ============================================================
+
+/**
+ * Re-locates the "identifier[0]" object (the { system, value } pair that
+ * both extractReqCat and extractClaimID read from) inside the CURRENT
+ * `parsed` object.
+ *
+ * We re-look-it-up every time instead of caching the object reference from
+ * extraction time, because `parsed` gets replaced with a brand new object
+ * every time the textarea's `change` event fires. A cached reference would
+ * point at the old (now-discarded) JSON after that happens.
+ */
+function getClaimIdentifier() {
+    if (!parsed) return null;
+    const entryOfInfo = findResource(parsed.entry, 'Claim', null);
+    return entryOfInfo?.resource?.identifier?.[0] ?? null;
+}
+
+/**
+ * Declarative list of "field bindings": one entry per extracted-value input.
+ * - input:     the HTML input element the user edits
+ * - getTarget: finds the live object inside `parsed` that owns the value
+ * - get:       reads the current value out of that object (used to detect
+ *              "did anything actually change")
+ * - set:       writes the input's new value back into that object
+ *
+ * Add a new entry here any time you add another extracted field/input.
+ */
+const fieldBindings = [
+    {
+        input: reqClaimIDInput,
+        getTarget: getClaimIdentifier,
+        get: (target) => target.value,
+        set: (target, newValue) => {
+            target.value = newValue;
+        }
+    },
+    {
+        input: reqInput,
+        // This field touches TWO paths in `parsed`:
+        //   1. entry[1].resource.identifier[0].system  (via getClaimIdentifier)
+        //   2. entry[1].resource.use
+        // So getTarget returns a bundle holding live references to both
+        // objects, instead of just one. Add more keys to the bundle for any
+        // extra path the field needs to touch.
+        getTarget: () => {
+            const claimResource = findResource(parsed.entry, 'Claim', null)?.resource ?? null;
+            const identifier = claimResource?.identifier?.[0] ?? null;
+            if (!claimResource || !identifier) return null;
+            return { claimResource, identifier };
+        },
+        get: (target) => target.identifier.system?.split('/').pop() ?? '',
+        set: (target, newValue) => {
+            // reqInput only offers "authorization" / "claim" as valid values,
+            // since extractReqCat only ever writes one of those two.
+            if (newValue !== 'authorization' && newValue !== 'claim') {
+                throw new Error(`"${newValue}" is not a valid request category.`);
+            }
+
+            // Compute both new values BEFORE mutating anything, so that if
+            // something above throws, neither path gets a partial update.
+            const oldSystem = target.identifier.system;
+            const newSystem = oldSystem.substring(0, oldSystem.lastIndexOf('/') + 1) + newValue;
+            // "use" uses different wording than "system" ("preauthorization"
+            // vs "authorization") — adjust this mapping if your real values differ.
+            const newUse = newValue === 'authorization' ? 'preauthorization' : 'claim';
+
+            // Path 1: identifier.system — swap only the last URL segment.
+            target.identifier.system = newSystem;
+            // Path 2: Claim.use
+            target.claimResource.use = newUse;
+        }
+    }
+    // e.g. to bind a new "patient reference" input, you'd add:
+    // {
+    //     input: patientRefInput,
+    //     getTarget: () => findResource(parsed.entry, 'Claim', null)?.resource ?? null,
+    //     get: (target) => target.patient?.reference,
+    //     set: (target, newValue) => { target.patient.reference = newValue; }
+    // },
+];
+
+/**
+ * Serializes the current `parsed` object back into the textarea.
+ *
+ * Note: setting .value programmatically does NOT fire the textarea's own
+ * 'change'/'input' listeners, so this can't create an infinite loop with
+ * the extraction logic above.
+ */
+function syncJSONToTextArea() {
+    if (!parsed) return;
+    requestBodyTxtArea.value = JSON.stringify(parsed, null, 4);
+}
+
+/**
+ * Wires up the 'input' listener for every binding. Uses 'input' (fires on
+ * every keystroke) rather than 'change' (fires on blur) so the JSON updates
+ * live as the user types. Swap to 'change' if you'd rather only sync on blur.
+ *
+ * Called ONCE at page load — not inside the textarea's change handler —
+ * so listeners never get attached more than once per input element.
+ */
+function initFieldBindings() {
+    fieldBindings.forEach((binding) => {
+        binding.input.addEventListener('input', () => {
+            const target = binding.getTarget();
+            if (!target) {
+                showToast(
+                    `Error: Could not locate the JSON field to update for "${binding.input.id}". ` +
+                    `Make sure a valid JSON has been loaded first.`,
+                    'danger'
+                );
+                return;
+            }
+
+            try {
+                binding.set(target, binding.input.value);
+                syncJSONToTextArea();
+            } catch (e) {
+                showToast(`Error updating JSON from "${binding.input.id}": ${e.message}`, 'danger');
+            }
+        });
+    });
+}
+
+initFieldBindings();
