@@ -5,8 +5,8 @@ const THEMES = {
     LIGHT: "light"
 };
 const ICONS = {
-    dark: "ph ph-sun",
-    light: "ph ph-moon"
+    dark: "ph-bold ph-sun",
+    light: "ph-bold ph-moon"
 };
 const ENVIRONMENTS = {
     "uat": {
@@ -25,6 +25,54 @@ const ENVIRONMENTS = {
 const EXTENSION_CATEGORIES = {
     "Claim": "claim",
     "Beneficiary": "beneficiary"
+}
+const REQ_TYPES = {
+    institutional: {
+        display: "Institutional",
+        value: { "system": "http://terminology.hl7.org/CodeSystem/claim-type", "version": "1.0.1", "code": "institutional", "display": "Institutional" }
+    },
+    professional: {
+        display: "Professional",
+        value: { "system": "http://terminology.hl7.org/CodeSystem/claim-type", "version": "1.0.1", "code": "professional", "display": "Professional" }
+    },
+    oral: {
+        display: "Dental",
+        value: { "system": "http://terminology.hl7.org/CodeSystem/claim-type", "version": "1.0.1", "code": "oral", "display": "Dental" }
+    },
+    pharmacy: {
+        display: "Pharmacy",
+        value: { "system": "http://terminology.hl7.org/CodeSystem/claim-type", "version": "1.0.1", "code": "pharmacy", "display": "Pharmacy" }
+    },
+    vision: {
+        display: "Optical",
+        value: { "system": "http://terminology.hl7.org/CodeSystem/claim-type", "version": "1.0.1", "code": "vision", "display": "Optical" }
+    },
+}
+const MEMID_TYPES = {
+    BN: {
+        "system": "http://nphies.sa/terminology/CodeSystem/patient-identifier-type",
+        "version": "1.0.0",
+        "code": "BN",
+        "display": "Border Number"
+    },
+    DP: { "system": "http://nphies.sa/terminology/CodeSystem/patient-identifier-type", "version": "1.0.0", "code": "DP", "display": "Displaced person" },
+    PRC: { "system": "http://terminology.hl7.org/CodeSystem/v2-0203", "version": "5.0.0", "code": "PRC", "display": "Permanent Resident Card Number" },
+    PPN: { "system": "http://terminology.hl7.org/CodeSystem/v2-0203", "version": "5.0.0", "code": "PPN", "display": "Passport number" },
+    NI: { "system": "http://terminology.hl7.org/CodeSystem/v2-0203", "version": "5.0.0", "code": "NI", "display": "National unique individual identifier" },
+    VP: { "system": "http://terminology.hl7.org/CodeSystem/v2-0203", "version": "5.0.0", "code": "VP", "display": "Visitor Permit" },
+    MR: { "system": "http://terminology.hl7.org/CodeSystem/v2-0203", "version": "5.0.0", "code": "MR", "display": "Medical record number" },
+}
+const PROVIDER_TYPES = {
+    1: { "system": "http://nphies.sa/terminology/CodeSystem/provider-type", "version": "1.0.0", "code": "1", "display": "Hospital" },
+    2: { "system": "http://nphies.sa/terminology/CodeSystem/provider-type", "version": "1.0.0", "code": "2", "display": "General Medical Complex" },
+    3: { "system": "http://nphies.sa/terminology/CodeSystem/provider-type", "version": "1.0.0", "code": "3", "display": "Specialized Medical Complex" },
+    4: { "system": "http://nphies.sa/terminology/CodeSystem/provider-type", "version": "1.0.0", "code": "4", "display": "Diagnostic Center" },
+    5: { "system": "http://nphies.sa/terminology/CodeSystem/provider-type", "version": "1.0.0", "code": "5", "display": "Clinic" },
+    6: { "system": "http://nphies.sa/terminology/CodeSystem/provider-type", "version": "1.0.0", "code": "6", "display": "Pharmacy" },
+    7: { "system": "http://nphies.sa/terminology/CodeSystem/provider-type", "version": "1.0.0", "code": "7", "display": "Laboratory" },
+    8: { "system": "http://nphies.sa/terminology/CodeSystem/provider-type", "version": "1.0.0", "code": "8", "display": "Physiotherapy Center" },
+    9: { "system": "http://nphies.sa/terminology/CodeSystem/provider-type", "version": "1.0.0", "code": "9", "display": "Radiotherapy Center" },
+    other: { "system": "http://nphies.sa/terminology/CodeSystem/provider-type", "version": "1.0.0", "code": "other", "display": "other provider types" },
 }
 
 // Update theme ====================================================
@@ -80,6 +128,8 @@ const ICDtableList = el('ICDtableList');
 const supportingInfoUL = el('supportingInfoUL');
 const totalItems = el('totalItems');
 const addItemBtn = el('addItemBtn');
+const addICDBtn = el('addICDBtn');
+const addSuppInfBtn = el('addSuppInfBtn');
 const insurerNameInput = el('insurerNameInput');
 const insurerCityInput = el('insurerCityInput');
 const insurerCountryInput = el('insurerCountryInput');
@@ -89,27 +139,15 @@ const providerCountryInput = el('providerCountryInput');
 const providerTypeInput = el('providerTypeInput');
 const careTeamTBody = el('careTeamTBody');
 const itemsAccordion = el('itemsAccordion');
+const saveNewICDBtn = el('saveNewICDBtn');
 
 // Values Storage ====================================================
 // To store all the extracted values
-var REQ_VALUEPATHS;
 
 // Storage Arrays ====================================================
 var arrayofItems = [];
 var arrayofICD = [];
 var arrayofCareTeam = [];
-const arrayofProviderTypes = [
-    ["1", "Hospital"],
-    ["2", "General Medical Complex"],
-    ["3", "Specialized Medical Complex"],
-    ["4", "Diagnostic Center"],
-    ["5", "Clinic"],
-    ["6", "Pharmacy"],
-    ["7", "Laboratory"],
-    ["8", "Physiotherapy Center"],
-    ["9", "Radiotherapy Center"],
-    ["other", "other provider types"]
-]
 
 
 // for copy func
@@ -124,125 +162,12 @@ function init() {
     console.log('Request Initialized');
     displayedEnvURL.value = ENVIRONMENTS.uat.URL;
     addItemBtn.disabled = true;
+    addICDBtn.disabled = true;
+    addSuppInfBtn.disabled = true;
     // Empty the arrays
     arrayofItems = [];
     arrayofICD = [];
     arrayofCareTeam = [];
-
-    // Reset the Extracted Values
-    REQ_VALUEPATHS = {
-        reqInput: {
-            value: "",
-            paths: [],
-        },
-        reqTypeInput: {
-            value: "",
-            paths: [],
-        },
-        reqSubtypeInput: {
-            value: "",
-            paths: [],
-        },
-        reqPriorityInput: {
-            value: "",
-            paths: [],
-        },
-        reqClaimIDInput: {
-            value: "",
-            paths: [],
-        },
-        claimExtensionsUL: {
-            value: "",
-            paths: [],
-        },
-
-        reqMembershipInput: {
-            value: "",
-            paths: [],
-        },
-        reqMemNameInput: {
-            value: "",
-            paths: [],
-        },
-        reqIDTypeInput: {
-            value: "",
-            paths: [],
-        },
-        reqIDNumInput: {
-            value: "",
-            paths: [],
-        },
-        reqPhoneNumInput: {
-            value: "",
-            paths: [],
-        },
-        reqBDateInput: {
-            value: "",
-            paths: [],
-        },
-        reqGenderInput: {
-            value: "",
-            paths: [],
-        },
-        benefitiaryExtensionsUL: {
-            value: "",
-            paths: [],
-        },
-        ICDtableList: {
-            value: "",
-            paths: [],
-        },
-        supportingInfoUL: {
-            value: "",
-            paths: [],
-        },
-        totalItems: {
-            value: "",
-            paths: [],
-        },
-        addItemBtn: {
-            value: "",
-            paths: [],
-        },
-        insurerNameInput: {
-            value: "",
-            paths: [],
-        },
-        insurerCityInput: {
-            value: "",
-            paths: [],
-        },
-        insurerCountryInput: {
-            value: "",
-            paths: [],
-        },
-        providerNameInput: {
-            value: "",
-            paths: [],
-        },
-        providerCityInput: {
-            value: "",
-            paths: [],
-        },
-        providerCountryInput: {
-            value: "",
-            paths: [],
-        },
-        providerTypeInput: {
-            value: "",
-            paths: [],
-        },
-        careTeamTBody: {
-            value: "",
-            paths: [],
-        },
-        itemsAccordion: {
-            value: "",
-            paths: [],
-        }
-    }
-
-    addItemBtn.disabled = true;
 }
 
 
@@ -284,6 +209,8 @@ requestBodyTxtArea.addEventListener('change', () => {
     }
 
     addItemBtn.disabled = false;
+    addICDBtn.disabled = false;
+    addSuppInfBtn.disabled = false;
 
     let extractedInfo;
     let entryOfInfo;
@@ -465,7 +392,30 @@ function extractReqType(x) {
         );
         return;
     }
-    reqTypeInput.value = x.code;
+    try {
+        switch (x.code) {
+            case "professional":
+                reqTypeInput.value = "professional"
+                break;
+            case "institutional":
+                reqTypeInput.value = "institutional"
+                break;
+            case "oral":
+                reqTypeInput.value = "oral"
+                break;
+            case "vision":
+                reqTypeInput.value = "vision"
+                break;
+            case "pharmacy":
+                reqTypeInput.value = "pharmacy"
+                break;
+            default:
+                reqTypeInput.value = "professional"
+                showToast('Could not find the selected type, set to default', 'warning');
+        }
+    } catch (e) {
+        showToast(`Error: Could not extract the request type. (${e.message})`, 'danger');
+    }
 }
 
 function extractReqSubtype(x) {
@@ -478,15 +428,23 @@ function extractReqSubtype(x) {
         return;
     }
 
-    const reqCategory = x.code;
-    if (reqCategory === 'ip') {
-        reqSubtypeInput.value = 'Inpatient';
-    } else if (reqCategory === 'op') {
-        reqSubtypeInput.value = 'Outpatient';
-    } else if (reqCategory === 'emr') {
-        reqSubtypeInput.value = 'Emergency';
-    } else {
-        reqSubtypeInput.value = 'Unknown';
+    try {
+        switch (x.code) {
+            case "ip":
+                reqSubtypeInput.value = 'ip';
+                break;
+            case "op":
+                reqSubtypeInput.value = 'op';
+                break;
+            case "emr":
+                reqSubtypeInput.value = 'emr';
+                break;
+            default:
+                reqTypeInput.value = "op"
+                showToast('Could not find the selected subtype, set to OutPatient', 'warning');
+        }
+    } catch (e) {
+        showToast(`Error: Could not extract the request subtype. (${e.message})`, 'danger');
     }
 }
 
@@ -636,7 +594,7 @@ function addExtensionToList(el, extType, extVal, index) {
     <div class="gap-2">
         <p class="m-0 p-0 text-truncate extension-val">${extVal}</p>
         <button type="button" class="btn copy-ex-btn btn-sm" data-bs-target="${li.id}">
-        <i class="ph ph-copy phicon-container"></i>
+        <i class="ph-bold ph-copy phicon-container"></i>
         </button>
     </div>
     `;
@@ -919,7 +877,7 @@ function addSuppInfoToList(index, noOfParams, catTitle, mainValue, thirdInfo) {
     </div>
     </div>
     <button class="btn btn-outline-secondary info-copy-btn" type="button">
-    <i class="ph ph-copy phicon-container"></i>
+    <i class="ph-bold ph-copy phicon-container"></i>
     </button>
     `;
     supportingInfoUL.appendChild(newEl);
@@ -937,26 +895,42 @@ function extractICDCodes(x) {
     if (!x || x.length == 0) {
         clearICDList();
     } else {
-        ICDtableList.innerHTML = '';
         x.forEach((icd, index) => {
             let icdSeq = icd.sequence;
             let icdCode = icd.diagnosisCodeableConcept.coding[0].code ?? null;
             let icdType = icd.type[0].coding[0].code ?? null;
 
             // Add ICD to global ICD array
-            arrayofICD.push([icdSeq, icdCode]);
-
-            const newICDRow = document.createElement('tr');
-
-            newICDRow.innerHTML = `
-            <th class="text-secondary fw-normal align-middle" scope="row">${index + 1}</th>
-            <td><input class="form-control" value="${icdCode}"></td>
-            <td style="width: 55%;"><input class="form-control" value="${icdType}"></td>
-            `;
-            ICDtableList.appendChild(newICDRow);
+            arrayofICD.push([icdSeq, icdCode, icdType]);
+            renderICDList();
         });
     }
 }
+
+function addNewICDCode(newIcd) {
+    let icdSeq = arrayofICD.length + 1;
+    let icdCode = newIcd;
+    let icdType = "Principal";
+
+    // Add ICD to global ICD array
+    arrayofICD.push([icdSeq, icdCode, icdType]);
+    renderICDList()
+}
+
+function renderICDList() {
+    ICDtableList.innerHTML = '';
+    arrayofICD.forEach((icd, index) => {
+        const newICDRow = document.createElement('tr');
+
+        newICDRow.innerHTML = `
+            <th class="text-secondary fw-normal align-middle" scope="row">${icd[0]}</th>
+            <td><input class="form-control" value="${icd[1]}"></td>
+            <td style="width: 55%;"><input class="form-control" value="${icd[2]}"></td>
+            `;
+        ICDtableList.appendChild(newICDRow);
+    });
+}
+
 function clearICDList() {
     ICDtableList.innerHTML = `
     <tr>
@@ -1001,8 +975,12 @@ function extractBenifitiaryIdType(x) {
         );
         return;
     }
-    const extractedIDType = splitString(x.system);
-    reqIDTypeInput.value = extractedIDType[extractedIDType.length - 1];
+    try {
+        reqIDTypeInput.value = x.type.coding?.[0].code;
+    } catch (e) {
+        showToast('Error: Could not extract Member ID type code. Check the logs.', 'danger');
+        console.error(e.message);
+    }
 }
 
 function extractBenifitiaryId(x) {
@@ -1077,8 +1055,8 @@ function extractProviderData(resource) {
             providerNameInput.value = resource.name;
             providerCityInput.value = resource.address?.[0].city;
             providerCountryInput.value = resource.address?.[0].country;
-            let searchProvType = arrayofProviderTypes.find(t => t[0] == resource.extension?.[0].valueCodeableConcept.coding?.[0].code);
-            providerTypeInput.value = searchProvType[1];
+            let searchProvType = PROVIDER_TYPES[resource.extension?.[0].valueCodeableConcept.coding?.[0].code];
+            providerTypeInput.value = searchProvType.code;
         } catch (e) {
             showToast('Error: something went wrong during Provider data extraction, open the log for more details.', 'danger');
             console.warn(e);
@@ -1256,6 +1234,33 @@ function showToast(message, variant = "danger") {
     });
 }
 
+// Form Validations =========================================
+function setupValidatedForm(formId, onValidSubmit) {
+    const form = document.getElementById(formId)
+    if (!form) return
+
+    form.addEventListener('submit', event => {
+        event.preventDefault()
+        event.stopPropagation()
+
+        if (!form.checkValidity()) {
+            form.classList.add('was-validated')
+            return
+        }
+
+        onValidSubmit(form, event)
+        form.classList.remove('was-validated')
+    })
+}
+
+setupValidatedForm('addICDForm', (form) => {
+    const newICDInput = form.querySelector('#newICDCodeInput');
+    const code = newICDInput.value;
+    addNewICDCode(code);
+    bootstrap.Modal.getInstance(document.getElementById('newICDModal')).hide();
+    newICDInput.value = ''
+})
+
 // AI Assist
 
 // ============================================================
@@ -1264,10 +1269,6 @@ function showToast(message, variant = "danger") {
 // ============================================================
 
 /**
- * Re-locates the "identifier[0]" object (the { system, value } pair that
- * both extractReqCat and extractClaimID read from) inside the CURRENT
- * `parsed` object.
- *
  * We re-look-it-up every time instead of caching the object reference from
  * extraction time, because `parsed` gets replaced with a brand new object
  * every time the textarea's `change` event fires. A cached reference would
@@ -1280,15 +1281,67 @@ function getClaimIdentifier() {
 }
 
 /**
+ * The rest of these resolvers follow the same "re-look-it-up every time"
+ * rule as getClaimIdentifier: never cache a reference across textarea
+ * re-parses. They mirror the exact lookup chains used in the extraction
+ * logic (requestBodyTxtArea's 'change' handler) further up this file.
+ */
+function getClaimResource() {
+    if (!parsed) return null;
+    return findResource(parsed.entry, 'Claim', null)?.resource ?? null;
+}
+
+function getCoverageResource() {
+    if (!parsed) return null;
+    return findResource(parsed.entry, 'Coverage', null)?.resource ?? null;
+}
+
+// Coverage.beneficiary.reference -> Patient resource
+function getBeneficiaryResource() {
+    const coverage = getCoverageResource();
+    const ref = coverage?.beneficiary?.reference ?? null;
+    if (!ref) return null;
+    const [resType, resId] = splitString(ref) ?? [];
+    if (!resType) return null;
+    return findResource(parsed.entry, resType, resId)?.resource ?? null;
+}
+
+// Shared by reqIDTypeInput and reqIDNumInput, same as identifier[0] is
+// shared between reqInput/reqClaimIDInput on the Claim resource.
+function getBeneficiaryIdentifier() {
+    const identifier = getBeneficiaryResource()?.identifier?.[0] ?? null;
+    return identifier ? { identifier } : null;
+}
+
+// Claim.insurer.reference -> Organization resource
+function getInsurerResource() {
+    const claim = getClaimResource();
+    const ref = claim?.insurer?.reference ?? null;
+    if (!ref) return null;
+    const [resType, resId] = splitString(ref) ?? [];
+    if (!resType) return null;
+    return findResource(parsed.entry, resType, resId)?.resource ?? null;
+}
+
+// Claim.provider.reference -> Organization resource
+function getProviderResource() {
+    const claim = getClaimResource();
+    const ref = claim?.provider?.reference ?? null;
+    if (!ref) return null;
+    const [resType, resId] = splitString(ref) ?? [];
+    if (!resType) return null;
+    return findResource(parsed.entry, resType, resId)?.resource ?? null;
+}
+
+/**
  * Declarative list of "field bindings": one entry per extracted-value input.
  * - input:     the HTML input element the user edits
  * - getTarget: finds the live object inside `parsed` that owns the value
  * - get:       reads the current value out of that object (used to detect
  *              "did anything actually change")
  * - set:       writes the input's new value back into that object
- *
- * Add a new entry here any time you add another extracted field/input.
  */
+
 const fieldBindings = [
     {
         input: reqClaimIDInput,
@@ -1333,39 +1386,270 @@ const fieldBindings = [
             // Path 2: Claim.use
             target.claimResource.use = newUse;
         }
+    },
+    {
+        input: reqTypeInput,
+        getTarget: () => {
+            // We need the parent `type` object (not just coding[0]) because
+            // the whole coding array gets replaced, not a single field on it.
+            const type = getClaimResource()?.type ?? null;
+            return type ? { type } : null;
+        },
+        get: (target) => target.type.coding?.[0]?.code ?? '',
+        set: (target, newValue) => {
+            // newValue is = "professional", "oral", "vision"
+            const newCoding = REQ_TYPES[newValue].value;
+            if (!newCoding) {
+                throw new Error(`"${newValue}" is not a recognized claim type.`);
+            }
+            // Replace the coding array wholesale (system/version/code/display
+            // all need to change together), not just target.coding[0].code.
+            target.type.coding = [{ ...newCoding }];
+        }
+    },
+    {
+        input: reqSubtypeInput,
+        getTarget: () => {
+            const coding = getClaimResource()?.subType?.coding?.[0] ?? null;
+            return coding ? { coding } : null;
+        },
+        get: (target) => {
+            // Mirror extractReqSubtype's code -> label mapping, in reverse.
+            const map = { ip: 'Inpatient', op: 'Outpatient', emr: 'Emergency' };
+            return map[target.coding.code] ?? 'Unknown';
+        },
+        set: (target, newValue) => {
+            target.coding.code = newValue;
+        }
+    },
+    {
+        input: reqPriorityInput,
+        getTarget: () => {
+            const coding = getClaimResource()?.priority?.coding?.[0] ?? null;
+            return coding ? { coding } : null;
+        },
+        get: (target) => target.coding.code,
+        set: (target, newValue) => {
+            target.coding.code = newValue;
+        }
+    },
+
+    // --- Coverage / beneficiary fields --------------------------------
+    {
+        input: reqMembershipInput,
+        getTarget: () => {
+            const identifier = getCoverageResource()?.identifier?.[0] ?? null;
+            return identifier ? { identifier } : null;
+        },
+        get: (target) => target.identifier.value,
+        set: (target, newValue) => {
+            target.identifier.value = newValue;
+        }
+    },
+    {
+        input: reqMemNameInput,
+        getTarget: () => {
+            // Hold the beneficiary RESOURCE itself, not its .name array — you
+            // can't replace an array wholesale if you only reference the array;
+            // reassigning target.name would just overwrite a local variable,
+            // never the resource's actual .name property.
+            const beneficiary = getBeneficiaryResource();
+            return beneficiary ? { resource: beneficiary } : null;
+        },
+        get: (target) => target.resource.name?.[0]?.text ?? '',
+        set: (target, newValue) => {
+            target.resource.name = [{
+                "use": "official",
+                "text": newValue,
+            }];
+        }
+    },
+    {
+        // same pattern as reqInput/reqClaimIDInput on the Claim resource.
+        input: reqIDTypeInput,
+        getTarget: getBeneficiaryResource,
+        get: (target) => target.identifier?.[0]?.type?.coding?.[0]?.code ?? '',
+        set: (target, newValue) => {
+            const newCoding = MEMID_TYPES[newValue];
+            if (!newCoding) {
+                throw new Error(`"${newValue}" is not a recognized ID type.`);
+            }
+            if (!target.identifier?.[0]) {
+                throw new Error('Beneficiary has no identifier[0] to update.');
+            }
+            target.identifier[0].type.coding = [{ ...newCoding }];
+        }
+    },
+    {
+        input: reqIDNumInput,
+        getTarget: getBeneficiaryIdentifier,
+        get: (target) => target.identifier.value,
+        set: (target, newValue) => {
+            target.identifier.value = newValue;
+        }
+    },
+    {
+        input: reqPhoneNumInput,
+        getTarget: () => {
+            const telecom = getBeneficiaryResource()?.telecom?.[0] ?? null;
+            return telecom ? { telecom } : null;
+        },
+        get: (target) => target.telecom.value,
+        set: (target, newValue) => {
+            target.telecom.value = newValue;
+        }
+    },
+    {
+        input: reqBDateInput,
+        getTarget: () => {
+            const beneficiary = getBeneficiaryResource();
+            return beneficiary ? { beneficiary } : null;
+        },
+        get: (target) => target.beneficiary.birthDate,
+        set: (target, newValue) => {
+            target.beneficiary.birthDate = newValue;
+        }
+    },
+    {
+        input: reqGenderInput,
+        getTarget: () => {
+            const beneficiary = getBeneficiaryResource();
+            return beneficiary ? { beneficiary } : null;
+        },
+        get: (target) => target.beneficiary.gender,
+        set: (target, newValue) => {
+            try {
+                target.beneficiary.gender = newValue;
+                target.beneficiary._gender.extension[0].valueCodeableConcept.coding[0].code = newValue;
+            } catch (e) {
+                showToast('Error: Unable to update beneficiary gender. Check the logs.', 'danger')
+                console.error(e.message);
+            }
+        }
+    },
+
+    // --- Insurer fields --------------------------------------------------
+    {
+        input: insurerNameInput,
+        getTarget: () => {
+            const resource = getInsurerResource();
+            return resource ? { resource } : null;
+        },
+        get: (target) => target.resource.name,
+        set: (target, newValue) => {
+            target.resource.name = newValue;
+        }
+    },
+    {
+        input: insurerCityInput,
+        getTarget: () => {
+            const resource = getInsurerResource();
+            return resource ? { resource } : null;
+        },
+        get: (target) => target.resource.address?.[0]?.city ?? '',
+        set: (target, newValue) => {
+            if (!target.resource.address?.[0]) {
+                throw new Error('Insurer resource has no address[0] to update.');
+            }
+            target.resource.address[0].city = newValue;
+        }
+    },
+    {
+        input: insurerCountryInput,
+        getTarget: () => {
+            const resource = getInsurerResource();
+            return resource ? { resource } : null;
+        },
+        get: (target) => target.resource.address?.[0]?.country ?? '',
+        set: (target, newValue) => {
+            if (!target.resource.address?.[0]) {
+                throw new Error('Insurer resource has no address[0] to update.');
+            }
+            target.resource.address[0].country = newValue;
+        }
+    },
+
+    // --- Provider fields ---------------------------------------------------
+    {
+        input: providerNameInput,
+        getTarget: () => {
+            const resource = getProviderResource();
+            return resource ? { resource } : null;
+        },
+        get: (target) => target.resource.name,
+        set: (target, newValue) => {
+            target.resource.name = newValue;
+        }
+    },
+    {
+        input: providerCityInput,
+        getTarget: () => {
+            const resource = getProviderResource();
+            return resource ? { resource } : null;
+        },
+        get: (target) => target.resource.address?.[0]?.city ?? '',
+        set: (target, newValue) => {
+            if (!target.resource.address?.[0]) {
+                throw new Error('Provider resource has no address[0] to update.');
+            }
+            target.resource.address[0].city = newValue;
+        }
+    },
+    {
+        input: providerCountryInput,
+        getTarget: () => {
+            const resource = getProviderResource();
+            return resource ? { resource } : null;
+        },
+        get: (target) => target.resource.address?.[0]?.country ?? '',
+        set: (target, newValue) => {
+            if (!target.resource.address?.[0]) {
+                throw new Error('Provider resource has no address[0] to update.');
+            }
+            target.resource.address[0].country = newValue;
+        }
+    },
+    {
+        // a code (e.g. "1") in extension[0].valueCodeableConcept.coding[0].code.
+        // arrayofProviderTypes is the same [code, label] table extractProviderData
+        // already uses, reused here in reverse (label -> code).
+        input: providerTypeInput,
+        getTarget: () => {
+            const resource = getProviderResource();
+            return resource ? { resource } : null;
+        },
+        get: (target) => {
+            const code = target.resource.extension?.[0]?.valueCodeableConcept?.coding?.[0]?.code;
+            return PROVIDER_TYPES[code].display;
+        },
+        set: (target, newValue) => {
+            const newCoding = PROVIDER_TYPES[newValue];
+            if (!newCoding) {
+                throw new Error(`"${newValue}" is not a recognized claim type.`);
+            }
+            if (!target.resource.extension) {
+                throw new Error('Provider resource has no extension to update.');
+            }
+            target.resource.extension = [{ ...newCoding }];
+        }
     }
-    // e.g. to bind a new "patient reference" input, you'd add:
-    // {
-    //     input: patientRefInput,
-    //     getTarget: () => findResource(parsed.entry, 'Claim', null)?.resource ?? null,
-    //     get: (target) => target.patient?.reference,
-    //     set: (target, newValue) => { target.patient.reference = newValue; }
-    // },
 ];
 
-/**
- * Serializes the current `parsed` object back into the textarea.
- *
- * Note: setting .value programmatically does NOT fire the textarea's own
- * 'change'/'input' listeners, so this can't create an infinite loop with
- * the extraction logic above.
- */
+// Serializes the current `parsed` object back into the textarea.
 function syncJSONToTextArea() {
+    // .value doesn't fire the 'change'/'input' events, so it'll not make an infinite loop or smthng
     if (!parsed) return;
     requestBodyTxtArea.value = JSON.stringify(parsed, null, 4);
 }
 
 /**
- * Wires up the 'input' listener for every binding. Uses 'input' (fires on
- * every keystroke) rather than 'change' (fires on blur) so the JSON updates
- * live as the user types. Swap to 'change' if you'd rather only sync on blur.
- *
+ * Wires up the 'input' listener for every binding.
  * Called ONCE at page load — not inside the textarea's change handler —
  * so listeners never get attached more than once per input element.
  */
 function initFieldBindings() {
     fieldBindings.forEach((binding) => {
-        binding.input.addEventListener('input', () => {
+        binding.input.addEventListener('change', () => {
             const target = binding.getTarget();
             if (!target) {
                 showToast(

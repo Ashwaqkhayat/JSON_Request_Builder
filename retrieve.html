@@ -11,7 +11,7 @@
 
     <!-- Phosphor Icons -->
     <link rel="stylesheet" type="text/css"
-        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css" />
     <link rel="stylesheet" type="text/css"
         href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css" />
 
@@ -58,6 +58,31 @@
         </div>
     </div>
 
+    <!-- Modal for add ICD -->
+    <div class="modal fade" id="newICDModal" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form id="addICDForm" class="needs-validation" novalidate>
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add ICD Code</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <label for="newICDCodeInput" class="form-label text-secondary">New ICD Code</label>
+                        <input type="text" class="form-control" id="newICDCodeInput"
+                            aria-describedby="basic-addon3 basic-addon4" required>
+                        <div class="invalid-feedback">
+                            Please Enter the ICD Code.
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg px-2">
         <div class="container-fluid">
@@ -96,8 +121,8 @@
                     </div>
 
                     <button id="themeToggleBtn" class="btn btn-sm btn-secondary me-2">
-                        <!-- <i class="ph ph-moon" ></i> -->
-                        <i class="ph ph-moon phicon-container" id="switchTheme" style="color: rgb(255, 255, 255)"></i>
+                        <!-- <i class="ph-bold ph-moon" ></i> -->
+                        <i class="ph-bold ph-moon" id="switchTheme" style="color: rgb(255, 255, 255)"></i>
                     </button>
                 </div>
 
@@ -119,7 +144,7 @@
 
                                 <div class="card-header fw-semibold">
                                     <div class="d-flex flex-row gap-2 align-items-center">
-                                        <i class="ph ph-clipboard-text"></i>
+                                        <i class="ph-bold ph-clipboard-text"></i>
                                         Request Data
                                     </div>
                                 </div>
@@ -131,8 +156,7 @@
                                             <div class="col p-1">
                                                 <label for="reqInput" class="form-label text-secondary">Request</label>
                                                 <div class="input-group">
-                                                    <select class="form-select" id="reqInput"
-                                                        aria-label="Default select example">
+                                                    <select class="form-select" id="reqInput" aria-label="preauth">
                                                         <option value="authorization">Preauth</option>
                                                         <option value="claim">Claim</option>
                                                     </select>
@@ -141,26 +165,39 @@
                                             <div class="col p-1">
                                                 <label for="reqTypeInput" class="form-label text-secondary">Type</label>
                                                 <div class="input-group">
-                                                    <input type="text" class="form-control" id="reqTypeInput"
-                                                        aria-describedby="basic-addon3 basic-addon4">
+                                                    <select class="form-select" id="reqTypeInput"
+                                                        aria-label="professional">
+                                                        <option value="institutional">Institutional</option>
+                                                        <option value="professional">Professional</option>
+                                                        <option value="vision">Optical</option>
+                                                        <option value="oral">Dental</option>
+                                                        <option value="pharmacy">Pharmacy</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="col p-1">
                                                 <label for="reqSubtypeInput"
                                                     class="form-label text-secondary">Subtype</label>
                                                 <div class="input-group">
-                                                    <input type="text" class="form-control" id="reqSubtypeInput"
-                                                        aria-describedby="basic-addon3 basic-addon4">
+                                                    <select class="form-select" id="reqSubtypeInput" aria-label="op">
+                                                        <option value="op">Outpatient</option>
+                                                        <option value="ip">Inpatient</option>
+                                                        <option value="emr">Emergency</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row gap-2 mb-4">
+                                        <div class="row gap-2 mb-3">
                                             <div class="col p-1">
                                                 <label for="reqPriorityInput"
                                                     class="form-label text-secondary">Priority</label>
                                                 <div class="input-group">
-                                                    <input type="text" class="form-control" id="reqPriorityInput"
-                                                        aria-describedby="basic-addon3 basic-addon4">
+                                                    <select class="form-select" id="reqPriorityInput"
+                                                        aria-label="normal">
+                                                        <option value="normal">Normal</option>
+                                                        <option value="stat">Immediate</option>
+                                                        <option value="deferred">Deferred</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="col-9 p-1">
@@ -171,7 +208,31 @@
                                                         aria-describedby="basic-addon3 basic-addon4">
                                                     <button class="btn btn-outline-secondary copy-btn" type="button"
                                                         data-bs-target="reqClaimIDInput"><i
-                                                            class="ph ph-copy phicon-container"></i></button>
+                                                            class="ph-bold ph-copy phicon-container"></i></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row gap-2 mb-4">
+                                            <div class="col p-1">
+                                                <label for="reqRelatedReqInput"
+                                                    class="form-label text-secondary">Related Claim</label>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="reqRelatedReqInput"
+                                                        aria-describedby="basic-addon3 basic-addon4">
+                                                    <button class="btn btn-outline-secondary copy-btn" type="button"
+                                                        data-bs-target="reqRelatedReqInput"><i
+                                                            class="ph-bold ph-copy phicon-container"></i></button>
+                                                </div>
+                                            </div>
+                                            <div class="col p-1">
+                                                <label for="reqPreauthRefInput"
+                                                    class="form-label text-secondary">Preauth Reference</label>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="reqPreauthRefInput"
+                                                        aria-describedby="basic-addon3 basic-addon4">
+                                                    <button class="btn btn-outline-secondary copy-btn" type="button"
+                                                        data-bs-target="reqPreauthRefInput"><i
+                                                            class="ph-bold ph-copy phicon-container"></i></button>
                                                 </div>
                                             </div>
                                         </div>
@@ -197,7 +258,7 @@
 
                                 <div class="card-header fw-semibold">
                                     <div class="d-flex flex-row gap-2 align-items-center">
-                                        <i class="ph ph-user-list"></i>
+                                        <i class="ph-bold ph-user-list"></i>
                                         Beneficiary Information
                                     </div>
                                 </div>
@@ -215,7 +276,7 @@
                                                     <button class="btn btn-outline-secondary copy-btn"
                                                         data-bs-target="reqMembershipInput" type="button"
                                                         id="copyBtn"><i
-                                                            class="ph ph-copy phicon-container"></i></button>
+                                                            class="ph-bold ph-copy phicon-container"></i></button>
                                                 </div>
                                             </div>
                                             <div class="col p-1">
@@ -226,7 +287,7 @@
                                                         aria-describedby="basic-addon3 basic-addon4">
                                                     <button class="btn btn-outline-secondary copy-btn" type="button"
                                                         id="copyBtn" data-bs-target="reqMemNameInput"><i
-                                                            class="ph ph-copy phicon-container"></i></button>
+                                                            class="ph-bold ph-copy phicon-container"></i></button>
                                                 </div>
                                             </div>
                                         </div>
@@ -235,8 +296,15 @@
                                                 <label for="reqIDTypeInput" class="form-label text-secondary">Identifier
                                                     Type</label>
                                                 <div class="input-group">
-                                                    <input type="text" class="form-control" id="reqIDTypeInput"
-                                                        aria-describedby="basic-addon3 basic-addon4">
+                                                    <select class="form-select" id="reqIDTypeInput" aria-label="NI">
+                                                        <option value="NI">National ID</option>
+                                                        <option value="PRC">Iqama</option>
+                                                        <option value="BN">Border Number</option>
+                                                        <option value="MR">Medical record number</option>
+                                                        <option value="PPN">Passport number</option>
+                                                        <option value="DP">Displaced person</option>
+                                                        <option value="VP">Visitor Permit</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="col p-1">
@@ -247,7 +315,7 @@
                                                         aria-describedby="basic-addon3 basic-addon4">
                                                     <button class="btn btn-outline-secondary copy-btn" type="button"
                                                         id="copyBtn" data-bs-target="reqIDNumInput"><i
-                                                            class="ph ph-copy phicon-container"></i></button>
+                                                            class="ph-bold ph-copy phicon-container"></i></button>
                                                 </div>
                                             </div>
                                         </div>
@@ -272,8 +340,10 @@
                                                 <label for="reqGenderInput"
                                                     class="form-label text-secondary">Gender</label>
                                                 <div class="input-group">
-                                                    <input type="text" class="form-control" id="reqGenderInput"
-                                                        aria-describedby="basic-addon3 basic-addon4">
+                                                    <select class="form-select" id="reqGenderInput" aria-label="male">
+                                                        <option value="male">Male</option>
+                                                        <option value="female">Female</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                         </div>
@@ -304,7 +374,7 @@
                             <div class="card">
                                 <div class="card-header fw-semibold">
                                     <div class="d-flex flex-row gap-2 align-items-center">
-                                        <i class="ph ph-pulse"></i>
+                                        <i class="ph-bold ph-pulse"></i>
                                         Diagnosis & Supporting Info
                                     </div>
                                 </div>
@@ -313,7 +383,15 @@
                                     <div class="container h-100">
                                         <div class="row gap-3 h-100">
                                             <div class="col col-xl-12 col-xxl-3 p-0 h-100">
-                                                <p class="fs-6 mb-2 fw-semibold">Diagnosis Code</p>
+                                                <div class="d-flex justify-content-between">
+                                                    <p class="fs-6 mb-2 fw-semibold">Diagnosis Code</p>
+                                                    <div class="d-flex align-items-center column-gap-2">
+                                                        <button id="addICDBtn" class="btn btn-sm border-0"
+                                                            data-bs-toggle="modal" data-bs-target="#newICDModal">
+                                                            <i class="ph-bold ph-plus"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
                                                 <div class="h-85 overflow-y-auto">
                                                     <table class="table table-sm table-borderless">
                                                         <thead>
@@ -345,7 +423,15 @@
                                             </div>
 
                                             <div class="col d-flex flex-column w-100 h-100">
-                                                <p class="fs-6 mb-2 fw-semibold">Supporting Info</p>
+                                                <div class="d-flex justify-content-between mb-2">
+                                                    <p class="fs-6 mb-2 fw-semibold">Supporting Info</p>
+                                                    <div class="d-flex align-items-center column-gap-2">
+                                                        <button id="addSuppInfBtn" class="btn btn-sm border-0"
+                                                            data-bs-toggle="modal" data-bs-target="#newSuppInfModal">
+                                                            <i class="ph-bold ph-plus"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
                                                 <ul class="list-group overflow-auto" id="supportingInfoUL">
                                                     <li class="info-item d-flex w-100 h-100">
                                                         <div
@@ -368,7 +454,7 @@
                             <div class="card">
                                 <div class="card-header fw-semibold">
                                     <div class="d-flex flex-row gap-2 align-items-center">
-                                        <i class="ph ph-package"></i>
+                                        <i class="ph-bold ph-package"></i>
                                         Items
                                         <p id="totalItems" class="mb-0 me-4">| Total: 0.00 SAR</p>
                                     </div>
@@ -422,7 +508,7 @@
                             <div class="card">
                                 <div class="card-header fw-semibold">
                                     <div class="d-flex flex-row gap-2 align-items-center">
-                                        <i class="ph ph-hand-heart"></i>
+                                        <i class="ph-bold ph-hand-heart"></i>
                                         Insurer Data
                                     </div>
                                 </div>
@@ -466,7 +552,7 @@
                             <div class="card">
                                 <div class="card-header fw-semibold">
                                     <div class="d-flex flex-row gap-2 align-items-center">
-                                        <i class="ph ph-hospital"></i>
+                                        <i class="ph-bold ph-hospital"></i>
                                         Provider Data
                                     </div>
                                 </div>
@@ -487,8 +573,18 @@
                                                 <label for="providerTypeInput"
                                                     class="form-label text-secondary">Type</label>
                                                 <div class="input-group">
-                                                    <input type="text" class="form-control" id="providerTypeInput"
-                                                        aria-describedby="basic-addon3 basic-addon4">
+                                                    <select class="form-select" id="providerTypeInput" aria-label="1">
+                                                        <option value="1">Hospital</option>
+                                                        <option value="5">Clinic</option>
+                                                        <option value="6">Pharmacy</option>
+                                                        <option value="7">Laboratory</option>
+                                                        <option value="2">General Medical Complex</option>
+                                                        <option value="3">Specialized Medical Complex</option>
+                                                        <option value="4">Diagnostic Center</option>
+                                                        <option value="8">Physiotherapy Center</option>
+                                                        <option value="9">Radiotherapy Center</option>
+                                                        <option value="other">other provider types</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                         </div>
@@ -524,7 +620,7 @@
                                     <div class="card">
                                         <div class="card-header fw-semibold">
                                             <div class="d-flex flex-row gap-2 align-items-center">
-                                                <i class="ph ph-stethoscope"></i>
+                                                <i class="ph-bold ph-stethoscope"></i>
                                                 Care Team Data
                                             </div>
                                         </div>
