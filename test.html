@@ -1,105 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JSON to Form Editor</title>
-    <style>
-        body { font-family: system-ui, sans-serif; display: flex; gap: 20px; padding: 20px; }
-        .panel { flex: 1; display: flex; flex-direction: column; gap: 10px; }
-        textarea { height: 300px; font-family: monospace; padding: 10px; }
-        .form-group { display: flex; flex-direction: column; margin-bottom: 10px; }
-        label { font-weight: bold; margin-bottom: 5px; text-transform: capitalize; }
-        input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
-        .error { color: red; font-size: 0.9em; display: none; }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="bootstrap.css">
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Phosphor Icons -->
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css" />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap"
+        rel="stylesheet">
 </head>
-<body>
 
-    <!-- Left side: JSON Input -->
-    <div class="panel">
-        <h2>JSON Input</h2>
-        <span id="errorMessage" class="error">Invalid JSON syntax!</span>
-        <textarea id="jsonInput">
-            {
-            "name": "John Doe",
-            "role": "Developer",
-            "age": 30,
-            "city": "Makkah"
-            }
-        </textarea>
-    </div>
+<body class="min-vh-100 p-5" data-bs-theme="dark">
 
-    <!-- Right side: Dynamic Form -->
-    <div class="panel">
-        <h2>Dynamic Editor</h2>
-        <div id="formContainer"></div>
-    </div>
+    <main class="d-flex justify-content-center align-items-center h-100">
+        <div class="w-100" style="max-width: 1000px;">
+            <div class="d-flex">
+                <div class="items-header text-secondary w-100">
+                    <span class="text-nowrap">#</span>
+                    <span class="text-nowrap">ICD</span>
+                    <span class="text-nowrap">Service Description</span>
+                    <span class="text-nowrap">QTY</span>
+                    <span class="text-nowrap">Unit Price</span>
+                    <span class="text-nowrap">Factor</span>
+                    <span class="text-nowrap">Net</span>
+                    <span class="text-nowrap">Serviced Date</span>
+                    <span class="text-nowrap"></span>
+                </div>
 
-    <script>
-        const jsonInput = document.getElementById('jsonInput');
-        const formContainer = document.getElementById('formContainer');
-        const errorMessage = document.getElementById('errorMessage');
-        
-        let currentData = {};
+                <span class="w-100" style="max-width: 1rem;"></span>
+                <span class="w-100" style="max-width: 42.5px;"></span>
+            </div>
 
-        // 1. Read JSON and build the form
-        function renderForm() {
-            try {
-                // Parse the JSON string into a JavaScript Object
-                currentData = JSON.parse(jsonInput.value);
-                errorMessage.style.display = 'none'; // Hide error if successful
-                
-                // Clear the form container
-                formContainer.innerHTML = '';
+            <div class="accordion d-flex flex-column row-gap-2" id="itemsAccordion">
+                <div class="d-flex w-100 column-gap-3">
+                    <div class="accordion-item custom-item w-100">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#collapse-1"
+                                aria-expanded="false" aria-controls="collapse-1">
+                                <span class="row-cell">1</span>
+                                <span class="row-cell">K52.9</span>
+                                <span class="row-cell">Vedolizumab 250ml</span>
+                                <span class="row-cell">1</span>
+                                <span class="row-cell">4000</span>
+                                <span class="row-cell">1</span>
+                                <span class="row-cell">4000</span>
+                                <span class="row-cell">22/8/2026</span>
+                                <span class="row-cell"></span>
+                            </button>
+                        </h2>
+                        <div id="collapse-1" class="accordion-collapse collapse">
+                            <div class="accordion-body">
+                                <strong>This is the first item’s accordion body.</strong> It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It’s also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-outline-danger">
+                        <i class="ph-bold ph-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
 
-                // Loop through keys and create input fields
-                for (const [key, value] of Object.entries(currentData)) {
-                    createInputField(key, value);
-                }
-            } catch (e) {
-                // Show error if user types invalid JSON
-                errorMessage.style.display = 'block';
-            }
-        }
 
-        // 2. Create individual input fields and attach event listeners
-        function createInputField(key, value) {
-            const div = document.createElement('div');
-            div.className = 'form-group';
-
-            const label = document.createElement('label');
-            label.textContent = key;
-
-            const input = document.createElement('input');
-            input.type = typeof value === 'number' ? 'number' : 'text';
-            input.value = value;
-
-            // 3. Listen for typing in the generated input fields
-            input.addEventListener('input', (e) => {
-                // Update the object with the new value
-                // Convert back to number if the original was a number
-                let newValue = e.target.value;
-                if (input.type === 'number') {
-                    newValue = Number(newValue);
-                }
-
-                currentData[key] = newValue;
-                
-                // Stringify the updated object and put it back in the textarea
-                jsonInput.value = JSON.stringify(currentData, null, 2);
-            });
-
-            div.appendChild(label);
-            div.appendChild(input);
-            formContainer.appendChild(div);
-        }
-
-        // 4. Listen for manual typing in the JSON textarea
-        jsonInput.addEventListener('input', renderForm);
-
-        // Initial render on page load
-        renderForm();
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"
+        integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y"
+        crossorigin="anonymous"></script>
+    <script src="retrieve.js"></script>
 </body>
+
 </html>

@@ -1,4 +1,14 @@
-body, html {
+:root {
+    /* single source of truth for the items grid layout */
+    --items-grid-cols: 0.5fr 0.6fr 3fr 0.5fr 1fr 0.5fr 1fr 1.5fr 0.4fr;
+    --items-grid-gap: 20px;
+    --items-grid-padding-y: 10px;
+    --items-grid-padding-x: 20px;
+    --items-chevron-space: 1.25em;
+}
+
+body,
+html {
     height: 100%;
     margin: 0;
     box-sizing: border-box;
@@ -10,10 +20,10 @@ body, html {
 *,
 *::before,
 *::after {
-    transition: 
-        background-color 0.5s ease-in-out, 
-        color 0.4s ease-in-out;
-        border-color 0.5s ease;
+    transition:
+        background-color 0.5s ease-in-out,
+        color 0.4s ease-in-out,
+        border-color 0.5s ease,
         box-shadow 0.4s ease,
         fill 0.4s ease,
         stroke 0.4s ease;
@@ -29,24 +39,19 @@ body, html {
 
 /* Navbar items */
 .body-container {
-    height: calc(100vh - 56px); /* subtract navbar height */
+    height: calc(100vh - 56px);
+    /* subtract navbar height */
     display: flex;
     padding: 0;
 }
-
-/* Grid */
-/* .col {
-    height: 100%;
-    overflow-y: auto;
-    box-sizing: border-box;
-} */
 
 .fixed-col {
     flex: 0 0 40%;
     padding: 1rem;
 }
 
-.scrollable-col-1, .scrollable-col-2 {
+.scrollable-col-1,
+.scrollable-col-2 {
     flex: 1;
     padding: 0.5rem;
 }
@@ -55,10 +60,13 @@ body, html {
     height: 100%;
 }
 
-#request-body-text, #response-body-text {
+#request-body-text,
+#response-body-text {
     font-family: consolas;
-    white-space: nowrap; /* prevent text wrapping */
-    overflow-x: auto;    /* enable horizontal scrolling */
+    white-space: nowrap;
+    /* prevent text wrapping */
+    overflow-x: auto;
+    /* enable horizontal scrolling */
     font-size: 14px;
 }
 
@@ -77,6 +85,7 @@ body, html {
 .grow-shrink-50 {
     flex: 1 1 50%;
 }
+
 .grow-shrink-33 {
     flex: 1 1 33.3%;
 }
@@ -111,7 +120,8 @@ body, html {
 .list-container {
     display: flex;
     flex-direction: column;
-    flex: 1;        /* takes remaining space after the two input rows */
+    flex: 1;
+    /* takes remaining space after the two input rows */
     min-height: 0;
 }
 
@@ -127,20 +137,16 @@ body, html {
     justify-content: space-between !important;
     align-items: center !important;
     border: 0 !important;
-    background-color: RGBA(var(--bs-secondary-rgb),var(--bs-bg-opacity, 0.1)) !important;
+    background-color: RGBA(var(--bs-secondary-rgb), var(--bs-bg-opacity, 0.1)) !important;
     margin-top: 0.2rem !important;
     margin-bottom: 0.2rem !important;
     border-radius: var(--bs-border-radius) !important;
 }
 
-.list-group-item-ex > div {
+.list-group-item-ex>div {
     display: flex !important;
     flex-direction: row !important;
     align-items: center !important;
-}
-
-.control-input-disable > input {
-    disable;
 }
 
 .container {
@@ -179,7 +185,7 @@ body, html {
     display: flex;
     /* align-items: center;
     justify-content: space-between; */
-    background-color: RGBA(var(--bs-secondary-rgb),var(--bs-bg-opacity, 0.1)) !important;
+    background-color: RGBA(var(--bs-secondary-rgb), var(--bs-bg-opacity, 0.1)) !important;
     border-radius: var(--bs-border-radius) !important;
     padding: 10px 20px;
     min-width: 0;
@@ -189,8 +195,9 @@ body, html {
 
 .info-index {
     --bs-text-opacity: 1;
-    color: rgba(125, 126, 124 ,1);
-    margin-right: 2rem !important;;
+    color: rgba(125, 126, 124, 1);
+    margin-right: 2rem !important;
+    ;
     flex-shrink: 0;
 }
 
@@ -208,7 +215,7 @@ body, html {
 }
 
 .info-copy-btn {
-    background-color: RGBA(var(--bs-secondary-rgb),var(--bs-bg-opacity, 0.1)) !important;
+    background-color: RGBA(var(--bs-secondary-rgb), var(--bs-bg-opacity, 0.1)) !important;
     transition: background-color 0.15s ease, color 0.15s ease;
 }
 
@@ -222,62 +229,85 @@ body, html {
 
 
 /* Items Section */
-.items-header {
-    display: grid;
-    grid-template-columns: 0.5fr 1fr 3fr 0.5fr 1fr 0.5fr 1fr 1.5fr 0.2fr;
-    align-items: center;
-    padding: 10px 20px;
-    color: var(--bs-secondary);
-}
-
 .accordion-item {
-  border-radius: 0.375rem !important; /* restore full rounding on every item */
-  overflow: hidden; /* keeps header/body corners clipped */
-  border: 1px solid var(--bs-border-color, #dee2e6); /* re-add border since it's separated now */
+    border-radius: 0.375rem !important;
+    overflow: hidden;
+    border: none !important;
 }
 
 .accordion-item:last-of-type {
     margin-bottom: 0;
 }
 
+.items-header,
+.accordion-button {
+    display: grid;
+    grid-template-columns: var(--items-grid-cols);
+    column-gap: var(--items-grid-gap);
+    align-items: center;
+    padding-top: var(--items-grid-padding-y);
+    padding-bottom: var(--items-grid-padding-y);
+    padding-left: var(--items-grid-padding-x);
+    /* reserve identical space on both so columns stay aligned,
+       even though only the button actually has a chevron there */
+    padding-right: calc(var(--items-grid-padding-x) + var(--items-chevron-space));
+}
+
+.items-header span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .accordion-item .custom-item {
-    background-color: RGBA(var(--bs-secondary-rgb),var(--bs-bg-opacity, 0.1)) !important;
+    background-color: RGBA(var(--bs-secondary-rgb), var(--bs-bg-opacity, 0.1)) !important;
     border-radius: 10px !important;
     margin-bottom: 12px;
     overflow: hidden;
 }
 
 .custom-item .accordion-button {
-    background-color: RGBA(var(--bs-secondary-rgb),var(--bs-bg-opacity, 0.1)) !important;
-    display: grid;
-    grid-template-columns: 0.5fr 1fr 3fr 0.5fr 1fr 0.5fr 1fr 1.5fr 0.2fr;
-    align-items: center;
-    padding: 16px 20px;
-    width: 100%;
+    background-color: RGBA(var(--bs-secondary-rgb), var(--bs-bg-opacity, 0.1)) !important;
     border-radius: inherit;
 }
 
 .custom-item .accordion-button:not(.collapsed) {
-    background-color: RGBA(var(--bs-secondary-rgb),var(--bs-bg-opacity, 0.3)) !important;
+    background-color: RGBA(var(--bs-secondary-rgb), var(--bs-bg-opacity, 0.3)) !important;
     border-radius: inherit;
     color: var(--text-primary);
     box-shadow: none;
+}
+
+.accordion-button:not(.collapsed)::after {
+    transform: translateY(-50%) rotate(-180deg);
 }
 
 .custom-item .accordion-button:focus {
     box-shadow: none;
 }
 
+/* keep the chevron out of the grid flow so it doesn't wrap to a new row */
+.accordion-button {
+    position: relative;
+}
+
+.accordion-button::after {
+    position: absolute;
+    top: 50%;
+    right: var(--items-grid-padding-x);
+    margin-left: 0;
+    transform: translateY(-50%);
+}
+
 .row-cell {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    padding-right: 20px;
 }
 
 /* Expanded body */
 .custom-item .accordion-body {
-    background-color: RGBA(var(--bs-secondary-rgb),var(--bs-bg-opacity, 0.1)) !important;
+    background-color: RGBA(var(--bs-secondary-rgb), var(--bs-bg-opacity, 0.1)) !important;
     border-top: 1px solid var(--bs-secondary-bg);
 }
 
@@ -287,7 +317,7 @@ body, html {
 
 .itemLabel {
     --bs-text-opacity: 1;
-    color: rgba(var(--bs-secondary-rgb),var(--bs-text-opacity)) !important;
+    color: rgba(var(--bs-secondary-rgb), var(--bs-text-opacity)) !important;
     white-space: nowrap;
 }
 
@@ -301,4 +331,44 @@ body, html {
     border-radius: 6px;
     background-color: var(--bs-secondary-bg);
     overflow: hidden;
+}
+
+
+/* Add ICD Icon Toggle */
+.icon-container {
+    position: relative;
+    display: inline-block;
+    width: 16px;
+    /* Matches standard standard Bootstrap icon width */
+    height: 16px;
+    /* Matches standard standard Bootstrap icon height */
+    vertical-align: middle;
+}
+
+#editICDBtn .ph-bold {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* 3. Default state: Show untoggled, hide toggled */
+#editICDBtn .icon-toggled {
+    opacity: 0;
+    transform: scale(0.5);
+}
+
+#editICDBtn .icon-un-toggled {
+    opacity: 1;
+    transform: scale(1);
+}
+
+#editICDBtn.active .icon-toggled {
+    opacity: 1;
+    transform: scale(1);
+}
+
+#editICDBtn.active .icon-un-toggled {
+    opacity: 0;
+    transform: scale(0.5);
 }

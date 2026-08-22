@@ -1,0 +1,14 @@
+// Fix the Type and Subtype changes
+// Implement the Bundle & Timestamp refresh
+//Implement the Related & prauthRef fields
+
+
+// Extract >> Just extract the info and push into the array
+// Then call RenderFunc
+
+
+// Render >> Loop through the array and generate the HTML el and append it
+// Also add the eventlistener to the delete button which will also call the render
+
+
+// Add New >> get the values and push them into the array + render the items list again

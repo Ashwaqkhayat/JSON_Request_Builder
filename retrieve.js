@@ -1,4 +1,5 @@
 const el = val => document.getElementById(val);
+const elc = val => document.getElementsByClassName(val);
 
 const THEMES = {
     DARK: "dark",
@@ -140,6 +141,8 @@ const providerTypeInput = el('providerTypeInput');
 const careTeamTBody = el('careTeamTBody');
 const itemsAccordion = el('itemsAccordion');
 const saveNewICDBtn = el('saveNewICDBtn');
+const editICDBtn = el('editICDBtn');
+const itemDelButtonSpace = elc('itemDelButtonSpace');
 
 // Values Storage ====================================================
 // To store all the extracted values
@@ -148,7 +151,9 @@ const saveNewICDBtn = el('saveNewICDBtn');
 var arrayofItems = [];
 var arrayofICD = [];
 var arrayofCareTeam = [];
+var arrayofLineItems = [];
 
+// Controllers =======================================================
 
 // for copy func
 let benefEntry = null;
@@ -163,17 +168,24 @@ function init() {
     displayedEnvURL.value = ENVIRONMENTS.uat.URL;
     addItemBtn.disabled = true;
     addICDBtn.disabled = true;
+    editICDBtn.disabled = true;
     addSuppInfBtn.disabled = true;
+    itemDelButtonSpace[0].hidden = true;
+    itemDelButtonSpace[1].hidden = true;
+
+
     // Empty the arrays
     arrayofItems = [];
     arrayofICD = [];
     arrayofCareTeam = [];
+    arrayofLineItems = [];
 }
 
 
 // Extract input JSON & Data ========================================
 let userInputJSON;
 let parsed;
+let icdTrashButtons;
 
 requestBodyTxtArea.addEventListener('paste', function (e) {
     const scrollTop = this.scrollTop;
@@ -204,12 +216,13 @@ requestBodyTxtArea.addEventListener('change', () => {
     }
 
     try { parsed = JSON.parse(userInputJSON); } catch (e) {
-        showToast('Error: unable to parse the input JSON.' + e.message, 'danger');
+        showToast('Error: Invalid JSON request, please fix it and try again.', 'danger');
+        console.error(e.message);
         return;
     }
 
     addItemBtn.disabled = false;
-    addICDBtn.disabled = false;
+    editICDBtn.disabled = false;
     addSuppInfBtn.disabled = false;
 
     let extractedInfo;
@@ -314,7 +327,6 @@ requestBodyTxtArea.addEventListener('change', () => {
     // Extract Benefitiary Extensions
     extractedInfo = benefEntry?.resource.extension ?? null;
     extractClaimExtensions(extractedInfo, benefitiaryExtensionsUL, EXTENSION_CATEGORIES.Beneficiary);
-
 });
 
 function splitString(str) {
@@ -632,7 +644,7 @@ function extractLineItems(x) {
         // Get item info
         const seqID = item.sequence;
         let findICD = arrayofICD.find(i => i[0] === item.diagnosisSequence[0]);
-        const itemICD = findICD?.[1] ?? "?"; // index 1 is the ICD code
+        const itemICD = findICD?.[1] ?? "Unknown"; // index 1 is the ICD code
         const itemDesc = item.productOrService.coding[0].display;
         if (itemDesc === null) { itemDesc = 'Empty Description' }
         const itemQTY = item.quantity.value;
@@ -652,74 +664,88 @@ function extractLineItems(x) {
 
         const itemExtensions = generateItemExtension(item.extension);
 
+        arrayofLineItems.push(
+            [seqID, itemICD, itemDesc, itemQTY, itemUnitPrice, itemFactor, itemNetPrice, itemServdDateFrom, itemServdDateTo, itemNphiesCode, itemServiceCode, itemCareTeam, itemInfoSeq, itemExtensions]
+        );
+
         return `
-        <div class="accordion-item custom-item" style="border: none;">
-            <h2 class="accordion-header" id="${headingId}">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#${collapseId}" aria-expanded="${isFirst ? 'true' : 'false'}" aria-controls="${collapseId}">
-                    <span class="row-cell">${seqID}</span>
-                    <span class="row-cell">${itemICD}</span>
-                    <span class="row-cell">${itemDesc}</span>
-                    <span class="row-cell">${itemQTY}</span>
-                    <span class="row-cell">${itemUnitPrice}</span>
-                    <span class="row-cell">${itemFactor}</span>
-                    <span class="row-cell">${itemNetPrice}</span>
-                    <span class="row-cell">${itemServdDateFrom}</span>
-                </button>
-            </h2>
-            <div id="${collapseId}" class="accordion-collapse collapse" aria-labelledby="${headingId}">
-                <div class="accordion-body container">
-                    <div class="row row-gap-3 mb-3">
-                        <div class="col px-2">
-                            <label for="nphiesCode-${index}" class="form-label itemLabel">Nphies Code</label>
-                            <div class="input-group">
-                                <input type="text" class="form-control" id="nphiesCode-${index}" value="${itemNphiesCode}" aria-describedby="basic-addon3 basic-addon4">
+        <div class="d-flex w-100 column-gap-3">
+            <div class="accordion-item custom-item w-100">
+                <h2 class="accordion-header" ${headingId}>
+                    <button class="accordion-button collapsed" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#${collapseId}"
+                        aria-expanded="${isFirst ? 'true' : 'false'}" aria-controls="${collapseId}">
+                        <span class="row-cell">${seqID}</span>
+                        <span class="row-cell">${itemICD}</span>
+                        <span class="row-cell">${itemDesc}</span>
+                        <span class="row-cell">${itemQTY}</span>
+                        <span class="row-cell">${itemUnitPrice}</span>
+                        <span class="row-cell">${itemFactor}</span>
+                        <span class="row-cell">${itemNetPrice}</span>
+                        <span class="row-cell">${itemServdDateFrom}</span>
+                        <span class="row-cell"></span>
+                    </button>
+                </h2>
+                <div id="${collapseId}" class="accordion-collapse collapse" aria-labelledby="${headingId}">
+                    <div class="accordion-body container">
+                        <div class="row row-gap-3 mb-3">
+                            <div class="col px-2">
+                                <label for="nphiesCode-${index}" class="form-label itemLabel">Nphies Code</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="nphiesCode-${index}" value="${itemNphiesCode}" aria-describedby="basic-addon3 basic-addon4">
+                                </div>
+                            </div>
+                            <div class="col px-2">
+                                <label for="serviceCode-${index}" class="form-label itemLabel">Service Code</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="serviceCode-${index}" value="${itemServiceCode}" aria-describedby="basic-addon3 basic-addon4">
+                                </div>
+                            </div>
+                            <div class="col px-2">
+                                <label for="careTeam-${index}" class="form-label itemLabel">Care Team</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="careTeam-${index}" value="${itemCareTeam}" aria-describedby="basic-addon3 basic-addon4">
+                                </div>
+                            </div>
+                            <div class="col px-2">
+                                <label for="servFrom-${index}" class="form-label itemLabel">Serviced From</label>
+                                <div class="input-group">
+                                    <input type="date" class="form-control" id="servFrom-${index}" value=${itemServdDateFrom} aria-describedby="basic-addon3 basic-addon4">
+                                </div>
+                            </div>
+                            <div class="col px-2">
+                                <label for="servTo-${index}" class="form-label itemLabel">Serviced To</label>
+                                <div class="input-group">
+                                    <input type="date" class="form-control" id="servTo-${index}" value=${itemServdDateTo} aria-describedby="basic-addon3 basic-addon4" disabled="${itemServdDateTo !== "" ? false : true}">
+                                </div>
+                            </div>
+                            <div class="col-3 px-2">
+                                <label for="info-${index}" class="form-label itemLabel">Information</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="info-${index}" value="${itemInfoSeq}" aria-describedby="basic-addon3 basic-addon4">
+                                </div>
                             </div>
                         </div>
-                        <div class="col px-2">
-                            <label for="serviceCode-${index}" class="form-label itemLabel">Service Code</label>
-                            <div class="input-group">
-                                <input type="text" class="form-control" id="serviceCode-${index}" value="${itemServiceCode}" aria-describedby="basic-addon3 basic-addon4">
+                        <div class="row row-gap-3" style="height: fit-content;">
+                            <div class="col px-2 text-nowrap" style="flex-grow: 0;">
+                                <p class="text-secondary mb-0">Extensions</p>
                             </div>
+                            ${itemExtensions}
                         </div>
-                        <div class="col px-2">
-                            <label for="careTeam-${index}" class="form-label itemLabel">Care Team</label>
-                            <div class="input-group">
-                                <input type="text" class="form-control" id="careTeam-${index}" value="${itemCareTeam}" aria-describedby="basic-addon3 basic-addon4">
-                            </div>
-                        </div>
-                        <div class="col px-2">
-                            <label for="servFrom-${index}" class="form-label itemLabel">Serviced From</label>
-                            <div class="input-group">
-                                <input type="date" class="form-control" id="servFrom-${index}" value=${itemServdDateFrom} aria-describedby="basic-addon3 basic-addon4">
-                            </div>
-                        </div>
-                        <div class="col px-2">
-                            <label for="servTo-${index}" class="form-label itemLabel">Serviced To</label>
-                            <div class="input-group">
-                                <input type="date" class="form-control" id="servTo-${index}" value=${itemServdDateTo} aria-describedby="basic-addon3 basic-addon4" disabled="${itemServdDateTo !== "" ? false : true}">
-                            </div>
-                        </div>
-                        <div class="col-3 px-2">
-                            <label for="info-${index}" class="form-label itemLabel">Information</label>
-                            <div class="input-group">
-                                <input type="text" class="form-control" id="info-${index}" value="${itemInfoSeq}" aria-describedby="basic-addon3 basic-addon4">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row row-gap-3" style="height: fit-content;">
-                        <div class="col px-2 text-nowrap" style="flex-grow: 0;">
-                            <p class="text-secondary mb-0">Extensions</p>
-                        </div>
-                        ${itemExtensions}
                     </div>
                 </div>
             </div>
+            <button id="accordDelete-${index}" class="btn btn-outline-danger">
+                <i class="ph-bold ph-trash"></i>
+            </button>
         </div>
         `;
     }).join('');
 
     // Inject the dynamically built items into the container
     itemsAccordion.innerHTML = accordionHTML;
+    itemDelButtonSpace[0].hidden = false;
+    itemDelButtonSpace[1].hidden = false;
 
 }
 
@@ -760,19 +786,24 @@ function generateItemExtension(ex) {
 
 function clearItemsLists() {
     itemsAccordion.innerHTML = `
-    <div class="accordion-item custom-item" style="border: none;">
-        <h2 class="accordion-header" id="heading-1">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-1" aria-expanded="false" aria-controls="collapse-1">
-                <span class="row-cell"></span>
-                <span class="row-cell"></span>
-                <span class="row-cell"></span>
-                <span class="row-cell"></span>
-                <span class="row-cell"></span>
-                <span class="row-cell"></span>
-                <span class="row-cell"></span>
-                <span class="row-cell"></span>
-            </button>
-        </h2>
+    <div class="d-flex w-100 column-gap-3">
+        <div class="accordion-item custom-item w-100">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed text-body-tertiary" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#collapse-1"
+                    aria-expanded="false" aria-controls="collapse-1">
+                    <span class="row-cell">Seq</span>
+                    <span class="row-cell">ICD</span>
+                    <span class="row-cell">Service Desc</span>
+                    <span class="row-cell">QTY</span>
+                    <span class="row-cell">Unit Price</span>
+                    <span class="row-cell">Factor</span>
+                    <span class="row-cell">Net</span>
+                    <span class="row-cell">Serviced Date</span>
+                    <span class="row-cell"></span>
+                </button>
+            </h2>
+        </div>
     </div>
     `;
 }
@@ -899,36 +930,53 @@ function extractICDCodes(x) {
             let icdSeq = icd.sequence;
             let icdCode = icd.diagnosisCodeableConcept.coding[0].code ?? null;
             let icdType = icd.type[0].coding[0].code ?? null;
+            let icdOnAdm = icd.onAdmission.coding[0].code ?? null;
 
             // Add ICD to global ICD array
-            arrayofICD.push([icdSeq, icdCode, icdType]);
-            renderICDList();
+            arrayofICD.push([icdSeq, icdCode, icdType, icdOnAdm]);
+            renderICDList(false);
         });
     }
 }
 
-function addNewICDCode(newIcd) {
+function addNewICDCode(newIcd, newIcdType, newIcdAdm) {
     let icdSeq = arrayofICD.length + 1;
     let icdCode = newIcd;
-    let icdType = "Principal";
+    let icdType = newIcdType;
+    let icdOnAdm = newIcdAdm;
 
     // Add ICD to global ICD array
-    arrayofICD.push([icdSeq, icdCode, icdType]);
-    renderICDList()
+    arrayofICD.push([icdSeq, icdCode, icdType, icdOnAdm]);
+    renderICDList(true);
 }
 
-function renderICDList() {
-    ICDtableList.innerHTML = '';
+function renderICDList(isDeleteActive) {
+    ICDtableList.innerHTML = ''; // clear existing rows before re-render
+
     arrayofICD.forEach((icd, index) => {
         const newICDRow = document.createElement('tr');
 
         newICDRow.innerHTML = `
             <th class="text-secondary fw-normal align-middle" scope="row">${icd[0]}</th>
-            <td><input class="form-control" value="${icd[1]}"></td>
-            <td style="width: 55%;"><input class="form-control" value="${icd[2]}"></td>
-            `;
+            <td><input readonly class="form-control" value="${icd[1]}"></td>
+            <td style="width: 55%;"><input readonly class="form-control" value="${icd[2]}"></td>
+            <td ${isDeleteActive == false ? "hidden" : ""} id="icdDel-${index + 1}" class="icdTrashTd">
+                <button type="button" class="btn btn-outline-danger">
+                    <i class="ph-bold ph-trash"></i>
+                </button>
+            </td>
+        `;
+
+        // Delete button
+        const deleteBtn = newICDRow.querySelector('button');
+        deleteBtn.addEventListener('click', () => {
+            arrayofICD.splice(index, 1); // remove this item from the array
+            renderICDList(true);
+        });
+
         ICDtableList.appendChild(newICDRow);
     });
+    icdTrashButtons = document.querySelectorAll('.icdTrashTd');
 }
 
 function clearICDList() {
@@ -1234,6 +1282,35 @@ function showToast(message, variant = "danger") {
     });
 }
 
+// Button Listeners =========================================
+editICDBtn.addEventListener('click', () => {
+    // Bootstrap 'active' class is added AFTER the click event fires in some versions,
+    // so check state right after
+    setTimeout(() => {
+        if (editICDBtn.classList.contains('active')) {
+            // Show the Add button
+            addICDBtn.removeAttribute('hidden');
+            addICDBtn.disabled = false;
+
+            icdTrashButtons.forEach((icdTrashBtn) => {
+                icdTrashBtn.removeAttribute('hidden');
+            })
+        } else { // Save mode
+            // Hide the Add button + Confirm the changes
+            if (arrayofICD.length < 1) {
+                showToast('Diagnosis list is empty, add at least one ICD code to update the JSON request.', 'warning');
+            } else {
+                initListsBindings();
+            }
+            addICDBtn.setAttribute('hidden', '');
+            icdTrashButtons.forEach((icdTrashBtn) => {
+                icdTrashBtn.setAttribute('hidden', '');
+            })
+        }
+    }, 0);
+
+});
+
 // Form Validations =========================================
 function setupValidatedForm(formId, onValidSubmit) {
     const form = document.getElementById(formId)
@@ -1255,13 +1332,14 @@ function setupValidatedForm(formId, onValidSubmit) {
 
 setupValidatedForm('addICDForm', (form) => {
     const newICDInput = form.querySelector('#newICDCodeInput');
-    const code = newICDInput.value;
-    addNewICDCode(code);
+    const newICDType = form.querySelector('#newICDTypeInput');
+    const newICDOnAdm = form.querySelector('#newICDAdmissInput');
+    addNewICDCode(newICDInput.value, newICDType.value, newICDOnAdm.value);
     bootstrap.Modal.getInstance(document.getElementById('newICDModal')).hide();
-    newICDInput.value = ''
+    form.reset();
 })
 
-// AI Assist
+// AI Assist ===============================================
 
 // ============================================================
 // Two-way binding: push edits made in the extracted-value inputs
@@ -1635,6 +1713,65 @@ const fieldBindings = [
     }
 ];
 
+const listBindings = [
+    {
+        input: ICDtableList,
+        getTarget: () => {
+            const claim = getClaimResource();
+            return claim ? { claim } : null;
+        },
+        get: (target) => target.claim.diagnosis ?? '',
+        set: (target) => {
+            // arrayofICD [Seq, ICD, Type]
+            const diagnosisArray = arrayofICD.map(function (icd) {
+                return {
+                    "extension": [
+                        {
+                            "url": "http://nphies.sa/fhir/ksa/nphies-fs/StructureDefinition/extension-condition-onset",
+                            "valueCodeableConcept": {
+                                "coding": [
+                                    {
+                                        "system": "http://nphies.sa/terminology/CodeSystem/condition-onset",
+                                        "code": "NR"
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    "sequence": icd[0],
+                    "diagnosisCodeableConcept": {
+                        "coding": [
+                            {
+                                "system": "http://hl7.org/fhir/sid/icd-10-am",
+                                "code": icd[1]
+                            }
+                        ]
+                    },
+                    "type": [
+                        {
+                            "coding": [
+                                {
+                                    "system": "http://nphies.sa/terminology/CodeSystem/diagnosis-type",
+                                    "code": icd[2]
+                                }
+                            ]
+                        }
+                    ],
+                    "onAdmission": {
+                        "coding": [
+                            {
+                                "system": "http://nphies.sa/terminology/CodeSystem/diagnosis-on-admission",
+                                "code": icd[3]
+                            }
+                        ]
+                    }
+                };
+            });
+            target.claim.diagnosis = diagnosisArray;
+        }
+    }
+];
+
 // Serializes the current `parsed` object back into the textarea.
 function syncJSONToTextArea() {
     // .value doesn't fire the 'change'/'input' events, so it'll not make an infinite loop or smthng
@@ -1661,7 +1798,7 @@ function initFieldBindings() {
             }
 
             try {
-                binding.set(target, binding.input.value);
+                binding.set(target, binding.input);
                 syncJSONToTextArea();
             } catch (e) {
                 showToast(`Error updating JSON from "${binding.input.id}": ${e.message}`, 'danger');
@@ -1671,3 +1808,24 @@ function initFieldBindings() {
 }
 
 initFieldBindings();
+
+function initListsBindings() {
+    listBindings.forEach((binding) => {
+        const target = binding.getTarget();
+        if (!target) {
+            showToast(
+                `Error: Could not locate the JSON field to update for "${binding.input.id}". ` +
+                `Make sure a valid JSON has been loaded first.`,
+                'danger'
+            );
+            return;
+        }
+
+        try {
+            binding.set(target);
+            syncJSONToTextArea();
+        } catch (e) {
+            showToast(`Error updating JSON from "${binding.input.id}": ${e.message}`, 'danger');
+        }
+    });
+}
