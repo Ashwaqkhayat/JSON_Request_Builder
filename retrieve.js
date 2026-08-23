@@ -142,13 +142,13 @@ const careTeamTBody = el('careTeamTBody');
 const itemsAccordion = el('itemsAccordion');
 const saveNewICDBtn = el('saveNewICDBtn');
 const editICDBtn = el('editICDBtn');
+const editItemsBtn = el('editItemsBtn');
 const itemDelButtonSpace = elc('itemDelButtonSpace');
 
 // Values Storage ====================================================
 // To store all the extracted values
 
 // Storage Arrays ====================================================
-var arrayofItems = [];
 var arrayofICD = [];
 var arrayofCareTeam = [];
 var arrayofLineItems = [];
@@ -169,13 +169,13 @@ function init() {
     addItemBtn.disabled = true;
     addICDBtn.disabled = true;
     editICDBtn.disabled = true;
+    editItemsBtn.disabled = true;
     addSuppInfBtn.disabled = true;
     itemDelButtonSpace[0].hidden = true;
     itemDelButtonSpace[1].hidden = true;
 
 
     // Empty the arrays
-    arrayofItems = [];
     arrayofICD = [];
     arrayofCareTeam = [];
     arrayofLineItems = [];
@@ -186,6 +186,7 @@ function init() {
 let userInputJSON;
 let parsed;
 let icdTrashButtons;
+let lineItemsTrashButtons;
 
 requestBodyTxtArea.addEventListener('paste', function (e) {
     const scrollTop = this.scrollTop;
@@ -223,11 +224,13 @@ requestBodyTxtArea.addEventListener('change', () => {
 
     addItemBtn.disabled = false;
     editICDBtn.disabled = false;
+    editItemsBtn.disabled = false;
     addSuppInfBtn.disabled = false;
 
     let extractedInfo;
     let entryOfInfo;
     let extractedTypeVal;
+    let arrayofItems;
 
     // Extract data for Claim resource type ==============================
     entryOfInfo = findResource(parsed.entry, 'Claim', null);
@@ -621,11 +624,6 @@ function clearExtensionLists(el) {
 }
 
 function extractLineItems(x) {
-    if (!itemsAccordion) {
-        showToast('Code Error: could not find the accordion container.', 'danger');
-        return;
-    }
-
     // Handle missing items data
     if (x === null || x.length == 0) {
         showToast('Items array is empty or not found.', 'danger');
@@ -634,118 +632,183 @@ function extractLineItems(x) {
         return;
     }
 
-    // Map array items to HTML strings
-    const accordionHTML = x.map((item, index) => {
+    x.forEach((item, index) => {
+        // Get item info
+        const seqID = item.sequence ?? '';
+        let findICD = arrayofICD.find(i => i[0] === item.diagnosisSequence[0]);
+        const itemICD = findICD?.[1] ?? "Unknown"; // index 1 is the ICD code
+        const itemDesc = item.productOrService.coding[0].display ?? 'No Description';
+        const itemQTY = item.quantity.value ?? '';
+        const itemUnitPrice = item.unitPrice.value ?? '';
+        const itemFactor = item.factor ?? 1;
+        const itemNetPrice = item.net.value ?? '';
+        const itemServdDateFrom = item.servicedPeriod?.start ?? item.servicedDate ?? null;
+        const itemServdDateTo = item.servicedPeriod?.end ?? '';
+
+        const nphiesCodeObj = item.productOrService.coding.find(code => code.system && code.system.startsWith("http://nphies.sa"));
+        const itemNphiesCode = nphiesCodeObj ? nphiesCodeObj.code : '';
+        const serviceCodeObj = item.productOrService.coding.find(code => code.system && !code.system.startsWith("http://nphies.sa"));
+        const itemServiceCode = serviceCodeObj ? serviceCodeObj.code : '';
+
+        const itemCareTeam = item.careTeamSequence ?? '';
+        const itemInfoSeq = item.informationSequence ?? '';
+
+        const itemBodySite = item.bodySite?.coding[0].code ?? null;
+        const itemQTYType = item.quantity.code ?? null;
+
+        const itemExtensions = generateItemExtension(item.extension);
+
+        arrayofLineItems.push(
+            [
+                seqID,
+                itemICD,
+                itemDesc,
+                itemQTY,
+                itemUnitPrice,
+                itemFactor,
+                itemNetPrice,
+                itemServdDateFrom,
+                itemServdDateTo,
+                itemNphiesCode,
+                itemServiceCode,
+                itemCareTeam,
+                itemInfoSeq,
+                itemExtensions,
+                itemBodySite,
+                itemQTYType
+            ]
+        );
+    });
+    renderItemsList(false); //isDeleteActive is false
+}
+
+function renderItemsList(isDeleteActive) {
+    if (!itemsAccordion) {
+        showToast('Code Error: could not find the items list container.', 'danger');
+        return;
+    }
+
+    itemsAccordion.innerHTML = ''; // clear existing rows before re-render
+
+    arrayofLineItems.forEach((item, index) => {
+        const newAccordionItem = document.createElement('div');
+        newAccordionItem.className = 'd-flex w-100 column-gap-3'
+
         // Generate unique IDs for dynamic Bootstrap targeting
         const collapseId = `collapse_${index}`;
         const headingId = `heading_${index}`;
         const isFirst = index === 0;
 
-        // Get item info
-        const seqID = item.sequence;
-        let findICD = arrayofICD.find(i => i[0] === item.diagnosisSequence[0]);
-        const itemICD = findICD?.[1] ?? "Unknown"; // index 1 is the ICD code
-        const itemDesc = item.productOrService.coding[0].display;
-        if (itemDesc === null) { itemDesc = 'Empty Description' }
-        const itemQTY = item.quantity.value;
-        const itemUnitPrice = item.unitPrice.value;
-        const itemFactor = item.factor ?? 1;
-        const itemNetPrice = item.net.value;
-        const itemServdDateFrom = item.servicedPeriod?.start ?? item.servicedDate ?? null;
-        const itemServdDateTo = item.servicedPeriod?.end ?? "";
+        // item[0=seqID, 1=itemICD, 2=itemDesc, 3=itemQTY, 4=itemUnitPrice, 5=itemFactor
+        // 6=itemNetPrice, 7=itemServdDateFrom, 8=itemServdDateTo, 9=itemNphiesCode,
+        // 10= itemServiceCode, 11=itemCareTeam, 12=itemInfoSeq, 13=itemExtensions
+        // 14= itemBodySite, 15=itemQTYType]
 
-        const nphiesCodeObj = item.productOrService.coding.find(code => code.system && code.system.startsWith("http://nphies.sa"));
-        const itemNphiesCode = nphiesCodeObj ? nphiesCodeObj.code : null;
-        const serviceCodeObj = item.productOrService.coding.find(code => code.system && !code.system.startsWith("http://nphies.sa"));
-        const itemServiceCode = serviceCodeObj ? serviceCodeObj.code : "";
-
-        const itemCareTeam = item.careTeamSequence;
-        const itemInfoSeq = item.informationSequence;
-
-        const itemExtensions = generateItemExtension(item.extension);
-
-        arrayofLineItems.push(
-            [seqID, itemICD, itemDesc, itemQTY, itemUnitPrice, itemFactor, itemNetPrice, itemServdDateFrom, itemServdDateTo, itemNphiesCode, itemServiceCode, itemCareTeam, itemInfoSeq, itemExtensions]
-        );
-
-        return `
-        <div class="d-flex w-100 column-gap-3">
+        newAccordionItem.innerHTML = `
             <div class="accordion-item custom-item w-100">
                 <h2 class="accordion-header" ${headingId}>
                     <button class="accordion-button collapsed" type="button"
                         data-bs-toggle="collapse" data-bs-target="#${collapseId}"
                         aria-expanded="${isFirst ? 'true' : 'false'}" aria-controls="${collapseId}">
-                        <span class="row-cell">${seqID}</span>
-                        <span class="row-cell">${itemICD}</span>
-                        <span class="row-cell">${itemDesc}</span>
-                        <span class="row-cell">${itemQTY}</span>
-                        <span class="row-cell">${itemUnitPrice}</span>
-                        <span class="row-cell">${itemFactor}</span>
-                        <span class="row-cell">${itemNetPrice}</span>
-                        <span class="row-cell">${itemServdDateFrom}</span>
+                        <span class="row-cell">${item[0]}</span>
+                        <span class="row-cell">${item[1]}</span>
+                        <span class="row-cell">${item[2]}</span>
+                        <span class="row-cell">${item[3]}</span>
+                        <span class="row-cell">${item[4]}</span>
+                        <span class="row-cell">${item[5]}</span>
+                        <span class="row-cell">${item[6]}</span>
+                        <span class="row-cell">${item[7]}</span>
                         <span class="row-cell"></span>
                     </button>
                 </h2>
                 <div id="${collapseId}" class="accordion-collapse collapse" aria-labelledby="${headingId}">
                     <div class="accordion-body container">
-                        <div class="row row-gap-3 mb-3">
+                        <div class="row row-gap-3">
                             <div class="col px-2">
                                 <label for="nphiesCode-${index}" class="form-label itemLabel">Nphies Code</label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="nphiesCode-${index}" value="${itemNphiesCode}" aria-describedby="basic-addon3 basic-addon4">
+                                    <input type="text" class="form-control" id="nphiesCode-${index}" value="${item[9]}" aria-describedby="basic-addon3 basic-addon4">
                                 </div>
                             </div>
                             <div class="col px-2">
                                 <label for="serviceCode-${index}" class="form-label itemLabel">Service Code</label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="serviceCode-${index}" value="${itemServiceCode}" aria-describedby="basic-addon3 basic-addon4">
+                                    <input type="text" class="form-control" id="serviceCode-${index}" value="${item[10]}" aria-describedby="basic-addon3 basic-addon4">
                                 </div>
                             </div>
                             <div class="col px-2">
                                 <label for="careTeam-${index}" class="form-label itemLabel">Care Team</label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="careTeam-${index}" value="${itemCareTeam}" aria-describedby="basic-addon3 basic-addon4">
+                                    <input type="text" class="form-control" id="careTeam-${index}" value="${item[11]}" aria-describedby="basic-addon3 basic-addon4">
                                 </div>
                             </div>
                             <div class="col px-2">
                                 <label for="servFrom-${index}" class="form-label itemLabel">Serviced From</label>
                                 <div class="input-group">
-                                    <input type="date" class="form-control" id="servFrom-${index}" value=${itemServdDateFrom} aria-describedby="basic-addon3 basic-addon4">
+                                    <input type="date" class="form-control" id="servFrom-${index}" value=${item[7]} aria-describedby="basic-addon3 basic-addon4">
                                 </div>
                             </div>
                             <div class="col px-2">
                                 <label for="servTo-${index}" class="form-label itemLabel">Serviced To</label>
                                 <div class="input-group">
-                                    <input type="date" class="form-control" id="servTo-${index}" value=${itemServdDateTo} aria-describedby="basic-addon3 basic-addon4" disabled="${itemServdDateTo !== "" ? false : true}">
+                                    <input type="date" class="form-control" id="servTo-${index}" value=${item[8]} aria-describedby="basic-addon3 basic-addon4" disabled="${item[8] !== "" ? false : true}">
                                 </div>
                             </div>
                             <div class="col-3 px-2">
                                 <label for="info-${index}" class="form-label itemLabel">Information</label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="info-${index}" value="${itemInfoSeq}" aria-describedby="basic-addon3 basic-addon4">
+                                    <input type="text" class="form-control" id="info-${index}" value="${item[12]}" aria-describedby="basic-addon3 basic-addon4">
                                 </div>
                             </div>
                         </div>
-                        <div class="row row-gap-3" style="height: fit-content;">
+                        <div class="row row-gap-3 mt-2" ${(item[14] == null && item[15] == null) ? "hidden" : ''}>
+                            <div class="col-auto px-2" ${item[15] == null ? "hidden" : ''}>
+                                <label for="QTYType-${index}" class="form-label itemLabel">QTY Type</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="QTYType-${index}" value="${item[15]}" aria-describedby="basic-addon3 basic-addon4">
+                                </div>
+                            </div>
+                            <div class="col-auto px-2" ${item[14] == null ? "hidden" : ''}>
+                                <label for="bodySite-${index}" class="form-label itemLabel">Body Site</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="bodySite-${index}" value="${item[14]}" aria-describedby="basic-addon3 basic-addon4">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row row-gap-3 mt-3" style="height: fit-content;">
                             <div class="col px-2 text-nowrap" style="flex-grow: 0;">
                                 <p class="text-secondary mb-0">Extensions</p>
                             </div>
-                            ${itemExtensions}
+                            ${item[13]}
                         </div>
                     </div>
                 </div>
             </div>
-            <button id="accordDelete-${index}" class="btn btn-outline-danger">
+            <button ${isDeleteActive == false ? "hidden" : ""} class="btn btn-outline-danger itemTrashbtn">
                 <i class="ph-bold ph-trash"></i>
             </button>
-        </div>
         `;
-    }).join('');
 
-    // Inject the dynamically built items into the container
-    itemsAccordion.innerHTML = accordionHTML;
-    itemDelButtonSpace[0].hidden = false;
-    itemDelButtonSpace[1].hidden = false;
+        // Delete button
+        const deleteBtn = newAccordionItem.querySelector('.itemTrashbtn');
+        deleteBtn.addEventListener('click', () => {
+            if (arrayofLineItems.length <= 1) {
+                showToast('You should keep at least one item.', 'warning');
+            } else {
+                arrayofLineItems.splice(index, 1); // remove this item from the array
+                renderItemsList(true);
+            }
+        });
+
+        itemsAccordion.appendChild(newAccordionItem);
+    });
+
+    lineItemsTrashButtons = document.querySelectorAll('.itemTrashbtn');
+    itemDelButtonSpace[0].hidden = !isDeleteActive;
+    itemDelButtonSpace[1].hidden = !isDeleteActive;
+}
+
+function addLineItem() {
 
 }
 
@@ -934,8 +997,8 @@ function extractICDCodes(x) {
 
             // Add ICD to global ICD array
             arrayofICD.push([icdSeq, icdCode, icdType, icdOnAdm]);
-            renderICDList(false);
         });
+        renderICDList(false);
     }
 }
 
@@ -970,8 +1033,12 @@ function renderICDList(isDeleteActive) {
         // Delete button
         const deleteBtn = newICDRow.querySelector('button');
         deleteBtn.addEventListener('click', () => {
-            arrayofICD.splice(index, 1); // remove this item from the array
-            renderICDList(true);
+            if (arrayofICD.length <= 1) {
+                showToast('You should keep at least one ICD code.', 'warning');
+            } else {
+                arrayofICD.splice(index, 1); // remove this item from the array
+                renderICDList(true);
+            }
         });
 
         ICDtableList.appendChild(newICDRow);
@@ -1305,6 +1372,38 @@ editICDBtn.addEventListener('click', () => {
             addICDBtn.setAttribute('hidden', '');
             icdTrashButtons.forEach((icdTrashBtn) => {
                 icdTrashBtn.setAttribute('hidden', '');
+            })
+        }
+    }, 0);
+
+});
+
+editItemsBtn.addEventListener('click', () => {
+    // Bootstrap 'active' class is added AFTER the click event fires in some versions,
+    // so check state right after
+    setTimeout(() => {
+        if (editItemsBtn.classList.contains('active')) {
+            itemDelButtonSpace[0].hidden = false;
+            itemDelButtonSpace[1].hidden = false;
+            // Show the Add button
+            addItemBtn.removeAttribute('hidden');
+            addItemBtn.disabled = false;
+
+            lineItemsTrashButtons.forEach((TrashBtn) => {
+                TrashBtn.removeAttribute('hidden');
+            })
+        } else { // Save mode
+            itemDelButtonSpace[0].hidden = true;
+            itemDelButtonSpace[1].hidden = true;
+            // Hide the Add button + Confirm the changes
+            if (arrayofICD.length < 1) {
+                showToast('Items list is empty, add at least one line item to update the JSON request.', 'warning');
+            } else {
+                initListsBindings();
+            }
+            addItemBtn.setAttribute('hidden', '');
+            lineItemsTrashButtons.forEach((TrashBtn) => {
+                TrashBtn.setAttribute('hidden', '');
             })
         }
     }, 0);
@@ -1798,10 +1897,11 @@ function initFieldBindings() {
             }
 
             try {
-                binding.set(target, binding.input);
+                binding.set(target, binding.input.value);
                 syncJSONToTextArea();
             } catch (e) {
                 showToast(`Error updating JSON from "${binding.input.id}": ${e.message}`, 'danger');
+                console.error(e);
             }
         });
     });
