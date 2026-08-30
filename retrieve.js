@@ -144,6 +144,8 @@ const saveNewICDBtn = el('saveNewICDBtn');
 const editICDBtn = el('editICDBtn');
 const editItemsBtn = el('editItemsBtn');
 const itemDelButtonSpace = elc('itemDelButtonSpace');
+const newItemModal = el('newItemModal');
+const icdSelect = el('icdSelect');
 
 // Values Storage ====================================================
 // To store all the extracted values
@@ -1482,6 +1484,28 @@ setupValidatedForm('addICDForm', (form) => {
     bootstrap.Modal.getInstance(document.getElementById('newICDModal')).hide();
     form.reset();
 })
+
+setupValidatedForm('addItemForm', (form) => {
+    bootstrap.Modal.getInstance(document.getElementById('newItemModal')).hide();
+    form.reset();
+})
+
+
+// Load Dynamic Lists ======================================
+newItemModal.addEventListener('shown.bs.modal', function () {
+    loadICDList();
+});
+
+function loadICDList() {
+    icdSelect.innerHTML = '<option selected disabled value="">Select ICD</option>';
+
+    arrayofICD.forEach(icd => {
+        const option = document.createElement('option');
+        option.value = icd[0];
+        option.textContent = icd[1];
+        icdSelect.appendChild(option);
+    });
+}
 
 // AI Assist ===============================================
 
