@@ -181,7 +181,6 @@ function init() {
     arrayofLineItems = [];
 }
 
-
 // Extract input JSON & Data ========================================
 let userInputJSON;
 let parsed;
@@ -229,106 +228,97 @@ requestBodyTxtArea.addEventListener('change', () => {
 
     let extractedInfo;
     let entryOfInfo;
-    let extractedTypeVal;
     let arrayofItems;
 
     // Extract data for Claim resource type ==============================
-    entryOfInfo = findResource(parsed.entry, 'Claim', null);
+    entryOfInfo = getClaimResource();
     // Extract Req Category
-    extractedInfo = entryOfInfo?.resource.identifier[0] ?? null;
+    extractedInfo = entryOfInfo?.identifier[0] ?? null;
     extractReqCat(extractedInfo);
 
     // Extract Claim ID
     extractClaimID(extractedInfo);
 
     // Extract Req Type
-    extractedInfo = entryOfInfo?.resource.type.coding[0] ?? null;
+    extractedInfo = entryOfInfo?.type.coding[0] ?? null;
     extractReqType(extractedInfo);
 
     // Extract Req Subtype
-    extractedInfo = entryOfInfo?.resource.subType.coding[0] ?? null;
+    extractedInfo = entryOfInfo?.subType.coding[0] ?? null;
     extractReqSubtype(extractedInfo);
 
     // Extract Req Priority
-    extractedInfo = entryOfInfo?.resource.priority.coding[0] ?? null;
+    extractedInfo = entryOfInfo?.priority.coding[0] ?? null;
     extractReqPriority(extractedInfo);
 
     // Extract Req Extensions
-    extractedInfo = entryOfInfo?.resource.extension ?? null;
+    extractedInfo = entryOfInfo?.extension ?? null;
     extractClaimExtensions(extractedInfo, claimExtensionsUL, EXTENSION_CATEGORIES.Claim);
 
     // Extract ICD codes
-    extractedInfo = entryOfInfo?.resource.diagnosis
+    extractedInfo = entryOfInfo?.diagnosis
     extractICDCodes(extractedInfo);
 
     // Extract Supporting info
-    extractedInfo = entryOfInfo?.resource.supportingInfo ?? null;
+    extractedInfo = entryOfInfo?.supportingInfo ?? null;
     extractSupportingInfo(extractedInfo);
 
     // Extract Line Items 
-    arrayofItems = entryOfInfo?.resource.item ?? null;
+    arrayofItems = entryOfInfo?.item ?? null;
     extractLineItems(arrayofItems);
 
     if (totalItems) {
-        totalItems.innerText = "| Total: " + entryOfInfo?.resource.total.value + " " + entryOfInfo?.resource.total.currency;
+        totalItems.innerText = "| Total: " + entryOfInfo?.total.value + " " + entryOfInfo?.total.currency;
     } else {
         showToast("Error: Items total is not found.", "danger");
     }
 
     // Extract Insurer Data
-    let InsurerResource = entryOfInfo?.resource.insurer.reference ?? null;
-    extractedTypeVal = splitString(InsurerResource);
-    let InsurerEntry = findResource(parsed.entry, extractedTypeVal[0], extractedTypeVal[1]);
-    extractedInfo = InsurerEntry?.resource ?? null;
+    extractedInfo = getInsurerResource();
     extractInsurerData(extractedInfo);
 
     // Extract Provider Data
-    let providerResource = entryOfInfo?.resource.provider.reference ?? null;
-    extractedTypeVal = splitString(providerResource);
-    let providerEntry = findResource(parsed.entry, extractedTypeVal[0], extractedTypeVal[1]);
-    extractedInfo = providerEntry?.resource ?? null;
+    extractedInfo = getProviderResource();
     extractProviderData(extractedInfo);
 
     // Extract Care Team data
-    const careTeamResource = entryOfInfo?.resource.careTeam ?? null; // Array
+    const careTeamResource = entryOfInfo?.careTeam ?? null; // Array
     extractPractitioners(parsed.entry, careTeamResource);
 
     // Extract data for Coverage resource type ==========================
 
     // Extract Req Membership
-    entryOfInfo = findResource(parsed.entry, 'Coverage', null);
-    extractedInfo = entryOfInfo?.resource.identifier[0] ?? null;
+    entryOfInfo = getCoverageResource()
+    extractedInfo = entryOfInfo?.identifier[0] ?? null;
     extracReqMembership(extractedInfo);
 
     // Extract data for Patient (benefitiary) resource type ============
     // Extract Req Member Name
-    let beneficiaryResource = entryOfInfo?.resource.beneficiary.reference ?? null;
-    extractedTypeVal = splitString(beneficiaryResource);
-    let benefEntry = findResource(parsed.entry, extractedTypeVal[0], extractedTypeVal[1]);
-    extractedInfo = benefEntry?.resource.name[0] ?? null;
+    let benefEntry = getBeneficiaryResource();
+    extractedInfo = benefEntry?.name[0] ?? null;
     extractMemberName(extractedInfo);
 
     // Extract Req Id type
-    extractedInfo = benefEntry?.resource.identifier[0] ?? null;
+    extractedInfo = benefEntry?.identifier[0] ?? null;
     extractBenifitiaryIdType(extractedInfo);
 
     // Extract Req ID Number
     extractBenifitiaryId(extractedInfo);
 
     // Extract Phone number
-    extractedInfo = benefEntry?.resource.telecom[0] ?? null;
+    extractedInfo = benefEntry?.telecom[0] ?? null;
     extractBenifitiaryPhoneNum(extractedInfo);
 
     // Extract Birthdate
-    extractedInfo = benefEntry?.resource.birthDate ?? null;
+    extractedInfo = benefEntry?.birthDate ?? null;
     extractBenifitiaryBD(extractedInfo);
 
     // Extract Gender
-    extractedInfo = benefEntry?.resource.gender ?? null;
+    extractedInfo = benefEntry?.gender ?? null;
     extractBenifitiaryGender(extractedInfo);
 
     // Extract Benefitiary Extensions
-    extractedInfo = benefEntry?.resource.extension ?? null;
+    extractedInfo = benefEntry?.extension ?? null;
     extractClaimExtensions(extractedInfo, benefitiaryExtensionsUL, EXTENSION_CATEGORIES.Beneficiary);
 });
 
@@ -656,7 +646,7 @@ function extractLineItems(x) {
         const itemBodySite = item.bodySite?.coding[0].code ?? null;
         const itemQTYType = item.quantity.code ?? null;
 
-        const itemExtensions = generateItemExtension(item.extension);
+        const itemExtensions = generateItemExtension(item.extension, true);
 
         arrayofLineItems.push(
             [
@@ -808,30 +798,84 @@ function renderItemsList(isDeleteActive) {
     itemDelButtonSpace[1].hidden = !isDeleteActive;
 }
 
-function addLineItem() {
+function addLineItem(newItem) {
+    // item[0=seqID, 1=itemICD, 2=itemDesc, 3=itemQTY, 4=itemUnitPrice, 5=itemFactor
+    // 6=itemNetPrice, 7=itemServdDateFrom, 8=itemServdDateTo, 9=itemNphiesCode,
+    // 10= itemServiceCode, 11=itemCareTeam, 12=itemInfoSeq, 13=itemExtensions
+    // 14= itemBodySite, 15=itemQTYType]
 
+    // Get item info
+    const seqID = newItem[0];
+    const itemICD = newItem[1] ?? "Unknown"; // index 1 is the ICD code
+    const itemDesc = newItem[2] ?? 'No Description';
+    const itemQTY = newItem[3] ?? '';
+    const itemUnitPrice = newItem[4] ?? '';
+    const itemFactor = newItem[5] ?? 1;
+    const itemNetPrice = newItem[6] ?? '';
+    const itemServdDateFrom = newItem[7] ?? null;
+    const itemServdDateTo = newItem[8] ?? '';
+
+    const itemNphiesCode = newItem[9] ?? '';
+    const itemServiceCode = newItem[10] ?? '';
+
+    const itemCareTeam = newItem[11] ?? '';
+    const itemInfoSeq = newItem[12] ?? '';
+    const itemExtensions = generateItemExtension(newItem[13]);
+
+    const itemBodySite = newItem[14] ?? null;
+    const itemQTYType = newItem[15] ?? null;
+
+    // Add ICD to global ICD array
+    arrayofLineItems.push(
+        [
+            seqID,
+            itemICD,
+            itemDesc,
+            itemQTY,
+            itemUnitPrice,
+            itemFactor,
+            itemNetPrice,
+            itemServdDateFrom,
+            itemServdDateTo,
+            itemNphiesCode,
+            itemServiceCode,
+            itemCareTeam,
+            itemInfoSeq,
+            itemExtensions,
+            itemBodySite,
+            itemQTYType
+        ]
+    );
+    renderItemsList(true);
 }
 
-function generateItemExtension(ex) {
+function generateItemExtension(ex, extracted) {
     let htmlContent = '';
+    let itemTitle;
+    let extractedValue;
 
     ex.forEach(item => {
-        const itemTitle = item.url.substring(item.url.lastIndexOf('/') + 1).replace('extension-', '');
-        let extractedValue = '';
-        // Find the dynamic key (the one that is not 'url')
-        const dynamicKey = Object.keys(item).find(key => key !== 'url');
 
-        if (dynamicKey) {
-            const rawValue = item[dynamicKey];
+        if (extracted) {
+            itemTitle = item.url.substring(item.url.lastIndexOf('/') + 1).replace('extension-', '');
+            extractedValue = '';
+            // Find the dynamic key (the one that is not 'url')
+            const dynamicKey = Object.keys(item).find(key => key !== 'url');
 
-            // Check if the value is an object (like valueMoney or valueIdentifier)
-            if (typeof rawValue === 'object' && rawValue !== null) {
-                // Extract the nested 'value'
-                extractedValue = rawValue.value !== undefined ? rawValue.value : '';
-            } else {
-                // If it's a primitive (like boolean or string), convert directly to string
-                extractedValue = String(rawValue);
+            if (dynamicKey) {
+                const rawValue = item[dynamicKey];
+
+                // Check if the value is an object (like valueMoney or valueIdentifier)
+                if (typeof rawValue === 'object' && rawValue !== null) {
+                    // Extract the nested 'value'
+                    extractedValue = rawValue.value !== undefined ? rawValue.value : '';
+                } else {
+                    // If it's a primitive (like boolean or string), convert directly to string
+                    extractedValue = String(rawValue);
+                }
             }
+        } else { // added
+
         }
 
         // 3. Construct the HTML template
@@ -1037,6 +1081,7 @@ function renderICDList(isDeleteActive) {
                 showToast('You should keep at least one ICD code.', 'warning');
             } else {
                 arrayofICD.splice(index, 1); // remove this item from the array
+                showToast('Make sure the ICD you deleted is not linked to any line item!', 'warning');
                 renderICDList(true);
             }
         });

@@ -34,64 +34,80 @@
     <!-- Modal for add Item -->
     <div class="modal fade" id="newItemModal" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
+            <form id="addItemForm" class="modal-content needs-validation" novalidate>
                 <div class="modal-header">
                     <h5 class="modal-title">Add Line Item</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Modal body text goes here.</p>
+                    <div class="row">
+                        <div class="col">
+                            <label for="newItemICDInput" class="form-label text-secondary">ICD</label>
+                            <select class="form-select selectpicker" id="icdSelect" data-live-search="true">
+                                <!-- options will be injected here -->
+                            </select>
+                            <div class="invalid-feedback">
+                                Please Select a Valid Nphies Code.
+                            </div>
+                        </div>
+                        <div class="col">
+                            <label for="newNphiesCodeInput" class="form-label text-secondary">Nphies Code</label>
+                            <input type="text" class="form-control" id="newNphiesCodeInput"
+                                aria-describedby="basic-addon3 basic-addon4" required>
+                            <div class="invalid-feedback">
+                                Please Enter a Valid Nphies Code.
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary">Save</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 
     <!-- Modal for add ICD -->
     <div class="modal fade" id="newICDModal" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form id="addICDForm" class="needs-validation" novalidate>
-                    <div class="modal-header">
-                        <h5 class="modal-title">Add ICD Code</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col">
-                                <label for="newICDCodeInput" class="form-label text-secondary">ICD-10 Code</label>
-                                <input type="text" class="form-control" id="newICDCodeInput"
-                                    aria-describedby="basic-addon3 basic-addon4" required>
-                                <div class="invalid-feedback">
-                                    Please Enter the ICD Code.
-                                </div>
-                            </div>
-                            <div class="col">
-                                <label for="newICDTypeInput" class="form-label text-secondary">Type</label>
-                                <select id="newICDTypeInput" required class="form-select" aria-label="principal">
-                                    <option selected value="principal">Principal</option>
-                                    <option value="secondary">Secondary</option>
-                                    <option value="admitting">Admitting</option>
-                                    <option value="discharge">Discharge</option>
-                                    <option value="differential">Differential</option>
-                                </select>
-                            </div>
-                            <div class="col">
-                                <label for="newICDAdmissInput" class="form-label text-secondary">Type</label>
-                                <select id="newICDAdmissInput" required class="form-select" aria-label="principal">
-                                    <option selected value="n">No</option>
-                                    <option value="y">Yes</option>
-                                </select>
+            <form id="addICDForm" class="modal-content needs-validation" novalidate>
+                <div class="modal-header">
+                    <h5 class="modal-title">Add ICD Code</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col">
+                            <label for="newICDCodeInput" class="form-label text-secondary">ICD-10 Code</label>
+                            <input type="text" class="form-control" id="newICDCodeInput"
+                                aria-describedby="basic-addon3 basic-addon4" required>
+                            <div class="invalid-feedback">
+                                Please Enter the ICD Code.
                             </div>
                         </div>
+                        <div class="col">
+                            <label for="newICDTypeInput" class="form-label text-secondary">Type</label>
+                            <select id="newICDTypeInput" required class="form-select" aria-label="principal">
+                                <option selected value="principal">Principal</option>
+                                <option value="secondary">Secondary</option>
+                                <option value="admitting">Admitting</option>
+                                <option value="discharge">Discharge</option>
+                                <option value="differential">Differential</option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <label for="newICDAdmissInput" class="form-label text-secondary">Type</label>
+                            <select id="newICDAdmissInput" required class="form-select" aria-label="principal">
+                                <option selected value="n">No</option>
+                                <option value="y">Yes</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Add</button>
-                    </div>
-                </form>
-            </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -484,9 +500,9 @@
                                                 class="ph-bold ph-plus"></i>
                                         </button>
                                         <button id="editItemsBtn" class="btn btn-light btn-sm" data-bs-toggle="button">
-                                            <span>
+                                            <span class="icon-container">
                                                 <i class="ph-bold ph-pencil-simple icon-un-toggled"></i>
-                                                <!-- <i class="ph-bold ph-check icon-toggled"></i> -->
+                                                <i class="ph-bold ph-check icon-toggled"></i>
                                             </span>
                                         </button>
                                     </div>
