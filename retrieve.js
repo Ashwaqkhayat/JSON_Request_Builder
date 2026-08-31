@@ -615,6 +615,11 @@ function clearExtensionLists(el) {
     `;
 }
 
+function findItemICD(icdSeqNumber) {
+    let findICD = arrayofICD.find(i => i[0] === icdSeqNumber);
+    return findICD ?? null; // index 1 is the ICD code
+}
+
 function extractLineItems(x) {
     // Handle missing items data
     if (x === null || x.length == 0) {
@@ -627,8 +632,7 @@ function extractLineItems(x) {
     x.forEach((item, index) => {
         // Get item info
         const seqID = item.sequence ?? '';
-        let findICD = arrayofICD.find(i => i[0] === item.diagnosisSequence[0]);
-        const itemICD = findICD?.[1] ?? "Unknown"; // index 1 is the ICD code
+        const itemICD = findItemICD(item.diagnosisSequence[0]) ?? 'Unknown';
         const itemDesc = item.productOrService.coding[0].display ?? 'No Description';
         const itemQTY = item.quantity.value ?? '';
         const itemUnitPrice = item.unitPrice.value ?? '';
@@ -703,7 +707,7 @@ function renderItemsList(isDeleteActive) {
                         data-bs-toggle="collapse" data-bs-target="#${collapseId}"
                         aria-expanded="${isFirst ? 'true' : 'false'}" aria-controls="${collapseId}">
                         <span class="row-cell">${item[0]}</span>
-                        <span class="row-cell">${item[1]}</span>
+                        <span class="row-cell">${item[1][1]}</span>
                         <span class="row-cell">${item[2]}</span>
                         <span class="row-cell">${item[3]}</span>
                         <span class="row-cell">${item[4]}</span>
@@ -808,7 +812,7 @@ function addLineItem(newItem) {
 
     // Get item info
     const seqID = newItem[0];
-    const itemICD = newItem[1] ?? "Unknown"; // index 1 is the ICD code
+    const itemICD = newItem[1] ?? null; // index 1 is the ICD code
     const itemDesc = newItem[2] ?? 'No Description';
     const itemQTY = newItem[3] ?? '';
     const itemUnitPrice = newItem[4] ?? '';
@@ -1056,6 +1060,7 @@ function addNewICDCode(newIcd, newIcdType, newIcdAdm) {
 
     // Add ICD to global ICD array
     arrayofICD.push([icdSeq, icdCode, icdType, icdOnAdm]);
+    renderItemsList(false); // To reflect the new ICD changes
     renderICDList(true);
 }
 
@@ -1085,6 +1090,25 @@ function renderICDList(isDeleteActive) {
                 arrayofICD.splice(index, 1); // remove this item from the array
                 showToast('Make sure the ICD you deleted is not linked to any line item!', 'warning');
                 renderICDList(true);
+
+                // Reflect the changes on the line items linked to the deleted ICD
+                for (let i = 0; i < arrayofLineItems.length; i++) {
+                    if (arrayofLineItems[i][1][1] == icd[1]) {
+                        let newicd = findItemICD(arrayofLineItems[i][1][0]);
+                        if (newicd == null) {
+                            showToast(`Warning: Deleting ICD ${icd[1]} will set a random ICD for Item ${arrayofLineItems[i][0]}`, 'warning');
+                            arrayofLineItems[i][1] = arrayofICD[0];
+                            console.log('ICD random', arrayofLineItems[i][1][1]);
+                            console.log('ICD random', arrayofICD[0]);
+                        } else {
+                            arrayofLineItems[i][1] = newicd;
+                            console.log('ICD changed', arrayofLineItems[i][1][1]);
+                        }
+                        console.log("Match found:");
+                        break;
+                    }
+                }
+                renderItemsList(false); // To reflect the new ICD changes
             }
         });
 
@@ -1377,6 +1401,7 @@ function showToast(message, variant = "danger") {
     toastEl.setAttribute("role", "alert");
     toastEl.setAttribute("aria-live", "assertive");
     toastEl.setAttribute("aria-atomic", "true");
+    toastEl.setAttribute("data-bs-delay", "10000");
 
     toastEl.innerHTML = `
         <div class="d-flex">
