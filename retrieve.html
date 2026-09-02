@@ -32,7 +32,8 @@
     </div>
 
     <!-- Modal for add Item -->
-    <div class="modal fade" id="newItemModal" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
+    <div class="modal fade" id="newItemModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="modal-title" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <form id="addItemForm" class="modal-content needs-validation" novalidate>
                 <div class="modal-header">
@@ -43,7 +44,7 @@
                     <div class="row mb-3">
                         <div class="col-3">
                             <label for="newItemICDInput" class="form-label text-secondary">ICD</label>
-                            <select class="form-select selectpicker" id="icdSelect" required>
+                            <select class="form-select" id="newItemICDInput" required>
                                 <option selected disabled value="">Loading...</option>
                             </select>
                             <div class="invalid-feedback">
@@ -71,16 +72,38 @@
                                 aria-describedby="basic-addon3 basic-addon4">
                         </div>
                         <div class="col">
-                            <label for="newItemQtyInput" class="form-label text-secondary">QTY</label>
-                            <input type="text" class="form-control" id="newItemQtyInput"
-                                aria-describedby="basic-addon3 basic-addon4" value="1" required>
+                            <label for="newSDateFromInput" class="form-label text-secondary">Serviced Date/From</label>
+                            <input type="date" class="form-control" id="newSDateFromInput" required>
+                            <div class="invalid-feedback">
+                                Please select serviced date.
+                            </div>
+                        </div>
+                        <div class="col">
+                            <label for="newSDateToInput" class="form-label text-secondary">Serviced Date To</label>
+                            <input type="date" class="form-control" id="newSDateToInput"
+                                aria-describedby="basic-addon3 basic-addon4">
+                            <div class="invalid-feedback">
+                                Please select serviced date to if applicable.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label for="newItemQtyInput" class="form-label text-secondary">QTY & Type</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="newItemQtyInput" value="1" required>
+                                <select class="form-select" id="newItemQTYTypeInput" required>
+                                    <option selected value="package">Package</option>
+                                    <option value="unit">Unit</option>
+                                </select>
+                            </div>
                             <div class="invalid-feedback">
                                 Please enter valid Quantity.
                             </div>
                         </div>
                         <div class="col">
                             <label for="newItemUPriceInput" class="form-label text-secondary">Unit Price</label>
-                            <input type="text" class="form-control" id="newItemUPriceInput"
+                            <input type="number" class="form-control" id="newItemUPriceInput"
                                 aria-describedby="basic-addon3 basic-addon4" value="1.00" required>
                             <div class="invalid-feedback">
                                 Please enter valid Unit Price.
@@ -88,25 +111,83 @@
                         </div>
                         <div class="col">
                             <label for="newItemFactInput" class="form-label text-secondary">Factor</label>
-                            <input type="text" class="form-control" id="newItemFactInput"
+                            <input type="number" class="form-control" id="newItemFactInput"
                                 aria-describedby="basic-addon3 basic-addon4" value="1" required>
                             <div class="invalid-feedback">
                                 Please enter valid factor value.
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col">
-                            <label for="newSDateFromInput" class="form-label text-secondary">Serviced Date From</label>
-                            <input type="date" class="form-control" id="newSDateFromInput"
-                                aria-describedby="basic-addon3 basic-addon4" required>
+                    <div class="row mb-3">
+                        <div class="col-3">
+                            <label for="newCareTeamInput" class="form-label text-secondary">Care Team</label>
+                            <input type="text" class="form-control" id="newCareTeamInput"
+                                aria-describedby="basic-addon3 basic-addon4" placeholder="1, 2, ...">
                             <div class="invalid-feedback">
-                                Please select serviced date.
+                                Please enter the sequence number(s) for the linked care team members.
+                            </div>
+                        </div>
+                        <div class="col">
+                            <label for="newInfoSeqInput" class="form-label text-secondary">Information Seq</label>
+                            <input type="text" class="form-control" id="newInfoSeqInput"
+                                aria-describedby="basic-addon3 basic-addon4" placeholder="1, 2, ...">
+                            <div class="invalid-feedback">
+                                Please enter the sequence number(s) for the linked supporting information.
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <label for="newItemBodySiteInput" class="form-label text-secondary">Body Site</label>
+                            <input type="number" class="form-control" id="newItemBodySiteInput">
+                            <div class="invalid-feedback">
+                                Please enter a valid tooth number.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <h6 class="mb-3">Extensions</h6>
+                        <div class="col">
+                            <label for="newItemPatientShareInput" class="form-label text-secondary">Patient
+                                Share</label>
+                            <input type="number" class="form-control" id="newItemPatientShareInput"
+                                aria-describedby="basic-addon3 basic-addon4">
+                            <div class="invalid-feedback">
+                                Please enter valid patient share amount in SAR.
+                            </div>
+                        </div>
+                        <div class="col">
+                            <label for="newItemPatientInvInput" class="form-label text-secondary">Patient
+                                Invoice</label>
+                            <input type="text" class="form-control" id="newItemPatientInvInput"
+                                aria-describedby="basic-addon3 basic-addon4">
+                            <div class="invalid-feedback">
+                                Please enter valid patient invoice value.
+                            </div>
+                        </div>
+                        <div class="col">
+                            <label for="newItemTaxInput" class="form-label text-secondary">Tax</label>
+                            <input type="number" class="form-control" id="newItemTaxInput">
+                            <div class="invalid-feedback">
+                                Please enter valid tax value.
+                            </div>
+                        </div>
+                        <div class="col align-content-end">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="true" id="newItemMaternity">
+                                <label class="form-check-label" for="newItemMaternity">
+                                    Maternity
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="true" id="newItemPackage">
+                                <label class="form-check-label" for="newItemPackage">
+                                    Package
+                                </label>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary">Save</button>
                 </div>
             </form>

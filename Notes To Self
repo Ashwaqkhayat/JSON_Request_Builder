@@ -8,7 +8,7 @@
 
 
 // ✅ Render >> Loop through the array and generate the HTML el and append it
-// Also add the eventlistener to the delete button which will also call the render
+// ✅ Also add the eventlistener to the delete button which will also call the render
 
 
 // Add New >> get the values and push them into the array + render the items list again

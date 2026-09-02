@@ -145,7 +145,7 @@ const editICDBtn = el('editICDBtn');
 const editItemsBtn = el('editItemsBtn');
 const itemDelButtonSpace = elc('itemDelButtonSpace');
 const newItemModal = el('newItemModal');
-const icdSelect = el('icdSelect');
+const newItemICDInput = el('newItemICDInput');
 
 // Values Storage ====================================================
 // To store all the extracted values
@@ -881,7 +881,8 @@ function generateItemExtension(ex, extracted) {
                 }
             }
         } else { // added
-
+            itemTitle = item[0]; //the title
+            extractedValue = item[1]; //the value input
         }
 
         // 3. Construct the HTML template
@@ -1453,6 +1454,10 @@ editICDBtn.addEventListener('click', () => {
 editItemsBtn.addEventListener('click', () => {
     // Bootstrap 'active' class is added AFTER the click event fires in some versions,
     // so check state right after
+
+    const servDateFrom = el('newSDateFromInput');
+    servDateFrom.value = new Date().toISOString().slice(0, 10);
+
     setTimeout(() => {
         if (editItemsBtn.classList.contains('active')) {
             itemDelButtonSpace[0].hidden = false;
@@ -1482,6 +1487,15 @@ editItemsBtn.addEventListener('click', () => {
 
 });
 
+newItemModal.addEventListener('hidden.bs.modal', function () {
+    // Find the form inside the modal and reset it
+    const form = newItemModal.querySelector('form');
+    if (form) {
+        form.reset();
+        form.classList.remove('was-validated');
+    }
+});
+
 // Form Validations =========================================
 function setupValidatedForm(formId, onValidSubmit) {
     const form = document.getElementById(formId)
@@ -1499,6 +1513,9 @@ function setupValidatedForm(formId, onValidSubmit) {
         onValidSubmit(form, event)
         form.classList.remove('was-validated')
     })
+
+    form.addEventListener('', event => {
+    })
 }
 
 setupValidatedForm('addICDForm', (form) => {
@@ -1511,6 +1528,65 @@ setupValidatedForm('addICDForm', (form) => {
 })
 
 setupValidatedForm('addItemForm', (form) => {
+    // item[0=seqID, 1=itemICD, 2=itemDesc, 3=itemQTY, 4=itemUnitPrice, 5=itemFactor
+    // 6=itemNetPrice, 7=itemServdDateFrom, 8=itemServdDateTo, 9=itemNphiesCode,
+    // 10= itemServiceCode, 11=itemCareTeam, 12=itemInfoSeq, 13=itemExtensions
+    // 14= itemBodySite, 15=itemQTYType]
+
+    // Get item info
+    const seqID = arrayofLineItems.length + 1;
+    const itemICD = form.querySelector('#newItemICDInput').value;
+    const itemDesc = form.querySelector('#newServDescInput').value;
+    const itemQTY = form.querySelector('#newItemQtyInput').value ?? 1;
+    const itemUnitPrice = form.querySelector('#newItemUPriceInput').value ?? 1;
+    const itemFactor = form.querySelector('#newItemFactInput').value ?? 1;
+    const itemNetPrice = itemUnitPrice * itemQTY * itemFactor ?? 1;
+    const itemServdDateFrom = form.querySelector('#newSDateFromInput').value ?? null;
+    const itemServdDateTo = form.querySelector('#newSDateToInput').value ?? null;
+
+    const itemNphiesCode = form.querySelector('#newNphiesCodeInput').value ?? '';
+    const itemServiceCode = form.querySelector('#newServCodeInput').value ?? '';
+
+    const itemCareTeam = form.querySelector('#newCareTeamInput').value ?? '';
+    const itemInfoSeq = form.querySelector('#newInfoSeqInput').value ?? '';
+    // generateItemExtension(ex, extracted)
+    const itemExtensions = generateItemExtension(
+        [
+            ['Patient Share', form.querySelector('#newItemPatientShareInput').value ?? ''],
+            ['Patient Invoice', form.querySelector('#newItemPatientInvInput').value ?? ''],
+            ['Tax', form.querySelector('#newItemTaxInput').value ?? ''],
+            ['Maternity', form.querySelector('#newItemMaternity').value ?? false],
+            ['Package', form.querySelector('#newItemPackage').value ?? false]
+        ]
+        , false);
+
+    const itemBodySite = form.querySelector('#newItemQTYTypeInput').value ?? null;
+    const itemQTYType = form.querySelector('#newItemBodySiteInput').value ?? 'Package';
+
+    arrayofLineItems.push(
+        [
+            seqID,
+            itemICD,
+            itemDesc,
+            itemQTY,
+            itemUnitPrice,
+            itemFactor,
+            itemNetPrice,
+            itemServdDateFrom,
+            itemServdDateTo,
+            itemNphiesCode,
+            itemServiceCode,
+            itemCareTeam,
+            itemInfoSeq,
+            itemExtensions,
+            itemBodySite,
+            itemQTYType
+        ]
+    );
+    renderItemsList(true);
+
+    console.log("new Item: ", arrayofLineItems[arrayofLineItems.length - 1]);
+
     bootstrap.Modal.getInstance(document.getElementById('newItemModal')).hide();
     form.reset();
 })
@@ -1522,13 +1598,13 @@ newItemModal.addEventListener('shown.bs.modal', function () {
 });
 
 function loadICDList() {
-    icdSelect.innerHTML = '<option selected disabled value="">Select ICD</option>';
+    newItemICDInput.innerHTML = '<option selected disabled value="">Select ICD</option>';
 
     arrayofICD.forEach(icd => {
         const option = document.createElement('option');
         option.value = icd[0];
         option.textContent = icd[1];
-        icdSelect.appendChild(option);
+        newItemICDInput.appendChild(option);
     });
 }
 
