@@ -1,7 +1,4 @@
 // ✅ Fix the Type and Subtype changes
-// Implement the Bundle & Timestamp refresh
-// Implement the Related & prauthRef fields
-
 
 // ✅ Extract >> Just extract the info and push into the array
 // Then call RenderFunc
@@ -11,8 +8,9 @@
 // ✅ Also add the eventlistener to the delete button which will also call the render
 
 
-// Add New >> get the values and push them into the array + render the items list again
+// ✅ Add New >> get the values and push them into the array + render the items list again
 
+// TODO: 
 // Bind the items list to update the JSON
 
 // Complete the list of Extensions
@@ -20,3 +18,9 @@
 // Add new supporting info thing
 
 // The submit function
+
+// Implement the Bundle & Timestamp refresh
+
+// Implement the Related & prauthRef fields
+
+// The request details

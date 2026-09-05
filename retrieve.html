@@ -54,22 +54,20 @@
                         <div class="col">
                             <label for="newServDescInput" class="form-label text-secondary">Service Description</label>
                             <input type="text" class="form-control" id="newServDescInput"
-                                aria-describedby="basic-addon3 basic-addon4" placeholder="Random Description">
+                                placeholder="Random Description">
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col">
                             <label for="newNphiesCodeInput" class="form-label text-secondary">Nphies Code</label>
-                            <input type="text" class="form-control" id="newNphiesCodeInput"
-                                aria-describedby="basic-addon3 basic-addon4" required>
+                            <input type="text" class="form-control" id="newNphiesCodeInput" required>
                             <div class="invalid-feedback">
                                 Please enter a valid Nphies Code.
                             </div>
                         </div>
                         <div class="col">
                             <label for="newServCodeInput" class="form-label text-secondary">Service Code</label>
-                            <input type="text" class="form-control" id="newServCodeInput"
-                                aria-describedby="basic-addon3 basic-addon4">
+                            <input type="text" class="form-control" id="newServCodeInput" >
                         </div>
                         <div class="col">
                             <label for="newSDateFromInput" class="form-label text-secondary">Serviced Date/From</label>
@@ -80,10 +78,9 @@
                         </div>
                         <div class="col">
                             <label for="newSDateToInput" class="form-label text-secondary">Serviced Date To</label>
-                            <input type="date" class="form-control" id="newSDateToInput"
-                                aria-describedby="basic-addon3 basic-addon4">
+                            <input type="date" class="form-control datepicker" id="newSDateToInput">
                             <div class="invalid-feedback">
-                                Please select serviced date to if applicable.
+                                Serviced Date To cannot be earlier than Serviced Date From.
                             </div>
                         </div>
                     </div>
@@ -103,16 +100,15 @@
                         </div>
                         <div class="col">
                             <label for="newItemUPriceInput" class="form-label text-secondary">Unit Price</label>
-                            <input type="number" class="form-control" id="newItemUPriceInput"
-                                aria-describedby="basic-addon3 basic-addon4" value="1.00" required>
+                            <input type="number" class="form-control" id="newItemUPriceInput" step="any"
+                                value="5.00" required>
                             <div class="invalid-feedback">
                                 Please enter valid Unit Price.
                             </div>
                         </div>
                         <div class="col">
                             <label for="newItemFactInput" class="form-label text-secondary">Factor</label>
-                            <input type="number" class="form-control" id="newItemFactInput"
-                                aria-describedby="basic-addon3 basic-addon4" value="1" required>
+                            <input type="number" class="form-control" id="newItemFactInput" value="1" step="any" required>
                             <div class="invalid-feedback">
                                 Please enter valid factor value.
                             </div>
@@ -144,7 +140,7 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <h6 class="mb-3">Extensions</h6>
+                        <h6 class="mb-2">Extensions</h6>
                         <div class="col">
                             <label for="newItemPatientShareInput" class="form-label text-secondary">Patient
                                 Share</label>
@@ -172,13 +168,13 @@
                         </div>
                         <div class="col align-content-end">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="true" id="newItemMaternity">
+                                <input class="form-check-input" type="checkbox" id="newItemMaternity">
                                 <label class="form-check-label" for="newItemMaternity">
                                     Maternity
                                 </label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="true" id="newItemPackage">
+                                <input class="form-check-input" type="checkbox" id="newItemPackage">
                                 <label class="form-check-label" for="newItemPackage">
                                     Package
                                 </label>
@@ -206,11 +202,8 @@
                     <div class="row">
                         <div class="col">
                             <label for="newICDCodeInput" class="form-label text-secondary">ICD-10 Code</label>
-                            <input type="text" class="form-control" id="newICDCodeInput"
-                                aria-describedby="basic-addon3 basic-addon4" required>
-                            <div class="invalid-feedback">
-                                Please Enter the ICD Code.
-                            </div>
+                            <input type="text" class="form-control" id="newICDCodeInput" autocapitalize="characters" required>
+                            <div class="invalid-feedback">Please Enter the ICD Code.</div>
                         </div>
                         <div class="col">
                             <label for="newICDTypeInput" class="form-label text-secondary">Type</label>
@@ -223,8 +216,8 @@
                             </select>
                         </div>
                         <div class="col">
-                            <label for="newICDAdmissInput" class="form-label text-secondary">Type</label>
-                            <select id="newICDAdmissInput" required class="form-select" aria-label="principal">
+                            <label for="newICDAdmissInput" class="form-label text-secondary">On Admission</label>
+                            <select id="newICDAdmissInput" required class="form-select" aria-label="On Admission">
                                 <option selected value="n">No</option>
                                 <option value="y">Yes</option>
                             </select>

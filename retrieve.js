@@ -146,6 +146,8 @@ const editItemsBtn = el('editItemsBtn');
 const itemDelButtonSpace = elc('itemDelButtonSpace');
 const newItemModal = el('newItemModal');
 const newItemICDInput = el('newItemICDInput');
+const newSDateFromInput = el('newSDateFromInput');
+const newSDateToInput = el('newSDateToInput');
 
 // Values Storage ====================================================
 // To store all the extracted values
@@ -616,13 +618,13 @@ function clearExtensionLists(el) {
 }
 
 function findItemICD(icdSeqNumber) {
-    let findICD = arrayofICD.find(i => i[0] === icdSeqNumber);
+    let findICD = arrayofICD.find(i => i[0] == icdSeqNumber);
     return findICD ?? null; // index 1 is the ICD code
 }
 
 function extractLineItems(x) {
     // Handle missing items data
-    if (x === null || x.length == 0) {
+    if (x == null || x.length == 0) {
         showToast('Items array is empty or not found.', 'danger');
         // Show empty state
         clearItemsLists();
@@ -652,7 +654,7 @@ function extractLineItems(x) {
         const itemBodySite = item.bodySite?.coding[0].code ?? null;
         const itemQTYType = item.quantity.code ?? null;
 
-        const itemExtensions = generateItemExtension(item.extension, true);
+        const itemExtensions = extractItemExtension(item.extension, true);
 
         arrayofLineItems.push(
             [
@@ -723,51 +725,51 @@ function renderItemsList(isDeleteActive) {
                             <div class="col px-2">
                                 <label for="nphiesCode-${index}" class="form-label itemLabel">Nphies Code</label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="nphiesCode-${index}" value="${item[9]}" aria-describedby="basic-addon3 basic-addon4">
+                                    <input type="text" class="form-control" id="nphiesCode-${index}" value="${item[9]}" readonly>
                                 </div>
                             </div>
                             <div class="col px-2">
                                 <label for="serviceCode-${index}" class="form-label itemLabel">Service Code</label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="serviceCode-${index}" value="${item[10]}" aria-describedby="basic-addon3 basic-addon4">
+                                    <input type="text" class="form-control" id="serviceCode-${index}" value="${item[10]}" readonly>
                                 </div>
                             </div>
                             <div class="col px-2">
                                 <label for="careTeam-${index}" class="form-label itemLabel">Care Team</label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="careTeam-${index}" value="${item[11]}" aria-describedby="basic-addon3 basic-addon4">
+                                    <input type="text" class="form-control" id="careTeam-${index}" value="${item[11]}" readonly>
                                 </div>
                             </div>
                             <div class="col px-2">
                                 <label for="servFrom-${index}" class="form-label itemLabel">Serviced From</label>
                                 <div class="input-group">
-                                    <input type="date" class="form-control" id="servFrom-${index}" value=${item[7]} aria-describedby="basic-addon3 basic-addon4">
+                                    <input type="date" class="form-control" id="servFrom-${index}" value="${item[7]}" readonly>
                                 </div>
                             </div>
                             <div class="col px-2">
                                 <label for="servTo-${index}" class="form-label itemLabel">Serviced To</label>
                                 <div class="input-group">
-                                    <input type="date" class="form-control" id="servTo-${index}" value=${item[8]} aria-describedby="basic-addon3 basic-addon4" disabled="${item[8] !== "" ? false : true}">
+                                    <input type="date" class="form-control" id="servTo-${index}" value="${item[8]}" readonly>
                                 </div>
                             </div>
                             <div class="col-3 px-2">
                                 <label for="info-${index}" class="form-label itemLabel">Information</label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="info-${index}" value="${item[12]}" aria-describedby="basic-addon3 basic-addon4">
+                                    <input type="text" class="form-control" id="info-${index}" value="${item[12]}" readonly>
                                 </div>
                             </div>
                         </div>
-                        <div class="row row-gap-3 mt-2" ${(item[14] == null && item[15] == null) ? "hidden" : ''}>
-                            <div class="col-auto px-2" ${item[15] == null ? "hidden" : ''}>
+                        <div class="row row-gap-3 mt-2" ${(checkNullOrEmpty(item[14]) && checkNullOrEmpty(item[15])) ? "hidden" : ''}>
+                            <div class="col-auto px-2" ${checkNullOrEmpty(item[15]) ? "hidden" : ''}>
                                 <label for="QTYType-${index}" class="form-label itemLabel">QTY Type</label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="QTYType-${index}" value="${item[15]}" aria-describedby="basic-addon3 basic-addon4">
+                                    <input type="text" class="form-control" id="QTYType-${index}" value="${item[15]}" readonly>
                                 </div>
                             </div>
-                            <div class="col-auto px-2" ${item[14] == null ? "hidden" : ''}>
+                            <div class="col-auto px-2" ${checkNullOrEmpty(item[14]) ? "hidden" : ''}>
                                 <label for="bodySite-${index}" class="form-label itemLabel">Body Site</label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="bodySite-${index}" value="${item[14]}" aria-describedby="basic-addon3 basic-addon4">
+                                    <input type="text" class="form-control" id="bodySite-${index}" value="${item[14]}" readonly>
                                 </div>
                             </div>
                         </div>
@@ -775,7 +777,7 @@ function renderItemsList(isDeleteActive) {
                             <div class="col px-2 text-nowrap" style="flex-grow: 0;">
                                 <p class="text-secondary mb-0">Extensions</p>
                             </div>
-                            ${item[13]}
+                            ${generateItemExtHTML(item[13])}
                         </div>
                     </div>
                 </div>
@@ -804,72 +806,24 @@ function renderItemsList(isDeleteActive) {
     itemDelButtonSpace[1].hidden = !isDeleteActive;
 }
 
-function addLineItem(newItem) {
-    // item[0=seqID, 1=itemICD, 2=itemDesc, 3=itemQTY, 4=itemUnitPrice, 5=itemFactor
-    // 6=itemNetPrice, 7=itemServdDateFrom, 8=itemServdDateTo, 9=itemNphiesCode,
-    // 10= itemServiceCode, 11=itemCareTeam, 12=itemInfoSeq, 13=itemExtensions
-    // 14= itemBodySite, 15=itemQTYType]
-
-    // Get item info
-    const seqID = newItem[0];
-    const itemICD = newItem[1] ?? null; // index 1 is the ICD code
-    const itemDesc = newItem[2] ?? 'No Description';
-    const itemQTY = newItem[3] ?? '';
-    const itemUnitPrice = newItem[4] ?? '';
-    const itemFactor = newItem[5] ?? 1;
-    const itemNetPrice = newItem[6] ?? '';
-    const itemServdDateFrom = newItem[7] ?? null;
-    const itemServdDateTo = newItem[8] ?? '';
-
-    const itemNphiesCode = newItem[9] ?? '';
-    const itemServiceCode = newItem[10] ?? '';
-
-    const itemCareTeam = newItem[11] ?? '';
-    const itemInfoSeq = newItem[12] ?? '';
-    const itemExtensions = generateItemExtension(newItem[13]);
-
-    const itemBodySite = newItem[14] ?? null;
-    const itemQTYType = newItem[15] ?? null;
-
-    // Add ICD to global ICD array
-    arrayofLineItems.push(
-        [
-            seqID,
-            itemICD,
-            itemDesc,
-            itemQTY,
-            itemUnitPrice,
-            itemFactor,
-            itemNetPrice,
-            itemServdDateFrom,
-            itemServdDateTo,
-            itemNphiesCode,
-            itemServiceCode,
-            itemCareTeam,
-            itemInfoSeq,
-            itemExtensions,
-            itemBodySite,
-            itemQTYType
-        ]
-    );
-    renderItemsList(true);
+function checkNullOrEmpty(x) {
+    return (x == null || x == '' || x.length < 1)
 }
 
-function generateItemExtension(ex, extracted) {
-    let htmlContent = '';
+function extractItemExtension(ex, extracted) {
     let itemTitle;
     let extractedValue;
+    let itemExtensions = [];
 
-    ex.forEach(item => {
-
+    for (let i = 0; i < ex.length; i++) {
         if (extracted) {
-            itemTitle = item.url.substring(item.url.lastIndexOf('/') + 1).replace('extension-', '');
+            itemTitle = ex[i].url.substring(ex[i].url.lastIndexOf('/') + 1).replace('extension-', '');
             extractedValue = '';
             // Find the dynamic key (the one that is not 'url')
-            const dynamicKey = Object.keys(item).find(key => key !== 'url');
+            const dynamicKey = Object.keys(ex[i]).find(key => key !== 'url');
 
             if (dynamicKey) {
-                const rawValue = item[dynamicKey];
+                const rawValue = ex[i][dynamicKey];
 
                 // Check if the value is an object (like valueMoney or valueIdentifier)
                 if (typeof rawValue === 'object' && rawValue !== null) {
@@ -880,20 +834,42 @@ function generateItemExtension(ex, extracted) {
                     extractedValue = String(rawValue);
                 }
             }
-        } else { // added
-            itemTitle = item[0]; //the title
-            extractedValue = item[1]; //the value input
+        } else { // item is added manually not extracted
+            if (checkNullOrEmpty(ex[i][1])) { continue; }
+            itemTitle = ex[i][0]; //the title
+            extractedValue = ex[i][1]; //the value input
         }
 
-        // 3. Construct the HTML template
+        itemExtensions.push([itemTitle, extractedValue])
+    }
+
+    return itemExtensions;
+}
+
+function generateItemExtHTML(extensions) {
+    let htmlContent = '';
+
+    // extensions = [[title, val], [title, val], [title, val]]
+
+    if (extensions.length < 1) { // Empty State
         htmlContent += `
-        <div class="col-auto px-2 text-nowrap" style="max-width: 300px; overflow: hidden;">
-            <div class="itemExt-badge">
-                <span>${itemTitle}</span>
-                <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${extractedValue}</span>
-            </div>
-        </div>`;
-    });
+            <div class="col-auto px-2 text-nowrap" style="overflow: hidden;">
+                <div class="itemExt-badge">
+                    <span>No Extensions</span>
+                </div>
+            </div>`;
+    } else {
+        extensions.forEach(ex => {
+            // ex = [itemTitle, extractedValue]
+            htmlContent += `
+                <div class="col-auto px-2 text-nowrap" style="max-width: 300px; overflow: hidden;">
+                    <div class="itemExt-badge">
+                        <span>${ex[0]}</span>
+                        <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${ex[1]}</span>
+                    </div>
+                </div>`;
+        })
+    }
 
     return htmlContent;
 }
@@ -1071,6 +1047,7 @@ function renderICDList(isDeleteActive) {
     arrayofICD.forEach((icd, index) => {
         const newICDRow = document.createElement('tr');
 
+        // [icdSeq, icdCode, icdType, icdOnAdm]
         newICDRow.innerHTML = `
             <th class="text-secondary fw-normal align-middle" scope="row">${icd[0]}</th>
             <td><input readonly class="form-control" value="${icd[1]}"></td>
@@ -1099,13 +1076,9 @@ function renderICDList(isDeleteActive) {
                         if (newicd == null) {
                             showToast(`Warning: Deleting ICD ${icd[1]} will set a random ICD for Item ${arrayofLineItems[i][0]}`, 'warning');
                             arrayofLineItems[i][1] = arrayofICD[0];
-                            console.log('ICD random', arrayofLineItems[i][1][1]);
-                            console.log('ICD random', arrayofICD[0]);
                         } else {
                             arrayofLineItems[i][1] = newicd;
-                            console.log('ICD changed', arrayofLineItems[i][1][1]);
                         }
-                        console.log("Match found:");
                         break;
                     }
                 }
@@ -1219,7 +1192,7 @@ function extractBenifitiaryGender(x) {
 }
 
 function extractInsurerData(resource) {
-    if (!resource || resource === null) {
+    if (!resource || resource == null) {
         showToast('Error: could not extract Insurer data', 'danger');
     } else {
         try {
@@ -1235,7 +1208,7 @@ function extractInsurerData(resource) {
 }
 
 function extractProviderData(resource) {
-    if (!resource || resource === null) {
+    if (!resource || resource == null) {
         showToast('Error: could not extract Provider data', 'danger');
     } else {
         try {
@@ -1455,9 +1428,6 @@ editItemsBtn.addEventListener('click', () => {
     // Bootstrap 'active' class is added AFTER the click event fires in some versions,
     // so check state right after
 
-    const servDateFrom = el('newSDateFromInput');
-    servDateFrom.value = new Date().toISOString().slice(0, 10);
-
     setTimeout(() => {
         if (editItemsBtn.classList.contains('active')) {
             itemDelButtonSpace[0].hidden = false;
@@ -1502,21 +1472,22 @@ function setupValidatedForm(formId, onValidSubmit) {
     if (!form) return
 
     form.addEventListener('submit', event => {
-        event.preventDefault()
-        event.stopPropagation()
+        // Custom validations:
+        validateItemServicedDate()
 
+        form.classList.add('was-validated')
+
+        event.preventDefault() // prevents native submit
         if (!form.checkValidity()) {
-            form.classList.add('was-validated')
+            event.stopPropagation()
             return
         }
 
         onValidSubmit(form, event)
         form.classList.remove('was-validated')
     })
-
-    form.addEventListener('', event => {
-    })
 }
+
 
 setupValidatedForm('addICDForm', (form) => {
     const newICDInput = form.querySelector('#newICDCodeInput');
@@ -1535,7 +1506,8 @@ setupValidatedForm('addItemForm', (form) => {
 
     // Get item info
     const seqID = arrayofLineItems.length + 1;
-    const itemICD = form.querySelector('#newItemICDInput').value;
+    const getICDVal = form.querySelector('#newItemICDInput').value;
+    const itemICD = findItemICD(getICDVal);
     const itemDesc = form.querySelector('#newServDescInput').value;
     const itemQTY = form.querySelector('#newItemQtyInput').value ?? 1;
     const itemUnitPrice = form.querySelector('#newItemUPriceInput').value ?? 1;
@@ -1549,19 +1521,18 @@ setupValidatedForm('addItemForm', (form) => {
 
     const itemCareTeam = form.querySelector('#newCareTeamInput').value ?? '';
     const itemInfoSeq = form.querySelector('#newInfoSeqInput').value ?? '';
-    // generateItemExtension(ex, extracted)
-    const itemExtensions = generateItemExtension(
+    const itemExtensions = extractItemExtension(
         [
-            ['Patient Share', form.querySelector('#newItemPatientShareInput').value ?? ''],
-            ['Patient Invoice', form.querySelector('#newItemPatientInvInput').value ?? ''],
-            ['Tax', form.querySelector('#newItemTaxInput').value ?? ''],
-            ['Maternity', form.querySelector('#newItemMaternity').value ?? false],
-            ['Package', form.querySelector('#newItemPackage').value ?? false]
+            ['Patient Share', form.querySelector('#newItemPatientShareInput').value],
+            ['Patient Invoice', form.querySelector('#newItemPatientInvInput').value],
+            ['Tax', form.querySelector('#newItemTaxInput').value],
+            ['Maternity', form.querySelector('#newItemMaternity').checked],
+            ['Package', form.querySelector('#newItemPackage').checked]
         ]
         , false);
 
-    const itemBodySite = form.querySelector('#newItemQTYTypeInput').value ?? null;
-    const itemQTYType = form.querySelector('#newItemBodySiteInput').value ?? 'Package';
+    const itemBodySite = form.querySelector('#newItemBodySiteInput').value ?? null;
+    const itemQTYType = form.querySelector('#newItemQTYTypeInput').value ?? 'Package';
 
     arrayofLineItems.push(
         [
@@ -1585,15 +1556,28 @@ setupValidatedForm('addItemForm', (form) => {
     );
     renderItemsList(true);
 
-    console.log("new Item: ", arrayofLineItems[arrayofLineItems.length - 1]);
 
     bootstrap.Modal.getInstance(document.getElementById('newItemModal')).hide();
     form.reset();
 })
 
+function validateItemServicedDate() {
+    const dateFromVal = newSDateFromInput.value
+    const dateToVal = newSDateToInput.value
+
+    if (dateFromVal && dateToVal && dateToVal < dateFromVal) {
+        newSDateToInput.setCustomValidity('Serviced Date To cannot be earlier than Serviced Date From')
+    } else {
+        newSDateToInput.setCustomValidity('')
+    }
+}
 
 // Load Dynamic Lists ======================================
 newItemModal.addEventListener('shown.bs.modal', function () {
+    // Set today's date as ServDate
+    newSDateFromInput.value = new Date().toISOString().slice(0, 10);
+
+    // Load the ICDs
     loadICDList();
 });
 
