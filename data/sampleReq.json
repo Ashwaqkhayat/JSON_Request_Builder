@@ -735,7 +735,9 @@
                         },
                         "servicedDate": "2023-12-04",
                         "quantity": {
-                            "value": 2
+                            "value": 2,
+                            "system": "http://unitsofmeasure.org",
+                            "code": "package"
                         },
                         "unitPrice": {
                             "value": 300,
@@ -744,6 +746,15 @@
                         "net": {
                             "value": 345,
                             "currency": "SAR"
+                        },
+                        "bodySite": {
+                            "coding": [
+                                {
+                                    "system": "http://nphies.sa/terminology/CodeSystem/fdi-oral-region",
+                                    "code": "13",
+                                    "display": "UPPER RIGHT; PERMANENT TEETH # 3"
+                                }
+                            ]
                         }
                     }
                 ],

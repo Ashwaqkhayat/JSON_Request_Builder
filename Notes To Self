@@ -1,17 +1,16 @@
 // ✅ Fix the Type and Subtype changes
-
 // ✅ Extract >> Just extract the info and push into the array
 // Then call RenderFunc
-
-
 // ✅ Render >> Loop through the array and generate the HTML el and append it
 // ✅ Also add the eventlistener to the delete button which will also call the render
-
-
 // ✅ Add New >> get the values and push them into the array + render the items list again
 
 // TODO: 
-// Bind the items list to update the JSON
+// Bind the items list to update the JSON (Fix that careSeq and InfoSeq are coming as strings in new items)
+
+// Implement the Bundle & Timestamp refresh
+
+// Implement the Related & prauthRef fields
 
 // Complete the list of Extensions
 
@@ -19,8 +18,8 @@
 
 // The submit function
 
-// Implement the Bundle & Timestamp refresh
-
-// Implement the Related & prauthRef fields
-
 // The request details
+
+// TODO: later improvments
+// Add the option to choose the service type (medication procedure ...etc)
+// Add the other preauth item extensions

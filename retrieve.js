@@ -1,3 +1,5 @@
+import { hi, buildClaimBody } from "./itemConstructor.js";
+
 const el = val => document.getElementById(val);
 const elc = val => document.getElementsByClassName(val);
 
@@ -165,6 +167,7 @@ let benefEntry = null;
 // Init ==============================================================
 window.addEventListener('load', () => {
     init();
+    hi() // TODO: DELETE
 });
 
 function init() {
@@ -237,22 +240,22 @@ requestBodyTxtArea.addEventListener('change', () => {
     // Extract data for Claim resource type ==============================
     entryOfInfo = getClaimResource();
     // Extract Req Category
-    extractedInfo = entryOfInfo?.identifier[0] ?? null;
+    extractedInfo = entryOfInfo?.identifier?.[0] ?? null;
     extractReqCat(extractedInfo);
 
     // Extract Claim ID
     extractClaimID(extractedInfo);
 
     // Extract Req Type
-    extractedInfo = entryOfInfo?.type.coding[0] ?? null;
+    extractedInfo = entryOfInfo?.type?.coding?.[0] ?? null;
     extractReqType(extractedInfo);
 
     // Extract Req Subtype
-    extractedInfo = entryOfInfo?.subType.coding[0] ?? null;
+    extractedInfo = entryOfInfo?.subType?.coding?.[0] ?? null;
     extractReqSubtype(extractedInfo);
 
     // Extract Req Priority
-    extractedInfo = entryOfInfo?.priority.coding[0] ?? null;
+    extractedInfo = entryOfInfo?.priority?.coding?.[0] ?? null;
     extractReqPriority(extractedInfo);
 
     // Extract Req Extensions
@@ -293,24 +296,24 @@ requestBodyTxtArea.addEventListener('change', () => {
 
     // Extract Req Membership
     entryOfInfo = getCoverageResource()
-    extractedInfo = entryOfInfo?.identifier[0] ?? null;
+    extractedInfo = entryOfInfo?.identifier?.[0] ?? null;
     extracReqMembership(extractedInfo);
 
     // Extract data for Patient (benefitiary) resource type ============
     // Extract Req Member Name
     let benefEntry = getBeneficiaryResource();
-    extractedInfo = benefEntry?.name[0] ?? null;
+    extractedInfo = benefEntry?.name?.[0] ?? null;
     extractMemberName(extractedInfo);
 
     // Extract Req Id type
-    extractedInfo = benefEntry?.identifier[0] ?? null;
+    extractedInfo = benefEntry?.identifier?.[0] ?? null;
     extractBenifitiaryIdType(extractedInfo);
 
     // Extract Req ID Number
     extractBenifitiaryId(extractedInfo);
 
     // Extract Phone number
-    extractedInfo = benefEntry?.telecom[0] ?? null;
+    extractedInfo = benefEntry?.telecom?.[0] ?? null;
     extractBenifitiaryPhoneNum(extractedInfo);
 
     // Extract Birthdate
@@ -480,6 +483,7 @@ function extractClaimID(x) {
     reqClaimIDInput.value = x.value;
 }
 
+// TODO: Complete this list
 // {
 //     "preauth-extensions": {
 //         "extension-encounter": "valueReference"."reference",
@@ -503,7 +507,7 @@ function extractClaimID(x) {
 //     }
 // }
 
-
+// TODO: Complete claim extensions
 function extractClaimExtensions(x, el, extensionOf) {
     // x is an array of extension items!
     if (!x || x.length == 0) {
@@ -511,29 +515,29 @@ function extractClaimExtensions(x, el, extensionOf) {
     } else {
         el.innerHTML = '';
         x.forEach((ex, index) => {
-            let extensionType = ex.url.split('/').pop();
+            let extensionType = ex.url?.split('/').pop();
             let extensionValue;
 
             // extensionOf = 'claim' / 'benefitiary' / ... other resources in progress
             if (extensionOf == 'claim') {
                 switch (extensionType) {
                     case "extension-encounter":
-                        extensionValue = ex.valueReference.reference;
+                        extensionValue = ex.valueReference?.reference ?? 'Not Defined';
                         break;
                     case "extension-eligibility-response":
-                        extensionValue = ex.valueReference.identifier.value;
+                        extensionValue = ex.valueReference?.identifier.value ?? 'Not Defined';
                         break;
                     case "extension-eligibility-offline-reference":
-                        extensionValue = ex.valueString;
+                        extensionValue = ex.valueString ?? 'Not Defined';
                         break;
                     case "extension-eligibility-offline-date":
-                        extensionValue = ex.valueDateTime;
+                        extensionValue = ex.valueDateTime ?? 'Not Defined';
                         break;
                     case "extension-newborn":
-                        extensionValue = ex.valueBoolean;
+                        extensionValue = ex.valueBoolean ?? 'Not Defined';
                         break;
                     case "extension-episode":
-                        extensionValue = ex.valueIdentifier.value;
+                        extensionValue = ex.valueIdentifier?.value ?? 'Not Defined';
                         break;
                     default:
                         extensionValue = "In Progress"
@@ -541,7 +545,7 @@ function extractClaimExtensions(x, el, extensionOf) {
             } else { // extensionOf == 'benefitiary'
                 switch (extensionType) {
                     case "extension-patient-religion":
-                        let religNum = ex.valueCodeableConcept.coding[0].code;
+                        let religNum = ex.valueCodeableConcept?.coding?.[0].code;
                         switch (religNum) {
                             case "1":
                                 extensionValue = "Muslim";
@@ -581,7 +585,7 @@ function extractClaimExtensions(x, el, extensionOf) {
                         }
                         break;
                     case "extension-occupation":
-                        extensionValue = ex.valueCodeableConcept.coding[0].code;
+                        extensionValue = ex.valueCodeableConcept?.coding?.[0].code;
                         break;
                     default:
                         extensionValue = "Not Found"
@@ -634,27 +638,27 @@ function extractLineItems(x) {
     x.forEach((item, index) => {
         // Get item info
         const seqID = item.sequence ?? '';
-        const itemICD = findItemICD(item.diagnosisSequence[0]) ?? 'Unknown';
-        const itemDesc = item.productOrService.coding[0].display ?? 'No Description';
-        const itemQTY = item.quantity.value ?? '';
-        const itemUnitPrice = item.unitPrice.value ?? '';
+        const itemICD = findItemICD(item.diagnosisSequence?.[0]) ?? 'Unknown';
+        const itemDesc = item.productOrService?.coding?.[0].display ?? 'No Description';
+        const itemQTY = item.quantity?.value ?? '';
+        const itemUnitPrice = item.unitPrice?.value ?? '';
         const itemFactor = item.factor ?? 1;
-        const itemNetPrice = item.net.value ?? '';
+        const itemNetPrice = item.net?.value ?? '';
         const itemServdDateFrom = item.servicedPeriod?.start ?? item.servicedDate ?? null;
         const itemServdDateTo = item.servicedPeriod?.end ?? '';
 
-        const nphiesCodeObj = item.productOrService.coding.find(code => code.system && code.system.startsWith("http://nphies.sa"));
+        const nphiesCodeObj = item.productOrService?.coding?.find(code => code.system && code.system.startsWith("http://nphies.sa"));
         const itemNphiesCode = nphiesCodeObj ? nphiesCodeObj.code : '';
-        const serviceCodeObj = item.productOrService.coding.find(code => code.system && !code.system.startsWith("http://nphies.sa"));
+        const serviceCodeObj = item.productOrService?.coding.find(code => code.system && !code.system.startsWith("http://nphies.sa"));
         const itemServiceCode = serviceCodeObj ? serviceCodeObj.code : '';
 
         const itemCareTeam = item.careTeamSequence ?? '';
         const itemInfoSeq = item.informationSequence ?? '';
 
-        const itemBodySite = item.bodySite?.coding[0].code ?? null;
-        const itemQTYType = item.quantity.code ?? null;
+        const itemBodySite = item.bodySite?.coding?.[0].code ?? null;
+        const itemQTYType = item.quantity?.code ?? 'package';
 
-        const itemExtensions = extractItemExtension(item.extension, true);
+        const itemExtensions = extractItemExtension(item.extension ?? null, true);
 
         arrayofLineItems.push(
             [
@@ -815,32 +819,34 @@ function extractItemExtension(ex, extracted) {
     let extractedValue;
     let itemExtensions = [];
 
-    for (let i = 0; i < ex.length; i++) {
-        if (extracted) {
-            itemTitle = ex[i].url.substring(ex[i].url.lastIndexOf('/') + 1).replace('extension-', '');
-            extractedValue = '';
-            // Find the dynamic key (the one that is not 'url')
-            const dynamicKey = Object.keys(ex[i]).find(key => key !== 'url');
+    if (ex !== null) {
+        for (let i = 0; i < ex.length; i++) {
+            if (extracted) {
+                itemTitle = ex[i].url.substring(ex[i].url.lastIndexOf('/') + 1).replace('extension-', '');
+                extractedValue = '';
+                // Find the dynamic key (the one that is not 'url')
+                const dynamicKey = Object.keys(ex[i]).find(key => key !== 'url');
 
-            if (dynamicKey) {
-                const rawValue = ex[i][dynamicKey];
+                if (dynamicKey) {
+                    const rawValue = ex[i][dynamicKey];
 
-                // Check if the value is an object (like valueMoney or valueIdentifier)
-                if (typeof rawValue === 'object' && rawValue !== null) {
-                    // Extract the nested 'value'
-                    extractedValue = rawValue.value !== undefined ? rawValue.value : '';
-                } else {
-                    // If it's a primitive (like boolean or string), convert directly to string
-                    extractedValue = String(rawValue);
+                    // Check if the value is an object (like valueMoney or valueIdentifier)
+                    if (typeof rawValue === 'object' && rawValue !== null) {
+                        // Extract the nested 'value'
+                        extractedValue = rawValue.value !== undefined ? rawValue.value : '';
+                    } else {
+                        // If it's a primitive (like boolean or string), convert directly to string
+                        extractedValue = String(rawValue);
+                    }
                 }
+            } else { // item is added manually not extracted
+                if (checkNullOrEmpty(ex[i][1])) { continue; }
+                itemTitle = ex[i][0]; //the title
+                extractedValue = ex[i][1]; //the value input
             }
-        } else { // item is added manually not extracted
-            if (checkNullOrEmpty(ex[i][1])) { continue; }
-            itemTitle = ex[i][0]; //the title
-            extractedValue = ex[i][1]; //the value input
-        }
 
-        itemExtensions.push([itemTitle, extractedValue])
+            itemExtensions.push([itemTitle, extractedValue])
+        }
     }
 
     return itemExtensions;
@@ -914,7 +920,7 @@ function extractSupportingInfo(x) {
             let suppInf = Object.entries(info).map(([key, val]) => ({ key, val }));
 
             extractedCateg = findSuppKey(suppInf, "category");
-            let infoType = extractedCateg.val.coding[0].code;
+            let infoType = extractedCateg?.val?.coding?.[0].code;
             let noOfData = suppInf.length;
 
             let mainValue = ["Undefined", -1];
@@ -945,21 +951,21 @@ function getSuppInfo(possibKeys, suppInfo, skippedKey = null) {
     let processedValue = ["undefined", keyTypeIndex];
     switch (keyTypeIndex) {
         case 0: //valueQuantity
-            processedValue[0] = extractedVal.val.value + " " + extractedVal.val.code ?? "";
+            processedValue[0] = extractedVal?.val?.value + " " + extractedVal?.val?.code ?? "";
             break;
         case 1: //timingPeriod
-            processedValue[0] = extractedVal.val.start + " → " + extractedVal.val.end;
+            processedValue[0] = extractedVal?.val?.start + " → " + extractedVal?.val?.end;
             break;
         case 2: //code
-            processedValue[0] = extractedVal.val.coding?.[0].code ?? "Unknown";
-            let isDisplay = extractedVal.val.text ?? extractedVal.val.coding?.[0].display ?? false;
+            processedValue[0] = extractedVal?.val?.coding?.[0].code ?? "Unknown";
+            let isDisplay = extractedVal?.val?.text ?? extractedVal?.val?.coding?.[0].display ?? false;
             if (isDisplay) { processedValue[0] = processedValue[0] + " | " + isDisplay; }
             break;
         case 3: //timingDate
-            processedValue[0] = extractedVal.val;
+            processedValue[0] = extractedVal?.val ?? 'Not Defined';
             break;
         case 4: //valueString
-            processedValue[0] = extractedVal.val;
+            processedValue[0] = extractedVal?.val ?? 'Not Defined';
             break;
         default:
             processedValue[0] = "Not Found.";
@@ -1016,11 +1022,11 @@ function extractICDCodes(x) {
     if (!x || x.length == 0) {
         clearICDList();
     } else {
-        x.forEach((icd, index) => {
-            let icdSeq = icd.sequence;
-            let icdCode = icd.diagnosisCodeableConcept.coding[0].code ?? null;
-            let icdType = icd.type[0].coding[0].code ?? null;
-            let icdOnAdm = icd.onAdmission.coding[0].code ?? null;
+        x.forEach((icd) => {
+            let icdSeq = icd.sequence ?? x.length + 1;
+            let icdCode = icd.diagnosisCodeableConcept?.coding?.[0].code ?? null;
+            let icdType = icd.type?.[0].coding?.[0].code ?? null;
+            let icdOnAdm = icd.onAdmission?.coding?.[0].code ?? null;
 
             // Add ICD to global ICD array
             arrayofICD.push([icdSeq, icdCode, icdType, icdOnAdm]);
@@ -1136,7 +1142,7 @@ function extractBenifitiaryIdType(x) {
         return;
     }
     try {
-        reqIDTypeInput.value = x.type.coding?.[0].code;
+        reqIDTypeInput.value = x.type?.coding?.[0].code ?? 'iqama';
     } catch (e) {
         showToast('Error: Could not extract Member ID type code. Check the logs.', 'danger');
         console.error(e.message);
@@ -1194,11 +1200,12 @@ function extractBenifitiaryGender(x) {
 function extractInsurerData(resource) {
     if (!resource || resource == null) {
         showToast('Error: could not extract Insurer data', 'danger');
+        return
     } else {
         try {
             insurerNameInput.value = resource.name;
-            insurerCityInput.value = resource.address?.[0].city;
-            insurerCountryInput.value = resource.address?.[0].country;
+            insurerCityInput.value = resource.address?.[0].city ?? 'Not Defined';
+            insurerCountryInput.value = resource.address?.[0].country ?? 'Not Defined';
         } catch (e) {
             showToast('Error: something went wrong during Insurer data extraction', 'danger');
             console.warn(e);
@@ -1210,13 +1217,14 @@ function extractInsurerData(resource) {
 function extractProviderData(resource) {
     if (!resource || resource == null) {
         showToast('Error: could not extract Provider data', 'danger');
+        return
     } else {
         try {
-            providerNameInput.value = resource.name;
-            providerCityInput.value = resource.address?.[0].city;
-            providerCountryInput.value = resource.address?.[0].country;
-            let searchProvType = PROVIDER_TYPES[resource.extension?.[0].valueCodeableConcept.coding?.[0].code];
-            providerTypeInput.value = searchProvType.code;
+            providerNameInput.value = resource.name ?? 'Not Defined';
+            providerCityInput.value = resource.address?.[0].city ?? 'Not Defined';
+            providerCountryInput.value = resource.address?.[0].country ?? 'Not Defined';
+            let searchProvType = PROVIDER_TYPES[resource.extension?.[0].valueCodeableConcept?.coding?.[0].code];
+            providerTypeInput.value = searchProvType?.code ?? 'Not Defined';
         } catch (e) {
             showToast('Error: something went wrong during Provider data extraction, open the log for more details.', 'danger');
             console.warn(e);
@@ -1234,22 +1242,23 @@ function extractPractitioners(entry, careTeamArr) {
 
             careTeamTBody.innerHTML = ``;
             let ref;
-            let resource;
+            let res;
             let practPersonalInfo;
             let role;
             let qual;
-            for (i = 0; i < careTeamArr.length; i++) {
+
+            for (let i = 0; i < careTeamArr.length; i++) {
                 ref = splitString(careTeamArr[i].provider.reference);
                 res = findResource(entry, ref[0], ref[1]);
 
                 // [License, Name]
                 practPersonalInfo = [
-                    res.resource.identifier?.[0].value ?? "-", res.resource.name?.[0].text ?? 'Unknown'
+                    res?.resource?.identifier?.[0].value ?? "-", res?.resource?.name?.[0].text ?? 'Unknown'
                 ]
 
                 // [License, Name, Role, Qualification]
-                role = careTeamArr[i].role.coding?.[0].code ?? "Unknown";
-                qual = careTeamArr[i].qualification.coding?.[0].code ?? "Unknown";
+                role = careTeamArr[i].role?.coding?.[0].code ?? "Unknown";
+                qual = careTeamArr[i].qualification?.coding?.[0].code ?? "Unknown";
                 let CareTeamMember = [practPersonalInfo[0], practPersonalInfo[1], role, qual];
                 arrayofCareTeam.push(CareTeamMember);
 
@@ -1369,6 +1378,8 @@ function fallbackCopy(val) {
 // Show Toast
 function showToast(message, variant = "danger") {
     const toastStack = document.getElementById("toastStack");
+
+    console.log("error msg ", message);
 
     const toastEl = document.createElement("div");
     toastEl.className = `toast text-bg-${variant} bg-opacity-75`;
@@ -1514,7 +1525,7 @@ setupValidatedForm('addItemForm', (form) => {
     const itemFactor = form.querySelector('#newItemFactInput').value ?? 1;
     const itemNetPrice = itemUnitPrice * itemQTY * itemFactor ?? 1;
     const itemServdDateFrom = form.querySelector('#newSDateFromInput').value ?? null;
-    const itemServdDateTo = form.querySelector('#newSDateToInput').value ?? null;
+    const itemServdDateTo = form.querySelector('#newSDateToInput').value ?? itemServdDateFrom;
 
     const itemNphiesCode = form.querySelector('#newNphiesCodeInput').value ?? '';
     const itemServiceCode = form.querySelector('#newServCodeInput').value ?? '';
@@ -2022,6 +2033,45 @@ const listBindings = [
             });
             target.claim.diagnosis = diagnosisArray;
         }
+    },
+    {
+        input: itemsAccordion,
+        getTarget: () => {
+            const claim = getClaimResource();
+            return claim ? { claim } : null;
+        },
+        get: (target) => target.claim.item ?? '',
+        set: (target) => {
+            const itemsParams = arrayofLineItems.map(function (item) {
+                const ext = item[13] ?? []; // guard against missing/short extension array
+                const toArray = (v) => Array.isArray(v) ? v : (v === undefined || v === null || v === '' ? [] : [v]);
+
+                return {
+                    patientShare: ext[0]?.[1],
+                    patientInvoiceNumber: ext[1]?.[1],
+                    tax: ext[2]?.[1],
+                    isMaternity: ext[3]?.[1],
+                    isPackage: ext[4]?.[1],
+                    sequence: item[0],
+                    careTeamSequences: toArray(item[11]),
+                    diagnosisSequences: toArray(item[1][0]),
+                    informationSequences: toArray(item[12]),
+                    nphiesCode: item[9],
+                    servCode: item[10],
+                    servDisplay: item[2],
+                    start: item[7],
+                    end: item[8],
+                    quantityValue: item[3],
+                    quantityType: item[15],
+                    unitPriceValue: item[4],
+                    netValue: item[6],
+                    bodySiteValue: item[14]
+                };
+            });
+
+            // buildClaimBody already returns { item: [...] } for the WHOLE array
+            target.claim.item = buildClaimBody(itemsParams).item;
+        }
     }
 ];
 
@@ -2077,7 +2127,9 @@ function initListsBindings() {
 
         try {
             binding.set(target);
+            console.log("Done here #1")
             syncJSONToTextArea();
+            console.log("Done here #2")
         } catch (e) {
             showToast(`Error updating JSON from "${binding.input.id}": ${e.message}`, 'danger');
         }
