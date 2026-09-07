@@ -83,6 +83,10 @@
                             "system": "http://saudigeneralhospital.com.sa/identifiers/episode",
                             "value": "provider_EpisodeID_48903211"
                         }
+                    },
+                    {
+                        "url": "http://nphies.sa/fhir/ksa/nphies-fs/StructureDefinition/extension-transfer",
+                        "valueBoolean": true
                     }
                 ],
                 "identifier": [
@@ -127,6 +131,24 @@
                         }
                     ]
                 },
+                "related": [
+                    {
+                        "claim": {
+                            "identifier": {
+                                "system": "http://saudigeneralhospital.com.sa/identifiers/authorization",
+                                "value": "req_30852"
+                            }
+                        },
+                        "relationship": {
+                            "coding": [
+                                {
+                                    "system": "http://nphies.sa/terminology/CodeSystem/related-claim-relationship",
+                                    "code": "prior"
+                                }
+                            ]
+                        }
+                    }
+                ],
                 "payee": {
                     "type": {
                         "coding": [

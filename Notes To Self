@@ -5,28 +5,27 @@
 // ✅ Also add the eventlistener to the delete button which will also call the render
 // ✅ Add New >> get the values and push them into the array + render the items list again
 // ✅ Bind the items list to update the JSON (Fix that careSeq and InfoSeq are coming as strings in new items)
+// ✅Markers when a resource is not found
+// ✅The request details
+// ✅Implement the Bundle & Timestamp refresh
 
 // TODO: 
 
-// Markers when a resource is not found
-
-// The request details
+// Filter يعني لما تتحدث اللست فلتري مين تحدث مو كل اللستات او الخانات the updated fields in json
 
 // Implement the Related & prauthRef fields
-
-// Implement the Bundle & Timestamp refresh
 
 // Update Items Total
 
 // Complete the list of Extensions
 
-// Add new supporting info thing
+// Add new supporting info thing (Complex)
 
 // The submit function
+// Link the update Bundle & Timestamp with the submit!!!!
 
-
-// The load options for list of supp info and care team >> Difficult as it require multiple select dropdown
 
 // TODO: later improvments
 // Add the option to choose the service type (medication procedure ...etc)
 // Add the other preauth item extensions
+// The load options for list of supp info and care team >> Difficult as it require multiple select dropdown

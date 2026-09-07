@@ -142,7 +142,6 @@ const providerCountryInput = el('providerCountryInput');
 const providerTypeInput = el('providerTypeInput');
 const careTeamTBody = el('careTeamTBody');
 const itemsAccordion = el('itemsAccordion');
-const saveNewICDBtn = el('saveNewICDBtn');
 const editICDBtn = el('editICDBtn');
 const editItemsBtn = el('editItemsBtn');
 const itemDelButtonSpace = elc('itemDelButtonSpace');
@@ -150,6 +149,13 @@ const newItemModal = el('newItemModal');
 const newItemICDInput = el('newItemICDInput');
 const newSDateFromInput = el('newSDateFromInput');
 const newSDateToInput = el('newSDateToInput');
+const requestTypeTitle = el('requestTypeTitle');
+const bundleField = el('bundleField');
+const timestampField = el('timestampField');
+const refreshBundleBtn = el('refreshBundleBtn');
+const referralBadge = el('referralBadge');
+const priorBadge = el('priorBadge');
+const reqRelatedReqInput = el('reqRelatedReqInput');
 
 // Values Storage ====================================================
 // To store all the extracted values
@@ -164,9 +170,10 @@ var arrayofLineItems = [];
 // for copy func
 let benefEntry = null;
 let benefitiaryFound = false;
-let careTeamFound = false;
 let providerFound = false;
 let insurerFound = false;
+let newBundle = '';
+let newTimeStamp = '';
 
 // Init ==============================================================
 window.addEventListener('load', () => {
@@ -184,7 +191,6 @@ function init() {
     itemDelButtonSpace[0].hidden = true;
     itemDelButtonSpace[1].hidden = true;
 
-
     // Empty the arrays
     arrayofICD = [];
     arrayofCareTeam = [];
@@ -192,6 +198,11 @@ function init() {
 
     // Reset the markers
     benefitiaryFound = false;
+    providerFound = false;
+    insurerFound = false;
+
+    referralBadge.setAttribute('hidden', '')
+    priorBadge.setAttribute('hidden', '')
 }
 
 // Extract input JSON & Data ========================================
@@ -243,6 +254,20 @@ requestBodyTxtArea.addEventListener('change', () => {
     let entryOfInfo;
     let arrayofItems;
 
+    // Extract bundle & timestamp ========================================
+    extractedInfo = parsed.id;
+    if (checkNullOrEmpty(extractedInfo)) {
+        showToast('Error: Could not find the bundle ID!')
+    } else {
+        bundleField.innerText = extractedInfo;
+    }
+    extractedInfo = parsed.timestamp
+    if (checkNullOrEmpty(extractedInfo)) {
+        showToast('Error: Could not find the request Timestamp!')
+    } else {
+        timestampField.innerText = extractedInfo;
+    }
+
     // Extract data for Claim resource type ==============================
     entryOfInfo = getClaimResource();
     // Extract Req Category
@@ -286,13 +311,20 @@ requestBodyTxtArea.addEventListener('change', () => {
         showToast("Error: Items total is not found.", "danger");
     }
 
+    // Related claims (if exists)
+    extractedInfo = entryOfInfo?.related?.[0] ?? null;
+    if (extractedInfo !== null) {
+        priorBadge.removeAttribute('hidden', '')
+        extractRelatedData(extractedInfo)
+    }
+
     // Extract Insurer Data
     extractedInfo = getInsurerResource();
-    extractInsurerData(extractedInfo);
+    if (insurerFound) { extractInsurerData(extractedInfo); }
 
     // Extract Provider Data
     extractedInfo = getProviderResource();
-    extractProviderData(extractedInfo);
+    if (providerFound) { extractProviderData(extractedInfo); }
 
     // Extract Care Team data
     const careTeamResource = entryOfInfo?.careTeam ?? null; // Array
@@ -311,31 +343,79 @@ requestBodyTxtArea.addEventListener('change', () => {
     if (benefitiaryFound) {
         extractedInfo = benefEntry?.name?.[0] ?? null;
         extractMemberName(extractedInfo);
-    
+
         // Extract Req Id type
         extractedInfo = benefEntry?.identifier?.[0] ?? null;
         extractBenifitiaryIdType(extractedInfo);
-    
+
         // Extract Req ID Number
         extractBenifitiaryId(extractedInfo);
-    
+
         // Extract Phone number
         extractedInfo = benefEntry?.telecom?.[0] ?? null;
         extractBenifitiaryPhoneNum(extractedInfo);
-    
+
         // Extract Birthdate
         extractedInfo = benefEntry?.birthDate ?? null;
         extractBenifitiaryBD(extractedInfo);
-    
+
         // Extract Gender
         extractedInfo = benefEntry?.gender ?? null;
         extractBenifitiaryGender(extractedInfo);
-    
+
         // Extract Benefitiary Extensions
         extractedInfo = benefEntry?.extension ?? null;
         extractClaimExtensions(extractedInfo, benefitiaryExtensionsUL, EXTENSION_CATEGORIES.Beneficiary);
     }
 });
+
+refreshBundleBtn.addEventListener('click', () => {
+    refreshBundleTimestamp()
+})
+
+function extractRelatedData(related) {
+    if (checkNullOrEmpty(related.claim.identifier.value)) {
+        showToast('Error: Could not extract the related request data')
+        return
+    }
+
+    reqRelatedReqInput.value = related.claim.identifier.value;
+    priorBadge.removeAttribute('hidden', '')
+    showToast('This is a related request.', 'info');
+}
+
+function refreshBundleTimestamp() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+    const seconds = String(now.getSeconds()).padStart(2, "0");
+
+    // milliseconds → two digits
+    const ms = String(now.getMilliseconds()).padStart(2, "0").slice(0, 2);
+    const offset = "+03:00"; // Arabian Standard Time
+
+    newBundle = crypto.randomUUID();
+    newTimeStamp = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${ms}${offset}`;
+    timestampField.innerText = newTimeStamp;
+    bundleField.innerText = newBundle;
+
+    // Update JSON body only when a request is pasted
+    if (!checkNullOrEmpty(parsed)) {
+        try {
+            parsed.id = newBundle;
+            parsed.timestamp = newTimeStamp;
+            syncJSONToTextArea();
+        } catch (e) {
+            showToast('Error: Could not update the JSON body with new bundleID and Timestamp')
+            console.error(e)
+        }
+    }
+
+}
 
 function splitString(str) {
     if (str && str !== '') {
@@ -393,9 +473,12 @@ function extractReqCat(x) {
         const reqCategory = x.system.split('/').pop();
         if (reqCategory === 'authorization') {
             reqInput.value = 'authorization';
+            requestTypeTitle.innerText = 'Preauth Request';
         } else if (reqCategory === 'claim') {
             reqInput.value = 'claim';
+            requestTypeTitle.innerText = 'Claim Request';
         } else {
+            requestTypeTitle.innerText = 'Unknown Request';
             reqInput.value = '';
         }
     } catch (e) {
@@ -546,6 +629,13 @@ function extractClaimExtensions(x, el, extensionOf) {
                         break;
                     case "extension-episode":
                         extensionValue = ex.valueIdentifier?.value ?? 'Not Defined';
+                        break;
+                    case "extension-transfer":
+                        extensionValue = ex.valueBoolean ?? 'Not Defined';
+                        if (extensionValue == true) {
+                            showToast('this is a referral request.', 'info')
+                            referralBadge.removeAttribute('hidden', '')
+                        }
                         break;
                     default:
                         extensionValue = "In Progress"
@@ -1051,14 +1141,14 @@ function addNewICDCode(newIcd, newIcdType, newIcdAdm) {
 
     // Add ICD to global ICD array
     arrayofICD.push([icdSeq, icdCode, icdType, icdOnAdm]);
-    
+
     try {
-        initListsBindings();
+        initListsBindings('ICDtableList');
     } catch (e) {
         showToast('Error: Could not add the new ICD to the JSON body.')
         console.error(e.message)
     }
-    
+
     renderItemsList(false); // To reflect the new ICD changes
     renderICDList(true);
 }
@@ -1255,7 +1345,6 @@ function extractPractitioners(entry, careTeamArr) {
         return;
     } else {
         try {
-
             careTeamTBody.innerHTML = ``;
             let ref;
             let res;
@@ -1267,29 +1356,34 @@ function extractPractitioners(entry, careTeamArr) {
                 ref = splitString(careTeamArr[i].provider.reference);
                 res = findResource(entry, ref[0], ref[1]);
 
-                // [License, Name]
-                practPersonalInfo = [
-                    res?.resource?.identifier?.[0].value ?? "-", res?.resource?.name?.[0].text ?? 'Unknown'
-                ]
+                if (res == null) {
+                    showToast(`Error: Could not find practitioner #${i + 1} info linked to the request!`)
+                    continue;
+                } else {
+                    // [License, Name]
+                    practPersonalInfo = [
+                        res?.resource?.identifier?.[0].value ?? "-", res?.resource?.name?.[0].text ?? 'Unknown'
+                    ]
 
-                // [License, Name, Role, Qualification]
-                role = careTeamArr[i].role?.coding?.[0].code ?? "Unknown";
-                qual = careTeamArr[i].qualification?.coding?.[0].code ?? "Unknown";
-                let CareTeamMember = [practPersonalInfo[0], practPersonalInfo[1], role, qual];
-                arrayofCareTeam.push(CareTeamMember);
+                    // [License, Name, Role, Qualification]
+                    role = careTeamArr[i].role?.coding?.[0].code ?? "Unknown";
+                    qual = careTeamArr[i].qualification?.coding?.[0].code ?? "Unknown";
+                    let CareTeamMember = [practPersonalInfo[0], practPersonalInfo[1], role, qual];
+                    arrayofCareTeam.push(CareTeamMember);
 
 
-                // Add to HTML
-                const newEl = document.createElement('tr');
+                    // Add to HTML
+                    const newEl = document.createElement('tr');
 
-                newEl.innerHTML = `
-                <th scope="row">${i + 1}</th>
-                <td>${practPersonalInfo[0]}</td>
-                <td>${practPersonalInfo[1]}</td>
-                <td>${role}</td>
-                <td>${qual}</td>
-                `;
-                careTeamTBody.appendChild(newEl);
+                    newEl.innerHTML = `
+                    <th scope="row">${i + 1}</th>
+                    <td>${practPersonalInfo[0]}</td>
+                    <td>${practPersonalInfo[1]}</td>
+                    <td>${role}</td>
+                    <td>${qual}</td>
+                    `;
+                    careTeamTBody.appendChild(newEl);
+                }
             }
 
 
@@ -1395,8 +1489,6 @@ function fallbackCopy(val) {
 function showToast(message, variant = "danger") {
     const toastStack = document.getElementById("toastStack");
 
-    console.log("error msg ", message);
-
     const toastEl = document.createElement("div");
     toastEl.className = `toast text-bg-${variant} bg-opacity-75`;
     toastEl.setAttribute("role", "alert");
@@ -1406,7 +1498,7 @@ function showToast(message, variant = "danger") {
 
     toastEl.innerHTML = `
         <div class="d-flex">
-            <div class="toast-body">${message}</div>
+            <div class="toast-body fw-medium">${message}</div>
             <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
     `;
@@ -1579,7 +1671,7 @@ setupValidatedForm('addItemForm', (form) => {
     );
 
     try {
-        initListsBindings();
+        initListsBindings('itemsAccordion');
     } catch (e) {
         showToast('Error: Could not add the new item to the JSON body.')
         console.error(e.message)
@@ -1622,22 +1714,15 @@ function loadICDList() {
     });
 }
 
-// AI Assist ===============================================
-
-// ============================================================
-// Two-way binding: push edits made in the extracted-value inputs
-// back into `parsed`, then re-serialize `parsed` into the textarea.
-// ============================================================
-
 /**
- * We re-look-it-up every time instead of caching the object reference from
+ * We re-look it up every time instead of caching the object reference from
  * extraction time, because `parsed` gets replaced with a brand new object
  * every time the textarea's `change` event fires. A cached reference would
  * point at the old (now-discarded) JSON after that happens.
  */
 function getClaimIdentifier() {
     if (!parsed) return null;
-    const entryOfInfo = findResource(parsed.entry, 'Claim', null);
+    const entryOfInfo = getClaimResource;
     return entryOfInfo?.resource?.identifier?.[0] ?? null;
 }
 
@@ -1666,7 +1751,7 @@ function getBeneficiaryResource() {
     if (!resType) return null;
 
     const benefResource = findResource(parsed.entry, resType, resId)?.resource ?? null;
-    if (benefResource == null ){
+    if (benefResource == null) {
         showToast('Error: Could not find the benefitiary data linked to the request!')
         return
     } else {
@@ -1689,7 +1774,16 @@ function getInsurerResource() {
     if (!ref) return null;
     const [resType, resId] = splitString(ref) ?? [];
     if (!resType) return null;
-    return findResource(parsed.entry, resType, resId)?.resource ?? null;
+
+
+    const insurerResource = findResource(parsed.entry, resType, resId)?.resource ?? null;
+    if (insurerResource == null) {
+        showToast('Error: Could not find the insurer data linked to the request!')
+        return
+    } else {
+        insurerFound = true;
+        return insurerResource;
+    }
 }
 
 // Claim.provider.reference -> Organization resource
@@ -1699,7 +1793,15 @@ function getProviderResource() {
     if (!ref) return null;
     const [resType, resId] = splitString(ref) ?? [];
     if (!resType) return null;
-    return findResource(parsed.entry, resType, resId)?.resource ?? null;
+
+    const providerResource = findResource(parsed.entry, resType, resId)?.resource ?? null;
+    if (providerResource == null) {
+        showToast('Error: Could not find the provider data linked to the request!')
+        return
+    } else {
+        providerFound = true;
+        return providerResource;
+    }
 }
 
 /**
@@ -1749,6 +1851,7 @@ const fieldBindings = [
             // "use" uses different wording than "system" ("preauthorization"
             // vs "authorization") — adjust this mapping if your real values differ.
             const newUse = newValue === 'authorization' ? 'preauthorization' : 'claim';
+            requestTypeTitle.innerText = newValue === 'authorization' ? 'Preauth Request' : 'Claim Request';
 
             // Path 1: identifier.system — swap only the last URL segment.
             target.identifier.system = newSystem;
@@ -2116,6 +2219,8 @@ function syncJSONToTextArea() {
 function initFieldBindings() {
     fieldBindings.forEach((binding) => {
         binding.input.addEventListener('change', () => {
+            // Refresh Timestamp & BundleID
+            refreshBundleTimestamp();
             const target = binding.getTarget();
             if (!target) {
                 showToast(
@@ -2139,7 +2244,9 @@ function initFieldBindings() {
 
 initFieldBindings();
 
-function initListsBindings() {
+function initListsBindings(type) {
+    // Refresh Timestamp & BundleID
+    refreshBundleTimestamp();
     listBindings.forEach((binding) => {
         const target = binding.getTarget();
         if (!target) {

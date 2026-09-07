@@ -412,3 +412,19 @@ input::-webkit-inner-spin-button {
 input[type=number] {
     -moz-appearance: textfield;
 }
+
+.prior-badge-style {
+    background-color: rgba(18, 122, 27, 0.52) !important;
+    border: 1px solid #529c6e;
+}
+
+.referral-badge-style {
+    background-color: rgba(58, 35, 152, 0.52) !important;
+    border: 1px solid #523f9e;
+}
+
+.flat-btn {
+    all: unset !important;
+    margin-left: 0.5rem !important;
+    cursor: pointer !important;
+}

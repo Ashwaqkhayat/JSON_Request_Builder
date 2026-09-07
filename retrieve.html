@@ -292,15 +292,15 @@
                                 <div class="card-body d-flex flex-row justify-content-between">
 
                                     <div>
-                                        <h5 class="fw-bold mb-1">Preauth Request</h5>
-                                        <p class="mb-0 text-secondary">Bundle<span class="ms-3">a84aabfa-1163-407d-aa38-f8119a0b8888</span> <span class="ms-2"><i class="ph-bold ph-arrow-clockwise"></i></span></p>
+                                        <h4 id="requestTypeTitle" class="fw-bold mb-2">Request Type</h4>
+                                        <p class="mb-0 text-secondary">Bundle<span id="bundleField" class="ms-3">a84aabfa-1163-407d-aa38-f8119a0b8888</span> <button id="refreshBundleBtn" type="button" class="flat-btn"><i class="ph-bold ph-arrow-clockwise"></i></button></p>
                                     </div>
                                     <div class="d-flex flex-column justify-content-end align-items-start">
                                         <h5 class="fw-semibold mb-1">
-                                            <span class="badge text-bg-secondary me-1">Prior</span>
-                                            <span class="badge text-bg-secondary">Referral</span>
+                                            <span id="priorBadge" class="badge text-bg-secondary me-1 prior-badge-style text-bg-dark">Related</span>
+                                            <span id="referralBadge" class="badge text-bg-secondary referral-badge-style text-bg-dark">Referral</span>
                                         </h5>
-                                        <p class="mb-0 text-secondary">Timestamp:<span class="ms-2">2026-07-01T13:29:00Z</span></p>
+                                        <p class="mb-0 text-secondary">Timestamp:<span id="timestampField" class="ms-2">2026-09-08T00:00:00.30+03:00</span></p>
                                     </div>
 
                                 </div>
@@ -388,8 +388,7 @@
                                                 <label for="reqRelatedReqInput"
                                                     class="form-label text-secondary">Related Claim</label>
                                                 <div class="input-group">
-                                                    <input type="text" class="form-control" id="reqRelatedReqInput"
-                                                        aria-describedby="basic-addon3 basic-addon4">
+                                                    <input type="text" class="form-control" id="reqRelatedReqInput" >
                                                     <button class="btn btn-outline-secondary copy-btn" type="button"
                                                         data-bs-target="reqRelatedReqInput"><i
                                                             class="ph-bold ph-copy phicon-container"></i></button>
