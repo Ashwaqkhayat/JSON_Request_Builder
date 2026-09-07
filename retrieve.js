@@ -1,4 +1,4 @@
-import { hi, buildClaimBody } from "./itemConstructor.js";
+import { buildClaimBody } from "./itemConstructor.js";
 
 const el = val => document.getElementById(val);
 const elc = val => document.getElementsByClassName(val);
@@ -163,11 +163,14 @@ var arrayofLineItems = [];
 
 // for copy func
 let benefEntry = null;
+let benefitiaryFound = false;
+let careTeamFound = false;
+let providerFound = false;
+let insurerFound = false;
 
 // Init ==============================================================
 window.addEventListener('load', () => {
     init();
-    hi() // TODO: DELETE
 });
 
 function init() {
@@ -186,6 +189,9 @@ function init() {
     arrayofICD = [];
     arrayofCareTeam = [];
     arrayofLineItems = [];
+
+    // Reset the markers
+    benefitiaryFound = false;
 }
 
 // Extract input JSON & Data ========================================
@@ -302,31 +308,33 @@ requestBodyTxtArea.addEventListener('change', () => {
     // Extract data for Patient (benefitiary) resource type ============
     // Extract Req Member Name
     let benefEntry = getBeneficiaryResource();
-    extractedInfo = benefEntry?.name?.[0] ?? null;
-    extractMemberName(extractedInfo);
-
-    // Extract Req Id type
-    extractedInfo = benefEntry?.identifier?.[0] ?? null;
-    extractBenifitiaryIdType(extractedInfo);
-
-    // Extract Req ID Number
-    extractBenifitiaryId(extractedInfo);
-
-    // Extract Phone number
-    extractedInfo = benefEntry?.telecom?.[0] ?? null;
-    extractBenifitiaryPhoneNum(extractedInfo);
-
-    // Extract Birthdate
-    extractedInfo = benefEntry?.birthDate ?? null;
-    extractBenifitiaryBD(extractedInfo);
-
-    // Extract Gender
-    extractedInfo = benefEntry?.gender ?? null;
-    extractBenifitiaryGender(extractedInfo);
-
-    // Extract Benefitiary Extensions
-    extractedInfo = benefEntry?.extension ?? null;
-    extractClaimExtensions(extractedInfo, benefitiaryExtensionsUL, EXTENSION_CATEGORIES.Beneficiary);
+    if (benefitiaryFound) {
+        extractedInfo = benefEntry?.name?.[0] ?? null;
+        extractMemberName(extractedInfo);
+    
+        // Extract Req Id type
+        extractedInfo = benefEntry?.identifier?.[0] ?? null;
+        extractBenifitiaryIdType(extractedInfo);
+    
+        // Extract Req ID Number
+        extractBenifitiaryId(extractedInfo);
+    
+        // Extract Phone number
+        extractedInfo = benefEntry?.telecom?.[0] ?? null;
+        extractBenifitiaryPhoneNum(extractedInfo);
+    
+        // Extract Birthdate
+        extractedInfo = benefEntry?.birthDate ?? null;
+        extractBenifitiaryBD(extractedInfo);
+    
+        // Extract Gender
+        extractedInfo = benefEntry?.gender ?? null;
+        extractBenifitiaryGender(extractedInfo);
+    
+        // Extract Benefitiary Extensions
+        extractedInfo = benefEntry?.extension ?? null;
+        extractClaimExtensions(extractedInfo, benefitiaryExtensionsUL, EXTENSION_CATEGORIES.Beneficiary);
+    }
 });
 
 function splitString(str) {
@@ -1043,6 +1051,14 @@ function addNewICDCode(newIcd, newIcdType, newIcdAdm) {
 
     // Add ICD to global ICD array
     arrayofICD.push([icdSeq, icdCode, icdType, icdOnAdm]);
+    
+    try {
+        initListsBindings();
+    } catch (e) {
+        showToast('Error: Could not add the new ICD to the JSON body.')
+        console.error(e.message)
+    }
+    
     renderItemsList(false); // To reflect the new ICD changes
     renderICDList(true);
 }
@@ -1124,7 +1140,7 @@ function extractMemberName(x) {
     if (!x || !('text' in x)) {
         showToast(
             // Key "entry[..].resource.name[0].text" not found in JSON.
-            'Member Name not found in JSON.',
+            'Beneficiary Name not found in JSON.',
             'danger'
         );
         return;
@@ -1136,7 +1152,7 @@ function extractBenifitiaryIdType(x) {
     if (!x || !('system' in x)) {
         showToast(
             // Key "entry[..].resource.identifier[0].system" not found in JSON.
-            'Patient ID Type not found in JSON.',
+            'Beneficiary ID Type not found in JSON.',
             'danger'
         );
         return;
@@ -1153,7 +1169,7 @@ function extractBenifitiaryId(x) {
     if (!x || !('value' in x)) {
         showToast(
             // Key "entry[..].resource.identifier[0].value" not found in JSON.
-            'Patient ID not found in JSON.',
+            'Beneficiary ID not found in JSON.',
             'danger'
         );
         return;
@@ -1423,8 +1439,6 @@ editICDBtn.addEventListener('click', () => {
             // Hide the Add button + Confirm the changes
             if (arrayofICD.length < 1) {
                 showToast('Diagnosis list is empty, add at least one ICD code to update the JSON request.', 'warning');
-            } else {
-                initListsBindings();
             }
             addICDBtn.setAttribute('hidden', '');
             icdTrashButtons.forEach((icdTrashBtn) => {
@@ -1456,8 +1470,6 @@ editItemsBtn.addEventListener('click', () => {
             // Hide the Add button + Confirm the changes
             if (arrayofICD.length < 1) {
                 showToast('Items list is empty, add at least one line item to update the JSON request.', 'warning');
-            } else {
-                initListsBindings();
             }
             addItemBtn.setAttribute('hidden', '');
             lineItemsTrashButtons.forEach((TrashBtn) => {
@@ -1565,6 +1577,13 @@ setupValidatedForm('addItemForm', (form) => {
             itemQTYType
         ]
     );
+
+    try {
+        initListsBindings();
+    } catch (e) {
+        showToast('Error: Could not add the new item to the JSON body.')
+        console.error(e.message)
+    }
     renderItemsList(true);
 
 
@@ -1588,7 +1607,7 @@ newItemModal.addEventListener('shown.bs.modal', function () {
     // Set today's date as ServDate
     newSDateFromInput.value = new Date().toISOString().slice(0, 10);
 
-    // Load the ICDs
+    // Load the options of select elements
     loadICDList();
 });
 
@@ -1645,7 +1664,15 @@ function getBeneficiaryResource() {
     if (!ref) return null;
     const [resType, resId] = splitString(ref) ?? [];
     if (!resType) return null;
-    return findResource(parsed.entry, resType, resId)?.resource ?? null;
+
+    const benefResource = findResource(parsed.entry, resType, resId)?.resource ?? null;
+    if (benefResource == null ){
+        showToast('Error: Could not find the benefitiary data linked to the request!')
+        return
+    } else {
+        benefitiaryFound = true;
+        return benefResource;
+    }
 }
 
 // Shared by reqIDTypeInput and reqIDNumInput, same as identifier[0] is
@@ -2044,7 +2071,6 @@ const listBindings = [
         set: (target) => {
             const itemsParams = arrayofLineItems.map(function (item) {
                 const ext = item[13] ?? []; // guard against missing/short extension array
-                const toArray = (v) => Array.isArray(v) ? v : (v === undefined || v === null || v === '' ? [] : [v]);
 
                 return {
                     patientShare: ext[0]?.[1],
@@ -2053,9 +2079,9 @@ const listBindings = [
                     isMaternity: ext[3]?.[1],
                     isPackage: ext[4]?.[1],
                     sequence: item[0],
-                    careTeamSequences: toArray(item[11]),
-                    diagnosisSequences: toArray(item[1][0]),
-                    informationSequences: toArray(item[12]),
+                    careTeamSequences: item[11],
+                    diagnosisSequences: item[1][0],
+                    informationSequences: item[12],
                     nphiesCode: item[9],
                     servCode: item[10],
                     servDisplay: item[2],

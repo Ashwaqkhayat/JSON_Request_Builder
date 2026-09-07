@@ -54,34 +54,39 @@ export function buildSequence(sequence) {
     return sequence;
 }
 
+// Common function for all array of sequences such as careTeamSequence, informationSequence and so on
+export function buildArraySequences(sequenceArr) {
+    let arr;
+
+    if (Array.isArray(sequenceArr)) {
+        arr = sequenceArr;
+    } else if (typeof sequenceArr === 'string') {
+        arr = sequenceArr.split(',').map((s) => s.trim());
+    } else if (sequenceArr === undefined || sequenceArr === null || sequenceArr === '') {
+        arr = [];
+    } else {
+        arr = [sequenceArr];
+    }
+
+    return arr
+        .filter((seq) => seq !== undefined && seq !== null && seq !== '')
+        .map((seq) => Number(seq))
+        .filter((seq) => !Number.isNaN(seq));
+}
+
 // ---- careTeamSequence ----
 export function buildCareTeamSequence(careTeamSequences) {
-    const arr = Array.isArray(careTeamSequences)
-        ? careTeamSequences
-        : (careTeamSequences === undefined || careTeamSequences === null || careTeamSequences === '')
-            ? []
-            : [careTeamSequences];
-    return arr.filter((seq) => seq !== undefined && seq !== null && seq !== '');
+    return buildArraySequences(careTeamSequences);
 }
 
 // ---- diagnosisSequence ----
 export function buildDiagnosisSequence(diagnosisSequences) {
-    const arr = Array.isArray(diagnosisSequences)
-        ? diagnosisSequences
-        : (diagnosisSequences === undefined || diagnosisSequences === null || diagnosisSequences === '')
-            ? []
-            : [diagnosisSequences];
-    return [...arr];
+    return buildArraySequences(diagnosisSequences);
 }
 
 // ---- informationSequence ----
 export function buildInformationSequence(informationSequences) {
-    const arr = Array.isArray(informationSequences)
-        ? informationSequences
-        : (informationSequences === undefined || informationSequences === null || informationSequences === '')
-            ? []
-            : [informationSequences];
-    return arr.filter((seq) => seq !== undefined && seq !== null && seq !== '');
+    return buildArraySequences(informationSequences);
 }
 
 // ---- productOrService ----
@@ -231,7 +236,6 @@ export function buildItem(params) {
  * @param {Object[]} itemsParams - array of param objects, one per item
  */
 export function buildClaimBody(itemsParams) {
-    console.log("construction item done")
     return {
         item: itemsParams.map(buildItem)
     };
