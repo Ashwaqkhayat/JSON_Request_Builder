@@ -32,50 +32,55 @@ const EXTENSION_CATEGORIES = {
 const REQ_TYPES = {
     institutional: {
         display: "Institutional",
-        value: { "system": "http://terminology.hl7.org/CodeSystem/claim-type", "version": "1.0.1", "code": "institutional", "display": "Institutional" }
+        value: { "system": "http://terminology.hl7.org/CodeSystem/claim-type", "code": "institutional", "display": "Institutional" }
     },
     professional: {
         display: "Professional",
-        value: { "system": "http://terminology.hl7.org/CodeSystem/claim-type", "version": "1.0.1", "code": "professional", "display": "Professional" }
+        value: { "system": "http://terminology.hl7.org/CodeSystem/claim-type", "code": "professional", "display": "Professional" }
     },
     oral: {
         display: "Dental",
-        value: { "system": "http://terminology.hl7.org/CodeSystem/claim-type", "version": "1.0.1", "code": "oral", "display": "Dental" }
+        value: { "system": "http://terminology.hl7.org/CodeSystem/claim-type", "code": "oral", "display": "Dental" }
     },
     pharmacy: {
         display: "Pharmacy",
-        value: { "system": "http://terminology.hl7.org/CodeSystem/claim-type", "version": "1.0.1", "code": "pharmacy", "display": "Pharmacy" }
+        value: { "system": "http://terminology.hl7.org/CodeSystem/claim-type", "code": "pharmacy", "display": "Pharmacy" }
     },
     vision: {
         display: "Optical",
-        value: { "system": "http://terminology.hl7.org/CodeSystem/claim-type", "version": "1.0.1", "code": "vision", "display": "Optical" }
+        value: { "system": "http://terminology.hl7.org/CodeSystem/claim-type", "code": "vision", "display": "Optical" }
     },
 }
 const MEMID_TYPES = {
     BN: {
         "system": "http://nphies.sa/terminology/CodeSystem/patient-identifier-type",
-        "version": "1.0.0",
         "code": "BN",
         "display": "Border Number"
     },
-    DP: { "system": "http://nphies.sa/terminology/CodeSystem/patient-identifier-type", "version": "1.0.0", "code": "DP", "display": "Displaced person" },
-    PRC: { "system": "http://terminology.hl7.org/CodeSystem/v2-0203", "version": "5.0.0", "code": "PRC", "display": "Permanent Resident Card Number" },
-    PPN: { "system": "http://terminology.hl7.org/CodeSystem/v2-0203", "version": "5.0.0", "code": "PPN", "display": "Passport number" },
-    NI: { "system": "http://terminology.hl7.org/CodeSystem/v2-0203", "version": "5.0.0", "code": "NI", "display": "National unique individual identifier" },
-    VP: { "system": "http://terminology.hl7.org/CodeSystem/v2-0203", "version": "5.0.0", "code": "VP", "display": "Visitor Permit" },
-    MR: { "system": "http://terminology.hl7.org/CodeSystem/v2-0203", "version": "5.0.0", "code": "MR", "display": "Medical record number" },
+    DP: { "system": "http://nphies.sa/terminology/CodeSystem/patient-identifier-type", "code": "DP", "display": "Displaced person" },
+    PRC: { "system": "http://terminology.hl7.org/CodeSystem/v2-0203", "code": "PRC", "display": "Permanent Resident Card Number" },
+    PPN: { "system": "http://terminology.hl7.org/CodeSystem/v2-0203", "code": "PPN", "display": "Passport number" },
+    NI: { "system": "http://terminology.hl7.org/CodeSystem/v2-0203", "code": "NI", "display": "National unique individual identifier" },
+    VP: { "system": "http://terminology.hl7.org/CodeSystem/v2-0203", "code": "VP", "display": "Visitor Permit" },
+    MR: { "system": "http://terminology.hl7.org/CodeSystem/v2-0203", "code": "MR", "display": "Medical record number" },
 }
 const PROVIDER_TYPES = {
-    1: { "system": "http://nphies.sa/terminology/CodeSystem/provider-type", "version": "1.0.0", "code": "1", "display": "Hospital" },
-    2: { "system": "http://nphies.sa/terminology/CodeSystem/provider-type", "version": "1.0.0", "code": "2", "display": "General Medical Complex" },
-    3: { "system": "http://nphies.sa/terminology/CodeSystem/provider-type", "version": "1.0.0", "code": "3", "display": "Specialized Medical Complex" },
-    4: { "system": "http://nphies.sa/terminology/CodeSystem/provider-type", "version": "1.0.0", "code": "4", "display": "Diagnostic Center" },
-    5: { "system": "http://nphies.sa/terminology/CodeSystem/provider-type", "version": "1.0.0", "code": "5", "display": "Clinic" },
-    6: { "system": "http://nphies.sa/terminology/CodeSystem/provider-type", "version": "1.0.0", "code": "6", "display": "Pharmacy" },
-    7: { "system": "http://nphies.sa/terminology/CodeSystem/provider-type", "version": "1.0.0", "code": "7", "display": "Laboratory" },
-    8: { "system": "http://nphies.sa/terminology/CodeSystem/provider-type", "version": "1.0.0", "code": "8", "display": "Physiotherapy Center" },
-    9: { "system": "http://nphies.sa/terminology/CodeSystem/provider-type", "version": "1.0.0", "code": "9", "display": "Radiotherapy Center" },
-    other: { "system": "http://nphies.sa/terminology/CodeSystem/provider-type", "version": "1.0.0", "code": "other", "display": "other provider types" },
+    1: { "system": "http://nphies.sa/terminology/CodeSystem/provider-type", "code": "1", "display": "Hospital" },
+    2: { "system": "http://nphies.sa/terminology/CodeSystem/provider-type", "code": "2", "display": "General Medical Complex" },
+    3: { "system": "http://nphies.sa/terminology/CodeSystem/provider-type", "code": "3", "display": "Specialized Medical Complex" },
+    4: { "system": "http://nphies.sa/terminology/CodeSystem/provider-type", "code": "4", "display": "Diagnostic Center" },
+    5: { "system": "http://nphies.sa/terminology/CodeSystem/provider-type", "code": "5", "display": "Clinic" },
+    6: { "system": "http://nphies.sa/terminology/CodeSystem/provider-type", "code": "6", "display": "Pharmacy" },
+    7: { "system": "http://nphies.sa/terminology/CodeSystem/provider-type", "code": "7", "display": "Laboratory" },
+    8: { "system": "http://nphies.sa/terminology/CodeSystem/provider-type", "code": "8", "display": "Physiotherapy Center" },
+    9: { "system": "http://nphies.sa/terminology/CodeSystem/provider-type", "code": "9", "display": "Radiotherapy Center" },
+    other: { "system": "http://nphies.sa/terminology/CodeSystem/provider-type", "code": "other", "display": "other provider types" },
+}
+const RELATED_TYPES = {
+    'extend': { "system": "http://nphies.sa/terminology/CodeSystem/related-claim-relationship", "code": "extend", "display": "Authorization to extend" },
+    'prior': { "system": "http://nphies.sa/terminology/CodeSystem/related-claim-relationship", "code": "prior", "display": "Prior Claim" },
+    'associated': { "system": "http://nphies.sa/terminology/CodeSystem/related-claim-relationship", "code": "associated", "display": "Associated Claim" },
+    'appealing': { "system": "http://nphies.sa/terminology/CodeSystem/related-claim-relationship", "code": "appealing", "display": "Appealing" }
 }
 
 // Update theme ====================================================
@@ -156,6 +161,11 @@ const refreshBundleBtn = el('refreshBundleBtn');
 const referralBadge = el('referralBadge');
 const priorBadge = el('priorBadge');
 const reqRelatedReqInput = el('reqRelatedReqInput');
+const relatedTypeInput = el('relatedTypeInput');
+const reqPreauthRefInput = el('reqPreauthRefInput');
+const attachedPACol = el('attachedPACol');
+const newInfoTypeInput = el('newInfoTypeInput');
+const newInfoValInput = el('newInfoValInput');
 
 // Values Storage ====================================================
 // To store all the extracted values
@@ -174,6 +184,7 @@ let providerFound = false;
 let insurerFound = false;
 let newBundle = '';
 let newTimeStamp = '';
+let itemsTotalPrice = 0.00;
 
 // Init ==============================================================
 window.addEventListener('load', () => {
@@ -203,6 +214,7 @@ function init() {
 
     referralBadge.setAttribute('hidden', '')
     priorBadge.setAttribute('hidden', '')
+    attachedPACol.setAttribute('hidden', '')
 }
 
 // Extract input JSON & Data ========================================
@@ -305,11 +317,7 @@ requestBodyTxtArea.addEventListener('change', () => {
     arrayofItems = entryOfInfo?.item ?? null;
     extractLineItems(arrayofItems);
 
-    if (totalItems) {
-        totalItems.innerText = "| Total: " + entryOfInfo?.total.value + " " + entryOfInfo?.total.currency;
-    } else {
-        showToast("Error: Items total is not found.", "danger");
-    }
+    extractItemsTotal();
 
     // Related claims (if exists)
     extractedInfo = entryOfInfo?.related?.[0] ?? null;
@@ -317,6 +325,10 @@ requestBodyTxtArea.addEventListener('change', () => {
         priorBadge.removeAttribute('hidden', '')
         extractRelatedData(extractedInfo)
     }
+
+    // Preauth Ref (if exists)
+    extractedInfo = entryOfInfo?.insurance?.[0].preAuthRef?.[0] ?? null;
+    reqPreauthRefInput.value = extractedInfo;
 
     // Extract Insurer Data
     extractedInfo = getInsurerResource();
@@ -373,13 +385,40 @@ refreshBundleBtn.addEventListener('click', () => {
     refreshBundleTimestamp()
 })
 
+function extractItemsTotal(isCalculated = false) {
+    const resource = getClaimResource();
+    let extractedTotalVal = 0;
+
+
+    if (isCalculated) {
+        totalItems.innerText = "| Total: " + itemsTotalPrice + " SAR";
+    } else {
+        try {
+            extractedTotalVal = resource?.total?.value;
+        } catch (e) {
+            showToast('Error: Could not extract the items total price')
+            console.error(e.message)
+            return;
+        }
+
+        if (totalItems) {
+            totalItems.innerText = "| Total: " + extractedTotalVal + " SAR";
+        } else {
+            showToast("Error: Items total container is not found");
+        }
+    }
+
+}
+
 function extractRelatedData(related) {
     if (checkNullOrEmpty(related.claim.identifier.value)) {
         showToast('Error: Could not extract the related request data')
         return
     }
 
-    reqRelatedReqInput.value = related.claim.identifier.value;
+    reqRelatedReqInput.value = related.claim.identifier?.value ?? 'Not Found';
+    let searchRelatedType = RELATED_TYPES[related.relationship?.coding?.[0]?.code];
+    relatedTypeInput.value = searchRelatedType.code ?? 'prior';
     priorBadge.removeAttribute('hidden', '')
     showToast('This is a related request.', 'info');
 }
@@ -476,6 +515,7 @@ function extractReqCat(x) {
             requestTypeTitle.innerText = 'Preauth Request';
         } else if (reqCategory === 'claim') {
             reqInput.value = 'claim';
+            attachedPACol.removeAttribute('hidden', '')
             requestTypeTitle.innerText = 'Claim Request';
         } else {
             requestTypeTitle.innerText = 'Unknown Request';
@@ -790,7 +830,12 @@ function renderItemsList(isDeleteActive) {
 
     itemsAccordion.innerHTML = ''; // clear existing rows before re-render
 
+    itemsTotalPrice = 0;
     arrayofLineItems.forEach((item, index) => {
+
+        // Calculate the items total price
+        itemsTotalPrice += Number(item[6])
+
         const newAccordionItem = document.createElement('div');
         newAccordionItem.className = 'd-flex w-100 column-gap-3'
 
@@ -896,12 +941,16 @@ function renderItemsList(isDeleteActive) {
                 showToast('You should keep at least one item.', 'warning');
             } else {
                 arrayofLineItems.splice(index, 1); // remove this item from the array
+                initListsBindings('Item');
                 renderItemsList(true);
             }
         });
 
         itemsAccordion.appendChild(newAccordionItem);
     });
+
+    // Update the total price field
+    extractItemsTotal(true);
 
     lineItemsTrashButtons = document.querySelectorAll('.itemTrashbtn');
     itemDelButtonSpace[0].hidden = !isDeleteActive;
@@ -1143,7 +1192,7 @@ function addNewICDCode(newIcd, newIcdType, newIcdAdm) {
     arrayofICD.push([icdSeq, icdCode, icdType, icdOnAdm]);
 
     try {
-        initListsBindings('ICDtableList');
+        initListsBindings('ICD');
     } catch (e) {
         showToast('Error: Could not add the new ICD to the JSON body.')
         console.error(e.message)
@@ -1330,7 +1379,7 @@ function extractProviderData(resource) {
             providerCityInput.value = resource.address?.[0].city ?? 'Not Defined';
             providerCountryInput.value = resource.address?.[0].country ?? 'Not Defined';
             let searchProvType = PROVIDER_TYPES[resource.extension?.[0].valueCodeableConcept?.coding?.[0].code];
-            providerTypeInput.value = searchProvType?.code ?? 'Not Defined';
+            providerTypeInput.value = searchProvType?.code ?? 'other';
         } catch (e) {
             showToast('Error: something went wrong during Provider data extraction, open the log for more details.', 'danger');
             console.warn(e);
@@ -1613,6 +1662,50 @@ setupValidatedForm('addICDForm', (form) => {
     form.reset();
 })
 
+setupValidatedForm('addSuppInfoForm', (form) => {
+    const newInfoTypeInput = form.querySelector('#newInfoTypeInput');
+    const newInfoValInput = form.querySelector('#newInfoValInput');
+
+    console.log("newInfoValInput ", newInfoValInput)
+
+    bootstrap.Modal.getInstance(document.getElementById('addSuppInfoForm')).hide();
+    form.reset();
+})
+
+newInfoTypeInput.addEventListener('change', function () {
+    const selectedType = this.value; //Cheif Complaint, height, weight..
+
+    // Update the input's type attribute
+    if (selectedType == 'attachment') { newInfoValInput.type = 'file'; }
+    else { newInfoValInput.type = 'text'; }
+
+    // Clear the value when switching types
+    newInfoValInput.value = '';
+});
+
+// Variable to store the file data
+let selectedFileBase64 = null;
+
+newInfoValInput.addEventListener('change', async function (e) {
+    if (newInfoValInput.type === 'file' && newInfoValInput.files[0]) {
+        const base64 = await fileToBase64(newInfoValInput.files[0]);
+        selectedFileBase64 = base64;
+        console.log(base64);
+    } else {
+        showToast('Error: Could not read the uploaded file')
+        return
+    }
+})
+
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
 setupValidatedForm('addItemForm', (form) => {
     // item[0=seqID, 1=itemICD, 2=itemDesc, 3=itemQTY, 4=itemUnitPrice, 5=itemFactor
     // 6=itemNetPrice, 7=itemServdDateFrom, 8=itemServdDateTo, 9=itemNphiesCode,
@@ -1671,7 +1764,7 @@ setupValidatedForm('addItemForm', (form) => {
     );
 
     try {
-        initListsBindings('itemsAccordion');
+        initListsBindings('Item');
     } catch (e) {
         showToast('Error: Could not add the new item to the JSON body.')
         console.error(e.message)
@@ -1815,6 +1908,7 @@ function getProviderResource() {
 
 const fieldBindings = [
     {
+        type: 'claimId',
         input: reqClaimIDInput,
         getTarget: getClaimIdentifier,
         get: (target) => target.value,
@@ -1823,6 +1917,7 @@ const fieldBindings = [
         }
     },
     {
+        type: 'reqCat',
         input: reqInput,
         // This field touches TWO paths in `parsed`:
         //   1. entry[1].resource.identifier[0].system  (via getClaimIdentifier)
@@ -1850,8 +1945,17 @@ const fieldBindings = [
             const newSystem = oldSystem.substring(0, oldSystem.lastIndexOf('/') + 1) + newValue;
             // "use" uses different wording than "system" ("preauthorization"
             // vs "authorization") — adjust this mapping if your real values differ.
-            const newUse = newValue === 'authorization' ? 'preauthorization' : 'claim';
-            requestTypeTitle.innerText = newValue === 'authorization' ? 'Preauth Request' : 'Claim Request';
+
+            let newUse;
+            if (newValue === 'authorization') {
+                newUse = 'preauthorization'
+                requestTypeTitle.innerText = 'Preauth Request'
+                attachedPACol.setAttribute('hidden', '')
+            } else {
+                newUse = 'claim';
+                requestTypeTitle.innerText = 'Claim Request';
+                attachedPACol.removeAttribute('hidden', '')
+            }
 
             // Path 1: identifier.system — swap only the last URL segment.
             target.identifier.system = newSystem;
@@ -1860,6 +1964,7 @@ const fieldBindings = [
         }
     },
     {
+        type: 'reqType',
         input: reqTypeInput,
         getTarget: () => {
             // We need the parent `type` object (not just coding[0]) because
@@ -1880,6 +1985,7 @@ const fieldBindings = [
         }
     },
     {
+        type: 'reqSubtype',
         input: reqSubtypeInput,
         getTarget: () => {
             const coding = getClaimResource()?.subType?.coding?.[0] ?? null;
@@ -1895,6 +2001,7 @@ const fieldBindings = [
         }
     },
     {
+        type: 'reqPriority',
         input: reqPriorityInput,
         getTarget: () => {
             const coding = getClaimResource()?.priority?.coding?.[0] ?? null;
@@ -1903,6 +2010,26 @@ const fieldBindings = [
         get: (target) => target.coding.code,
         set: (target, newValue) => {
             target.coding.code = newValue;
+        }
+    },
+
+    // Related and PreauthRef
+    {
+        input: relatedTypeInput,
+        getTarget: () => {
+            const related = getClaimResource()?.related ?? null;
+            return related ? { related } : null;
+        },
+        get: (target) => {
+            const code = target.related?.relationship?.coding?.[0].code ?? '';
+            return RELATED_TYPES[code].display;
+        },
+        set: (target, newValue) => {
+            const newCoding = RELATED_TYPES[newValue];
+            if (!newCoding) {
+                throw new Error(`"${newValue}" is not a recognized claim relationship type.`);
+            }
+            target.related[0].relationship.coding = [{ ...newCoding }];
         }
     },
 
@@ -1937,7 +2064,6 @@ const fieldBindings = [
         }
     },
     {
-        // same pattern as reqInput/reqClaimIDInput on the Claim resource.
         input: reqIDTypeInput,
         getTarget: getBeneficiaryResource,
         get: (target) => target.identifier?.[0]?.type?.coding?.[0]?.code ?? '',
@@ -2082,9 +2208,6 @@ const fieldBindings = [
         }
     },
     {
-        // a code (e.g. "1") in extension[0].valueCodeableConcept.coding[0].code.
-        // arrayofProviderTypes is the same [code, label] table extractProviderData
-        // already uses, reused here in reverse (label -> code).
         input: providerTypeInput,
         getTarget: () => {
             const resource = getProviderResource();
@@ -2097,7 +2220,7 @@ const fieldBindings = [
         set: (target, newValue) => {
             const newCoding = PROVIDER_TYPES[newValue];
             if (!newCoding) {
-                throw new Error(`"${newValue}" is not a recognized claim type.`);
+                throw new Error(`"${newValue}" is not a recognized provider type.`);
             }
             if (!target.resource.extension) {
                 throw new Error('Provider resource has no extension to update.');
@@ -2109,6 +2232,7 @@ const fieldBindings = [
 
 const listBindings = [
     {
+        type: 'ICD',
         input: ICDtableList,
         getTarget: () => {
             const claim = getClaimResource();
@@ -2165,6 +2289,7 @@ const listBindings = [
         }
     },
     {
+        type: 'Item',
         input: itemsAccordion,
         getTarget: () => {
             const claim = getClaimResource();
@@ -2247,7 +2372,14 @@ initFieldBindings();
 function initListsBindings(type) {
     // Refresh Timestamp & BundleID
     refreshBundleTimestamp();
-    listBindings.forEach((binding) => {
+
+    for (const binding of listBindings) {
+        // Check if specific type is specified type.length >= 1
+        // Skip this iteration if it doesn't match the requested type
+        if (type.length >= 1 && binding.type !== type) {
+            continue;
+        }
+
         const target = binding.getTarget();
         if (!target) {
             showToast(
@@ -2255,16 +2387,14 @@ function initListsBindings(type) {
                 `Make sure a valid JSON has been loaded first.`,
                 'danger'
             );
-            return;
+            continue;
         }
 
         try {
             binding.set(target);
-            console.log("Done here #1")
             syncJSONToTextArea();
-            console.log("Done here #2")
         } catch (e) {
             showToast(`Error updating JSON from "${binding.input.id}": ${e.message}`, 'danger');
         }
-    });
+    }
 }

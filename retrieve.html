@@ -33,7 +33,7 @@
 
     <!-- Modal for add Item -->
     <div class="modal fade" id="newItemModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="modal-title" aria-hidden="true">
+        aria-labelledby="modal-title">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <form id="addItemForm" class="modal-content needs-validation" novalidate>
                 <div class="modal-header">
@@ -191,7 +191,7 @@
     </div>
 
     <!-- Modal for add ICD -->
-    <div class="modal fade" id="newICDModal" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
+    <div class="modal fade" id="newICDModal" tabindex="-1" aria-labelledby="modal-title">
         <div class="modal-dialog modal-dialog-centered">
             <form id="addICDForm" class="modal-content needs-validation" novalidate>
                 <div class="modal-header">
@@ -202,7 +202,7 @@
                     <div class="row">
                         <div class="col">
                             <label for="newICDCodeInput" class="form-label text-secondary">ICD-10 Code</label>
-                            <input type="text" class="form-control" id="newICDCodeInput" autocapitalize="characters" required>
+                            <input type="text" class="form-control" id="newICDCodeInput" required>
                             <div class="invalid-feedback">Please Enter the ICD Code.</div>
                         </div>
                         <div class="col">
@@ -221,6 +221,40 @@
                                 <option selected value="n">No</option>
                                 <option value="y">Yes</option>
                             </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal fade" id="newSuppInfoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <form id="addSuppInfoForm" class="modal-content needs-validation" novalidate>
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Supporting Information</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-4">
+                            <label for="newInfoTypeInput" class="form-label text-secondary">Info Type</label>
+                            <select id="newInfoTypeInput" required class="form-select" aria-label="Info Type">
+                                <option selected value="chief-complaint">Chief Complaint</option>
+                                <option value="days-supply">Days Supply</option>
+                                <option value="attachment">Attachment</option>
+                                <option value="temperature">Temperature</option>
+                                <option value="estimated-Length-of-Stay">Estimated Length Of Stay</option>
+                                <option value="morphology">Morphology</option>
+                            </select>
+                        </div>
+                        <div class="col" id="suppInfValControl">
+                            <label for="newInfoValInput" class="form-label text-secondary">Value</label>
+                            <input type="text" class="form-control" id="newInfoValInput" required>
+                            <div class="invalid-feedback">Please enter a value</div>
                         </div>
                     </div>
                 </div>
@@ -388,18 +422,20 @@
                                                 <label for="reqRelatedReqInput"
                                                     class="form-label text-secondary">Related Claim</label>
                                                 <div class="input-group">
-                                                    <input type="text" class="form-control" id="reqRelatedReqInput" >
-                                                    <button class="btn btn-outline-secondary copy-btn" type="button"
-                                                        data-bs-target="reqRelatedReqInput"><i
-                                                            class="ph-bold ph-copy phicon-container"></i></button>
+                                                    <input type="text" class="form-control" id="reqRelatedReqInput">
+                                                    <select class="form-select" id="relatedTypeInput">
+                                                        <option selected value="prior">Prior Claim</option>
+                                                        <option value="extend">Preauth to extend</option>
+                                                        <option value="associated">Associated Claim</option>
+                                                        <option value="appealing">Appealing</option>
+                                                    </select>
                                                 </div>
                                             </div>
-                                            <div class="col p-1">
+                                            <div class="col p-1" id="attachedPACol">
                                                 <label for="reqPreauthRefInput"
                                                     class="form-label text-secondary">Preauth Reference</label>
                                                 <div class="input-group">
-                                                    <input type="text" class="form-control" id="reqPreauthRefInput"
-                                                        aria-describedby="basic-addon3 basic-addon4">
+                                                    <input type="text" class="form-control" id="reqPreauthRefInput">
                                                     <button class="btn btn-outline-secondary copy-btn" type="button"
                                                         data-bs-target="reqPreauthRefInput"><i
                                                             class="ph-bold ph-copy phicon-container"></i></button>
@@ -604,7 +640,7 @@
                                                     <p class="fs-6 mb-2 fw-semibold">Supporting Info</p>
                                                     <div class="d-flex align-items-center column-gap-2">
                                                         <button id="addSuppInfBtn" class="btn btn-sm border-0"
-                                                            data-bs-toggle="modal" data-bs-target="#newSuppInfModal">
+                                                            data-bs-toggle="modal" data-bs-target="#newSuppInfoModal">
                                                             <i class="ph-bold ph-plus"></i>
                                                         </button>
                                                     </div>

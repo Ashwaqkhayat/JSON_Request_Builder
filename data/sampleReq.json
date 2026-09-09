@@ -1,13 +1,13 @@
 {
     "resourceType": "Bundle",
-    "id": "a84aabfa-1163-407d-aa38-f8119a0b8888",
+    "id": "a0e3069e-8b92-4bd9-b5b1-d11ab3283bb6",
     "meta": {
         "profile": [
             "http://nphies.sa/fhir/ksa/nphies-fs/StructureDefinition/bundle|1.0.0"
         ]
     },
     "type": "message",
-    "timestamp": "2023-12-05T09:20:15.23+03:00",
+    "timestamp": "2026-09-09T15:04:43.22+03:00",
     "entry": [
         {
             "fullUrl": "urn:uuid:a7e4caf2-0441-40e5-97d2-5ae1802730af",
@@ -91,7 +91,7 @@
                 ],
                 "identifier": [
                     {
-                        "system": "http://saudigeneralhospital.com.sa/identifiers/authorization",
+                        "system": "http://saudigeneralhospital.com.sa/identifiers/claim",
                         "value": "req_3085"
                     }
                 ],
@@ -112,7 +112,7 @@
                         }
                     ]
                 },
-                "use": "preauthorization",
+                "use": "claim",
                 "patient": {
                     "reference": "Patient/173826788"
                 },
@@ -339,9 +339,7 @@
                         "code": {
                             "coding": [
                                 {
-                                    "system": "http://snomed.info/sct",
-                                    "code": "426749004",
-                                    "display": "Chronic atrial fibrillation (disorder)"
+                                    "text": "http://snomed.info/sct"
                                 }
                             ]
                         }
@@ -606,7 +604,10 @@
                         "focal": true,
                         "coverage": {
                             "reference": "Coverage/1334"
-                        }
+                        },
+                        "preAuthRef": [
+                            "123442335"
+                        ]
                     }
                 ],
                 "item": [
@@ -938,10 +939,6 @@
                         "http://nphies.sa/fhir/ksa/nphies-fs/StructureDefinition/patient|1.0.0"
                     ]
                 },
-                "text": {
-                    "status": "generated",
-                    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"Patient_173826788\"> </a><p class=\"res-header-id\"><b>Generated Narrative: Patient 173826788</b></p><a name=\"173826788\"> </a><a name=\"hc173826788\"> </a><div style=\"display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%\"><p style=\"margin-bottom: 0px\"/><p style=\"margin-bottom: 0px\">Profile: <a href=\"StructureDefinition-patient.html\">Nphies Patientversion: null1.0.0)</a></p></div><p style=\"border: 1px #661aff solid; background-color: #e6e6ff; padding: 10px;\">Muhammad Khaled Abbas(official) Male, DoB: 2010-08-21 ( Permanent Resident Card Number: 2000000002)</p><hr/><table class=\"grid\"><tr><td style=\"background-color: #f3f5da\" title=\"Record is active\">Active:</td><td>true</td><td style=\"background-color: #f3f5da\" title=\"Known Marital status of Patient\">Marital Status:</td><td colspan=\"3\"><span title=\"Codes:{http://terminology.hl7.org/CodeSystem/v3-MaritalStatus U}\">unmarried</span></td></tr><tr><td style=\"background-color: #f3f5da\" title=\"Ways to contact the Patient\">Contact Detail</td><td colspan=\"3\"><a href=\"tel:+966517382691\">+966517382691</a></td></tr><tr><td style=\"background-color: #f3f5da\" title=\"Patient occupation as per the nphies adopted list of occupations.\"><a href=\"StructureDefinition-extension-occupation.html\">Patient Occupation</a></td><td colspan=\"3\"><span title=\"Codes:{http://nphies.sa/terminology/CodeSystem/occupation student}\">Student</span></td></tr></table></div>"
-                },
                 "extension": [
                     {
                         "url": "http://nphies.sa/fhir/ksa/nphies-fs/StructureDefinition/extension-occupation",
@@ -966,7 +963,7 @@
                                 }
                             ]
                         },
-                        "system": "http://nphies.sa/identifier/iqama",
+                        "system": "http://nphies.sa/identifier/nationalid",
                         "value": "2000000002"
                     }
                 ],
@@ -1024,10 +1021,6 @@
                     "profile": [
                         "http://nphies.sa/fhir/ksa/nphies-fs/StructureDefinition/patient|1.0.0"
                     ]
-                },
-                "text": {
-                    "status": "generated",
-                    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"Patient_123454186\"> </a><p class=\"res-header-id\"><b>Generated Narrative: Patient 123454186</b></p><a name=\"123454186\"> </a><a name=\"hc123454186\"> </a><div style=\"display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%\"><p style=\"margin-bottom: 0px\"/><p style=\"margin-bottom: 0px\">Profile: <a href=\"StructureDefinition-patient.html\">Nphies Patientversion: null1.0.0)</a></p></div><p style=\"border: 1px #661aff solid; background-color: #e6e6ff; padding: 10px;\">Ahmad Khaled Abbas(official) Male, DoB: 1984-12-25 ( Passport Number: G12345678)</p><hr/><table class=\"grid\"><tr><td style=\"background-color: #f3f5da\" title=\"Record is active\">Active:</td><td>true</td><td style=\"background-color: #f3f5da\" title=\"Known status of Patient\">Deceased:</td><td>false</td></tr><tr><td style=\"background-color: #f3f5da\" title=\"Known Marital status of Patient\">Marital Status:</td><td colspan=\"3\"><span title=\"Codes:{http://terminology.hl7.org/CodeSystem/v3-MaritalStatus M}\">Married</span></td></tr><tr><td style=\"background-color: #f3f5da\" title=\"Ways to contact the Patient\">Contact Detail</td><td colspan=\"3\"><ul><li><a href=\"tel:+966512345691\">+966512345691</a></li><li>Salamah Street, Building 25, Suite 2, Saudi Arabia(home)</li></ul></td></tr><tr><td style=\"background-color: #f3f5da\" title=\"Patient occupation as per the nphies adopted list of occupations.\"><a href=\"StructureDefinition-extension-occupation.html\">Patient Occupation</a></td><td colspan=\"3\"><span title=\"Codes:{http://nphies.sa/terminology/CodeSystem/occupation business}\">Business</span></td></tr></table></div>"
                 },
                 "extension": [
                     {
