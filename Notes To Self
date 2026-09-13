@@ -11,16 +11,13 @@
 // ✅ Filter يعني لما تتحدث اللست فلتري مين تحدث مو كل اللستات او الخانات the updated fields in json
 // ✅ Implement the Related & prauthRef fields
 // ✅ Update Items Total
+// ✅ Updated item ICDs in JSON when one ICD is deleted
+// ✅ Clear ICD form when closed/dismissed without submit
+// ✅ Reflect the adjusted total to the JSON
 
 // TODO: 
 
-// Updated item ICDs when one ICD is deleted
-
-// Clear ICD form when closed/dismissed without submit
-
 // Complete the list of Extensions
-
-// Reflect the adjusted total to the JSON
 
 // Add new supporting info thing (Complex) >> In Progress
 

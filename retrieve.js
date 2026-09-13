@@ -392,6 +392,13 @@ function extractItemsTotal(isCalculated = false) {
 
     if (isCalculated) {
         totalItems.innerText = "| Total: " + itemsTotalPrice + " SAR";
+        try {
+            resource.total.value = itemsTotalPrice;
+            syncJSONToTextArea() // Reflect the change to JSON
+        } catch (error) {
+            showToast('Error: Could not update the parsed JSON with the new items total.')
+            console.error(error)
+        }
     } else {
         try {
             extractedTotalVal = resource?.total?.value;
@@ -1244,6 +1251,7 @@ function renderICDList(isDeleteActive) {
                     }
                 }
                 renderItemsList(false); // To reflect the new ICD changes
+                initListsBindings() // Reflect the changes on JSON for both ICD and items
             }
         });
 
@@ -1786,6 +1794,15 @@ function validateItemServicedDate() {
         newSDateToInput.setCustomValidity('')
     }
 }
+
+// Reset all forms when dismissed
+document.addEventListener('hidden.bs.modal', function (event) {
+    const modal = event.target;
+    modal.querySelectorAll('form').forEach(form => {
+        form.reset();
+        form.classList.remove('was-validated');
+    });
+});
 
 // Load Dynamic Lists ======================================
 newItemModal.addEventListener('shown.bs.modal', function () {
@@ -2376,7 +2393,7 @@ function initListsBindings(type) {
     for (const binding of listBindings) {
         // Check if specific type is specified type.length >= 1
         // Skip this iteration if it doesn't match the requested type
-        if (type.length >= 1 && binding.type !== type) {
+        if (type != undefined && type.length >= 1 && binding.type !== type) {
             continue;
         }
 
