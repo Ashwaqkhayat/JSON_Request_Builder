@@ -37,7 +37,6 @@ submitBtn.addEventListener('click', async () => {
     // For Testing Purposes
     try {
         await new Promise(resolve => setTimeout(resolve, 3000));
-        console.log('done');
     } catch (err) {
         console.error(err);
     } finally {

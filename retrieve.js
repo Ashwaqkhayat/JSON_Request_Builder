@@ -1,4 +1,5 @@
 import { buildClaimBody } from "./itemConstructor.js";
+import { populateCategorySelect, setArrayOfSupportingInfo, getArrayOfSupportingInfo, renderSupportingInfo, SUPPINF_CATEGORY_BY_CODE, buildSuppInfEntry } from "./supportingInfoConstructor.js";
 
 const el = val => document.getElementById(val);
 const elc = val => document.getElementsByClassName(val);
@@ -174,6 +175,7 @@ const newInfoValInput = el('newInfoValInput');
 var arrayofICD = [];
 var arrayofCareTeam = [];
 var arrayofLineItems = [];
+// arrayofSupportingInfo is in supportingInfoConstructor.js
 
 // Controllers =======================================================
 
@@ -206,6 +208,7 @@ function init() {
     arrayofICD = [];
     arrayofCareTeam = [];
     arrayofLineItems = [];
+    setArrayOfSupportingInfo([]);
 
     // Reset the markers
     benefitiaryFound = false;
@@ -624,12 +627,6 @@ function extractClaimID(x) {
 // TODO: Complete this list
 // {
 //     "preauth-extensions": {
-//         "extension-encounter": "valueReference"."reference",
-//         "extension-eligibility-response": "valueReference"."identifier"."value",
-//         "extension-eligibility-offline-reference": "valueString",
-//         "extension-eligibility-offline-date": "valueDateTime",
-//         "extension-newborn": "valueBoolean",
-//         "extension-episode": "valueIdentifier"."value",
 //         "extension-priorauthresponse": "valueIdentifier"."identifier"."value",
 //         "extension-transfer": "valueBoolean",
 //         "extension-maternity": "valueBoolean",
@@ -683,6 +680,9 @@ function extractClaimExtensions(x, el, extensionOf) {
                             showToast('this is a referral request.', 'info')
                             referralBadge.removeAttribute('hidden', '')
                         }
+                        break;
+                    case "extension-priorauthresponse":
+                        extensionValue = ex.valueIdentifier?.identifier?.value ?? 'Not Defined';
                         break;
                     default:
                         extensionValue = "In Progress"
@@ -1058,112 +1058,18 @@ function clearItemsLists() {
     `;
 }
 
-function extractSupportingInfo(x) {
-    // X is the list of SupportingInfo
-    if (!x || x.length == 0) {
-        clearSuppInfoLists();
-    } else {
-        supportingInfoUL.innerHTML = '';
-        let extractedCateg;
-        const possibKeys = ["valueQuantity", "timingPeriod", "code", "timingDate", "valueString"];
+function extractSupportingInfo(suppInfoArr) {
+    let arr = [];
+    if (Array.isArray(suppInfoArr)) { arr = suppInfoArr; }
+    else { showToast('Error: Could not extract the supporting Information'); }
 
-        x.forEach((info, index) => {
-            // Map each key and its value
-            // Object.entries() converts an object into an array of its own key-value pairs.
-            // [[seq, val], [category, val], [val1, val], [val2, val]]
-            let suppInf = Object.entries(info).map(([key, val]) => ({ key, val }));
-
-            extractedCateg = findSuppKey(suppInf, "category");
-            let infoType = extractedCateg?.val?.coding?.[0].code;
-            let noOfData = suppInf.length;
-
-            let mainValue = ["Undefined", -1];
-            let thirdValue = ["Undefined", -1];
-            mainValue = getSuppInfo(possibKeys, suppInf);
-
-            if (noOfData === 4) {
-                thirdValue = getSuppInfo(possibKeys, suppInf, mainValue[1]);
-                // main/thirdVal are an array of [the value, keyIndex]
-            }
-
-            addSuppInfoToList(index, noOfData, infoType, mainValue[0], thirdValue[0]);
-        });
-    }
+    if (arr != null && arr.length < 1) { clearSuppInfoLists(); }
+    setArrayOfSupportingInfo(arr)
+    renderSupportingInfo()
 }
-function getSuppInfo(possibKeys, suppInfo, skippedKey = null) {
-    let extractedVal;
-    let keyTypeIndex = -1;
-    for (let i = 0; i < possibKeys.length; i++) {
-        if (i == skippedKey) { continue; } // Skip the founded info
-        extractedVal = findSuppKey(suppInfo, possibKeys[i]);
-        if (extractedVal != null) {
-            keyTypeIndex = i;
-            break;
-        }
-    }
 
-    let processedValue = ["undefined", keyTypeIndex];
-    switch (keyTypeIndex) {
-        case 0: //valueQuantity
-            processedValue[0] = extractedVal?.val?.value + " " + extractedVal?.val?.code ?? "";
-            break;
-        case 1: //timingPeriod
-            processedValue[0] = extractedVal?.val?.start + " → " + extractedVal?.val?.end;
-            break;
-        case 2: //code
-            processedValue[0] = extractedVal?.val?.coding?.[0].code ?? "Unknown";
-            let isDisplay = extractedVal?.val?.text ?? extractedVal?.val?.coding?.[0].display ?? false;
-            if (isDisplay) { processedValue[0] = processedValue[0] + " | " + isDisplay; }
-            break;
-        case 3: //timingDate
-            processedValue[0] = extractedVal?.val ?? 'Not Defined';
-            break;
-        case 4: //valueString
-            processedValue[0] = extractedVal?.val ?? 'Not Defined';
-            break;
-        default:
-            processedValue[0] = "Not Found.";
-    }
-
-    return processedValue;
-}
-function findSuppKey(suppInfo, keyName) {
-    const found = suppInfo.find(inf => inf.key == keyName);
-    if (found) {
-        return found;
-    } else {
-        return null;
-    }
-}
-function addSuppInfoToList(index, noOfParams, catTitle, mainValue, thirdInfo) {
-
-    const newEl = document.createElement('li');
-    newEl.className = 'info-item';
-    newEl.id = `${catTitle}Li-${index}`;
-
-    newEl.innerHTML = `
-    <div class="info-content">
-    <div class="d-flex flex-row w-100">
-        <div class="info-index">#${index + 1}</div>
-        <div class="d-flex flex-column flex-grow-1">
-            <div class="d-flex flex-grow-1 flex-row justify-content-between">
-                <div class="info-label">${catTitle.replaceAll("-", " ")}</div>
-                <div class="info-value">${mainValue}</div>
-            </div>
-            <div class="d-flex flex-grow-1 flex-row justify-content-between">
-                <div class="info-label second-info text-secondary-emphasis opacity-50">${noOfParams == 3 ? "    " : "Timing Date/Period"}</div>
-                <div class="info-value second-info text-secondary-emphasis opacity-${noOfParams == 4 ? "50" : "0"}">${thirdInfo}</div>
-            </div>
-        </div>
-    </div>
-    </div>
-    <button class="btn btn-outline-secondary info-copy-btn" type="button">
-    <i class="ph-bold ph-copy phicon-container"></i>
-    </button>
-    `;
-    supportingInfoUL.appendChild(newEl);
-}
 function clearSuppInfoLists() {
+    setArrayOfSupportingInfo([])
     supportingInfoUL.innerHTML = `
     <li class="info-item d-flex w-100 h-100">
         <div class="info-content justify-content-center align-items-center">Empty</div>
@@ -1645,21 +1551,42 @@ function setupValidatedForm(formId, onValidSubmit) {
 
     form.addEventListener('submit', event => {
         // Custom validations:
-        validateItemServicedDate()
+        if (formId == 'addItemForm') { validateItemServicedDate() }
 
         form.classList.add('was-validated')
-
         event.preventDefault() // prevents native submit
         if (!form.checkValidity()) {
+            console.log("Hi here2")
             event.stopPropagation()
             return
         }
-
         onValidSubmit(form, event)
         form.classList.remove('was-validated')
     })
 }
 
+setupValidatedForm('addSuppInfoForm', (form) => {
+    let arrOfSuppInf = getArrayOfSupportingInfo();
+
+    const catCode = newInfoTypeInput.value;
+    const cat = SUPPINF_CATEGORY_BY_CODE[catCode];
+    if (!cat) { showToast('Please choose a supporting info category.'); return; }
+
+    try {
+        const entry = buildSuppInfEntry(cat);
+        arrOfSuppInf.push(entry);
+        arrOfSuppInf.sort((a, b) => (a.sequence || 0) - (b.sequence || 0));
+        setArrayOfSupportingInfo(arrOfSuppInf);
+        renderSupportingInfo();
+    } catch (err) {
+        showToast(err.message);
+        return;
+    }
+
+    console.log("Hi here")
+    bootstrap.Modal.getInstance(el('newSuppInfoModal')).hide();
+    form.reset();
+});
 
 setupValidatedForm('addICDForm', (form) => {
     const newICDInput = form.querySelector('#newICDCodeInput');
@@ -1669,50 +1596,6 @@ setupValidatedForm('addICDForm', (form) => {
     bootstrap.Modal.getInstance(document.getElementById('newICDModal')).hide();
     form.reset();
 })
-
-setupValidatedForm('addSuppInfoForm', (form) => {
-    const newInfoTypeInput = form.querySelector('#newInfoTypeInput');
-    const newInfoValInput = form.querySelector('#newInfoValInput');
-
-    console.log("newInfoValInput ", newInfoValInput)
-
-    bootstrap.Modal.getInstance(document.getElementById('addSuppInfoForm')).hide();
-    form.reset();
-})
-
-newInfoTypeInput.addEventListener('change', function () {
-    const selectedType = this.value; //Cheif Complaint, height, weight..
-
-    // Update the input's type attribute
-    if (selectedType == 'attachment') { newInfoValInput.type = 'file'; }
-    else { newInfoValInput.type = 'text'; }
-
-    // Clear the value when switching types
-    newInfoValInput.value = '';
-});
-
-// Variable to store the file data
-let selectedFileBase64 = null;
-
-newInfoValInput.addEventListener('change', async function (e) {
-    if (newInfoValInput.type === 'file' && newInfoValInput.files[0]) {
-        const base64 = await fileToBase64(newInfoValInput.files[0]);
-        selectedFileBase64 = base64;
-        console.log(base64);
-    } else {
-        showToast('Error: Could not read the uploaded file')
-        return
-    }
-})
-
-function fileToBase64(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-    });
-}
 
 setupValidatedForm('addItemForm', (form) => {
     // item[0=seqID, 1=itemICD, 2=itemDesc, 3=itemQTY, 4=itemUnitPrice, 5=itemFactor
@@ -1802,15 +1685,20 @@ document.addEventListener('hidden.bs.modal', function (event) {
         form.reset();
         form.classList.remove('was-validated');
     });
+    document.querySelectorAll('.field-group').forEach(g => {
+        g.classList.toggle('active', '');
+    });
 });
 
 // Load Dynamic Lists ======================================
 newItemModal.addEventListener('shown.bs.modal', function () {
     // Set today's date as ServDate
     newSDateFromInput.value = new Date().toISOString().slice(0, 10);
-
-    // Load the options of select elements
     loadICDList();
+});
+
+newSuppInfoModal.addEventListener('shown.bs.modal', function () {
+    populateCategorySelect();
 });
 
 function loadICDList() {

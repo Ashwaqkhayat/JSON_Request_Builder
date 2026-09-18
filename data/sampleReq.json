@@ -339,7 +339,7 @@
                         "code": {
                             "coding": [
                                 {
-                                    "text": "http://snomed.info/sct"
+                                    "text": "A sharp, throbbing headache on the right side of the head that began three days ago, occurs daily for about four hours each time, and is accompanied by nausea and sensitivity to light."
                                 }
                             ]
                         }
@@ -507,6 +507,39 @@
                             "value": 1.5,
                             "system": "http://unitsofmeasure.org",
                             "code": "h"
+                        }
+                    },
+                    {
+                        "sequence": 18,
+                        "category": {
+                            "coding": [
+                                {
+                                    "system": "http://nphies.sa/terminology/CodeSystem/claim-information-category",
+                                    "code": "days-supply"
+                                }
+                            ]
+                        },
+                        "valueQuantity": {
+                            "value": 30,
+                            "system": "http://unitsofmeasure.org",
+                            "code": "d"
+                        }
+                    },
+                    {
+                        "sequence": 19,
+                        "category": {
+                            "coding": [
+                                {
+                                    "system": "http://nphies.sa/terminology/CodeSystem/claim-information-category",
+                                    "code": "attachment"
+                                }
+                            ]
+                        },
+                        "valueAttachment": {
+                            "contentType": "application/pdf",
+                            "data": "Attachment1.pdf",
+                            "title": "Attachment1",
+                            "creation": "2026-09-18"
                         }
                     }
                 ],

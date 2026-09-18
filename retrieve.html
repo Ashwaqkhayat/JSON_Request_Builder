@@ -242,21 +242,115 @@
                 </div>
                 <div class="modal-body">
                     <div class="row">
-                        <div class="col-4">
+                        <div class="col">
                             <label for="newInfoTypeInput" class="form-label text-secondary">Info Type</label>
                             <select id="newInfoTypeInput" required class="form-select" aria-label="Info Type">
-                                <option selected value="chief-complaint">Chief Complaint</option>
-                                <option value="days-supply">Days Supply</option>
-                                <option value="attachment">Attachment</option>
-                                <option value="temperature">Temperature</option>
-                                <option value="estimated-Length-of-Stay">Estimated Length Of Stay</option>
-                                <option value="morphology">Morphology</option>
+                                <option selected disabled value="">Choose a category…</option>
                             </select>
                         </div>
-                        <div class="col" id="suppInfValControl">
-                            <label for="newInfoValInput" class="form-label text-secondary">Value</label>
-                            <input type="text" class="form-control" id="newInfoValInput" required>
-                            <div class="invalid-feedback">Please enter a value</div>
+                        <div class="col">
+                            <div id="fieldGroups">
+                                <div class="field-group" data-kind="timedValue">
+                                    <div class="row g-3">
+                                        <div class="col-6">
+                                            <label class="form-label" for="tv_start">Start date/time</label>
+                                            <input type="datetime-local" step="1" class="form-control" id="tv_start"
+                                                data-required-in-group>
+                                        </div>
+                                        <div class="col-6">
+                                            <label class="form-label" for="tv_end">End <small>(<a href="#"
+                                                        id="tv_sameAsStart">same as start</a>)</small></label>
+                                            <input type="datetime-local" step="1" class="form-control" id="tv_end">
+                                        </div>
+                                        <div class="col-8">
+                                            <label class="form-label" for="tv_value">Value</label>
+                                            <input type="number" step="any" class="form-control" id="tv_value"
+                                                placeholder="e.g. 120" data-required-in-group>
+                                        </div>
+                                        <div class="col-4">
+                                            <label class="form-label d-block">Unit</label>
+                                            <span class="badge text-bg-secondary unit-badge" id="tv_unitBadge">–</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="field-group" data-kind="plainValue">
+                                    <div class="row g-3">
+                                        <div class="col-8">
+                                            <label class="form-label" for="pv_value">Value</label>
+                                            <input type="number" step="any" class="form-control" id="pv_value"
+                                                placeholder="e.g. 129" data-required-in-group>
+                                        </div>
+                                        <div class="col-4">
+                                            <label class="form-label d-block">Unit</label>
+                                            <span class="badge text-bg-secondary unit-badge" id="pv_unitBadge">–</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="field-group" data-kind="string">
+                                    <label class="form-label" for="str_value">Text</label>
+                                    <textarea class="form-control" id="str_value" rows="3"
+                                        placeholder="e.g. No systemic disease" data-required-in-group></textarea>
+                                </div>
+
+                                <div class="field-group" data-kind="investigation">
+                                    <div class="row g-3">
+                                        <div class="col-4">
+                                            <label class="form-label" for="inv_code">Code</label>
+                                            <input type="text" class="form-control" id="inv_code" value="INP"
+                                                data-required-in-group>
+                                        </div>
+                                        <div class="col-8">
+                                            <label class="form-label" for="inv_display">Display</label>
+                                            <input type="text" class="form-control" id="inv_display"
+                                                value="Investigation(s) not performed">
+                                        </div>
+                                    </div>
+                                    <div class="small-note mt-1">System:
+                                        http://nphies.sa/terminology/CodeSystem/investigation-result — edit the
+                                        code/display if a different result applies.</div>
+                                </div>
+
+                                <div class="field-group" data-kind="onset">
+                                    <div class="row g-3">
+                                        <div class="col-4">
+                                            <label class="form-label" for="on_code">ICD-10-AM code</label>
+                                            <input type="text" class="form-control" id="on_code"
+                                                placeholder="e.g. R07.1" data-required-in-group>
+                                        </div>
+                                        <div class="col-8">
+                                            <label class="form-label" for="on_text">Description</label>
+                                            <input type="text" class="form-control" id="on_text"
+                                                placeholder="e.g. Chest pain on breathing">
+                                        </div>
+                                        <div class="col-6">
+                                            <label class="form-label" for="on_date">Onset date</label>
+                                            <input type="date" class="form-control" id="on_date">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="field-group" data-kind="attachment">
+                                    <div class="row g-3">
+                                        <div class="col-12">
+                                            <label class="form-label" for="att_title">Title <small>(optional — defaults
+                                                    to file name)</small></label>
+                                            <input type="text" class="form-control" id="att_title"
+                                                placeholder="e.g. Attachment1">
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label" for="att_file">File <small>(PDF, PNG, or
+                                                    JPEG)</small></label>
+                                            <input type="file" class="form-control" id="att_file"
+                                                accept="application/pdf,image/png,image/jpeg" data-required-in-group>
+                                        </div>
+                                        <div class="col-12">
+                                            <span class="small-note" id="att_fileInfo"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

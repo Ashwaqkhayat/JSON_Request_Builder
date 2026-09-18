@@ -428,3 +428,7 @@ input[type=number] {
     margin-left: 0.5rem !important;
     cursor: pointer !important;
 }
+
+.field-group{ display:none; }
+
+.field-group.active{ display:block; }
