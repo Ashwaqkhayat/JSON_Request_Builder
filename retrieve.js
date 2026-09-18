@@ -811,7 +811,7 @@ function extractLineItems(x) {
         const itemInfoSeq = item.informationSequence ?? '';
 
         const itemBodySite = item.bodySite?.coding?.[0].code ?? null;
-        const itemQTYType = item.quantity?.code ?? 'package';
+        const itemQTYType = item.quantity?.code ?? null;
 
         const itemExtensions = extractItemExtension(item.extension ?? null, true);
 
