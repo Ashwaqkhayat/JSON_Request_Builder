@@ -1,8 +1,12 @@
+import { initListsBindings, setSuppInfoTrashButtons, clearSuppInfoLists, copyToClipboard } from "./retrieve.js";
+
+const el = val => document.getElementById(val);
 const CATEGORY_SYSTEM = 'http://nphies.sa/terminology/CodeSystem/claim-information-category';
 const UCUM = 'http://unitsofmeasure.org';
-
 const SUPPINF_CATEGORIES = [
     { code: 'chief-complaint', label: 'Chief Complaint', kind: 'string' },
+    { code: 'days-supply', label: 'Days Supply', kind: 'plainValue', unit: { system: UCUM, code: 'd', display: 'Days' } },
+    { code: 'attachment', label: 'Attachment', kind: 'attachment' },
     { code: 'temperature', label: 'Temperature', kind: 'timedValue', unit: { system: UCUM, code: 'Cel', display: '°C' } },
     { code: 'vital-sign-height', label: 'Vital Sign – Height', kind: 'timedValue', unit: { system: UCUM, code: 'cm', display: 'cm' } },
     { code: 'vital-sign-weight', label: 'Vital Sign – Weight', kind: 'timedValue', unit: { system: UCUM, code: 'kg', display: 'kg' } },
@@ -18,9 +22,7 @@ const SUPPINF_CATEGORIES = [
     { code: 'physical-examination', label: 'Physical Examination', kind: 'string' },
     { code: 'history-of-present-illness', label: 'History of Present Illness', kind: 'string' },
     { code: 'investigation-result', label: 'Investigation Result', kind: 'investigation' },
-    { code: 'onset', label: 'Onset (Diagnosis)', kind: 'onset' },
-    { code: 'days-supply', label: 'Days Supply', kind: 'plainValue', unit: { system: UCUM, code: 'd', display: 'Days' } },
-    { code: 'attachment', label: 'Attachment', kind: 'attachment' }
+    { code: 'onset', label: 'Onset (Diagnosis)', kind: 'onset' }
 ];
 export const SUPPINF_CATEGORY_BY_CODE = Object.fromEntries(SUPPINF_CATEGORIES.map(c => [c.code, c]));
 export var arrayofSupportingInfo = [];
@@ -167,7 +169,7 @@ function summarize(entry) {
     return [value, timeDetails];
 }
 
-export function renderSupportingInfo() {
+export function renderSupportingInfo(isDeleteActive) {
     const ulBody = el('supportingInfoUL');
     ulBody.innerHTML = '';
     arrayofSupportingInfo.forEach((info, idx) => {
@@ -197,9 +199,32 @@ export function renderSupportingInfo() {
         <button class="btn btn-outline-secondary info-copy-btn" type="button">
         <i class="ph-bold ph-copy phicon-container"></i>
         </button>
+        <button ${isDeleteActive == false ? "hidden" : ""} class="btn btn-outline-danger info-del-btn" type="button">
+        <i class="ph-bold ph-trash phicon-container"></i>
+        </button>
         `;
+
+        // Copy button
+        const copyBtn = newEl.querySelector('.info-copy-btn');
+        copyBtn.addEventListener('click', () => {
+            copyToClipboard(JSON.stringify(info));
+        });
+        // Delete button
+        const deleteBtn = newEl.querySelector('.info-del-btn');
+        deleteBtn.addEventListener('click', () => {
+            arrayofSupportingInfo.splice(idx, 1); // remove this item from the array
+            if (arrayofSupportingInfo.length < 1) { 
+                clearSuppInfoLists();
+                return;
+            }
+            renderSupportingInfo(true);
+        });
+
         ulBody.appendChild(newEl);
     });
+
+    setSuppInfoTrashButtons(document.querySelectorAll('.info-del-btn'))
+    initListsBindings('SupportInfo')
 }
 
 // Event Wiring

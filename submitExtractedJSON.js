@@ -1,3 +1,5 @@
+import { refreshBundleTimestamp } from "./retrieve.js";
+
 const el = val => document.getElementById(val);
 
 const LOADING_HTML = `
@@ -18,7 +20,8 @@ function setLoading(btn, isLoading) {
 const submitBtn = el('reqSubmitBtn')
 
 submitBtn.addEventListener('click', async () => {
-    setLoading(submitBtn, true);
+    refreshBundleTimestamp()
+    setLoading(submitBtn, true)
     // try {
     //     const res = await fetch('/api/submit', {
     //         method: 'POST',

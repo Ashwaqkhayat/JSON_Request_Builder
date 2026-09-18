@@ -345,34 +345,55 @@ html {
     vertical-align: middle;
 }
 
+/* Edit ICD Btn */
 #editICDBtn .ph-bold {
     position: absolute;
     top: 0;
     left: 0;
     transition: opacity 0.2s ease, transform 0.2s ease;
 }
-
-/* 3. Default state: Show untoggled, hide toggled */
 #editICDBtn .icon-toggled {
     opacity: 0;
     transform: scale(0.5);
 }
-
 #editICDBtn .icon-un-toggled {
     opacity: 1;
     transform: scale(1);
 }
-
 #editICDBtn.active .icon-toggled {
     opacity: 1;
     transform: scale(1);
 }
-
 #editICDBtn.active .icon-un-toggled {
     opacity: 0;
     transform: scale(0.5);
 }
 
+/* Edit SuppInfo Btn */
+#editSuppInfBtn .ph-bold {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+#editSuppInfBtn .icon-toggled {
+    opacity: 0;
+    transform: scale(0.5);
+}
+#editSuppInfBtn .icon-un-toggled {
+    opacity: 1;
+    transform: scale(1);
+}
+#editSuppInfBtn.active .icon-toggled {
+    opacity: 1;
+    transform: scale(1);
+}
+#editSuppInfBtn.active .icon-un-toggled {
+    opacity: 0;
+    transform: scale(0.5);
+}
+
+/* Edit Item Btn */
 #editItemsBtn .ph-bold {
     position: absolute;
     top: 0;

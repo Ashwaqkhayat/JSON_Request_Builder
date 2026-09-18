@@ -149,6 +149,7 @@ const providerTypeInput = el('providerTypeInput');
 const careTeamTBody = el('careTeamTBody');
 const itemsAccordion = el('itemsAccordion');
 const editICDBtn = el('editICDBtn');
+const editSuppInfBtn = el('editSuppInfBtn');
 const editItemsBtn = el('editItemsBtn');
 const itemDelButtonSpace = elc('itemDelButtonSpace');
 const newItemModal = el('newItemModal');
@@ -166,7 +167,8 @@ const relatedTypeInput = el('relatedTypeInput');
 const reqPreauthRefInput = el('reqPreauthRefInput');
 const attachedPACol = el('attachedPACol');
 const newInfoTypeInput = el('newInfoTypeInput');
-const newInfoValInput = el('newInfoValInput');
+const copyReqBody = el('copyReqBody');
+const copyitemsBtn = el('copyitemsBtn');
 
 // Values Storage ====================================================
 // To store all the extracted values
@@ -198,9 +200,12 @@ function init() {
     displayedEnvURL.value = ENVIRONMENTS.uat.URL;
     addItemBtn.disabled = true;
     addICDBtn.disabled = true;
+    addSuppInfBtn.disabled = true;
     editICDBtn.disabled = true;
+    editSuppInfBtn.disabled = true;
     editItemsBtn.disabled = true;
     addSuppInfBtn.disabled = true;
+    copyitemsBtn.disabled = true;
     itemDelButtonSpace[0].hidden = true;
     itemDelButtonSpace[1].hidden = true;
 
@@ -224,6 +229,7 @@ function init() {
 let userInputJSON;
 let parsed;
 let icdTrashButtons;
+let suppInfoTrashButtons;
 let lineItemsTrashButtons;
 
 requestBodyTxtArea.addEventListener('paste', function (e) {
@@ -262,8 +268,9 @@ requestBodyTxtArea.addEventListener('change', () => {
 
     addItemBtn.disabled = false;
     editICDBtn.disabled = false;
+    editSuppInfBtn.disabled = false;
     editItemsBtn.disabled = false;
-    addSuppInfBtn.disabled = false;
+    copyitemsBtn.disabled = false;
 
     let extractedInfo;
     let entryOfInfo;
@@ -354,7 +361,7 @@ requestBodyTxtArea.addEventListener('change', () => {
 
     // Extract data for Patient (benefitiary) resource type ============
     // Extract Req Member Name
-    let benefEntry = getBeneficiaryResource();
+    benefEntry = getBeneficiaryResource();
     if (benefitiaryFound) {
         extractedInfo = benefEntry?.name?.[0] ?? null;
         extractMemberName(extractedInfo);
@@ -433,7 +440,7 @@ function extractRelatedData(related) {
     showToast('This is a related request.', 'info');
 }
 
-function refreshBundleTimestamp() {
+export function refreshBundleTimestamp() {
     const now = new Date();
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, "0");
@@ -644,6 +651,9 @@ function extractClaimID(x) {
 
 // TODO: Complete claim extensions
 function extractClaimExtensions(x, el, extensionOf) {
+    // extractedInfo = benefEntry?.extension ?? null;
+    // extractClaimExtensions(extractedInfo, benefitiaryExtensionsUL, EXTENSION_CATEGORIES.Beneficiary);
+
     // x is an array of extension items!
     if (!x || x.length == 0) {
         clearExtensionLists(el);
@@ -1065,10 +1075,10 @@ function extractSupportingInfo(suppInfoArr) {
 
     if (arr != null && arr.length < 1) { clearSuppInfoLists(); }
     setArrayOfSupportingInfo(arr)
-    renderSupportingInfo()
+    renderSupportingInfo(false)
 }
 
-function clearSuppInfoLists() {
+export function clearSuppInfoLists() {
     setArrayOfSupportingInfo([])
     supportingInfoUL.innerHTML = `
     <li class="info-item d-flex w-100 h-100">
@@ -1358,95 +1368,6 @@ function extractPractitioners(entry, careTeamArr) {
     }
 }
 
-// Copy to Clipboard ========================================
-document.querySelectorAll('.copy-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const targetID = btn.getAttribute('data-bs-target');
-        const input = document.getElementById(targetID);
-        copyToClipboard(input);
-    });
-});
-
-// Copy to clipboard - Extensions only
-claimExtensionsUL.addEventListener('click', (event) => {
-    // Check if the clicked element (or its parent, like the <i> icon) is the button
-    const btn = event.target.closest('.copy-ex-btn');
-
-    // If the click wasn't on or inside a copy button, ignore it
-    if (!btn) return;
-
-    const targetID = btn.getAttribute('data-bs-target');
-
-    // Use querySelector to find the list item by its id attribute
-    const listItem = document.querySelector(`[id="${targetID}"]`);
-
-    if (listItem) {
-        // Find the element with the class '.extension-type' inside that list item
-        const extValElement = listItem.querySelector('.extension-type');
-        let parsed;
-        try {
-            parsed = JSON.parse(userInputJSON);
-            copyToClipboardExtension(parsed.entry[1].resource.extension[extValElement.textContent[1]]);
-        } catch (e) {
-            showToast('Error in extension copy: ' + e.message, 'danger');
-            return;
-        }
-    }
-});
-
-benefitiaryExtensionsUL.addEventListener('click', (event) => {
-    // Check if the clicked element (or its parent, like the <i> icon) is the button
-    const btn = event.target.closest('.copy-ex-btn');
-
-    // If the click wasn't on or inside a copy button, ignore it
-    if (!btn) return;
-
-    const targetID = btn.getAttribute('data-bs-target');
-
-    // Use querySelector to find the list item by its id attribute
-    const listItem = document.querySelector(`[id="${targetID}"]`);
-
-    if (listItem && benefEntry !== null) {
-        // Find the element with the class '.extension-type' inside that list item
-        const extValElement = listItem.querySelector('.extension-type');
-        let parsed;
-        try {
-            parsed = JSON.parse(userInputJSON);
-            copyToClipboardExtension(benefEntry.resource.extension[extValElement.textContent[1]]);
-        } catch (e) {
-            showToast('Error in extension copy: ' + e.message, 'danger');
-            return;
-        }
-    }
-});
-
-function copyToClipboard(val) {
-    if (!val || typeof val.value !== 'string') {
-        showToast('Error: Unable to copy' + val, 'danger'); return;
-    }
-
-    const text = val.value;
-    if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(text).catch(() => fallbackCopy(val));
-    } else {
-        fallbackCopy(val);
-    }
-}
-function copyToClipboardExtension(val) {
-    if (!val) {
-        showToast('Error: Unable to copy extension', 'danger'); return;
-    }
-
-    navigator.clipboard.writeText(JSON.stringify(val, null, 4))
-        .then(() => showToast("Copied extension", "success"))
-        .catch(err => showToast('Navigator copy extension failed:', 'danger'));
-}
-function fallbackCopy(val) {
-    val.select();
-    val.setSelectionRange(0, 9999);
-    document.execCommand('copy');
-}
-
 // Error Handling ===========================================
 // Show Toast
 function showToast(message, variant = "danger") {
@@ -1487,8 +1408,8 @@ editICDBtn.addEventListener('click', () => {
             addICDBtn.removeAttribute('hidden');
             addICDBtn.disabled = false;
 
-            icdTrashButtons.forEach((icdTrashBtn) => {
-                icdTrashBtn.removeAttribute('hidden');
+            icdTrashButtons.forEach((btn) => {
+                btn.removeAttribute('hidden');
             })
         } else { // Save mode
             // Hide the Add button + Confirm the changes
@@ -1496,8 +1417,31 @@ editICDBtn.addEventListener('click', () => {
                 showToast('Diagnosis list is empty, add at least one ICD code to update the JSON request.', 'warning');
             }
             addICDBtn.setAttribute('hidden', '');
-            icdTrashButtons.forEach((icdTrashBtn) => {
-                icdTrashBtn.setAttribute('hidden', '');
+            icdTrashButtons.forEach((btn) => {
+                btn.setAttribute('hidden', '');
+            })
+        }
+    }, 0);
+
+});
+
+editSuppInfBtn.addEventListener('click', () => {
+    // Bootstrap 'active' class is added AFTER the click event fires in some versions,
+    // so check state right after
+    setTimeout(() => {
+        if (editSuppInfBtn.classList.contains('active')) {
+            // Show the Add button
+            addSuppInfBtn.removeAttribute('hidden');
+            addSuppInfBtn.disabled = false;
+
+            suppInfoTrashButtons.forEach((btn) => {
+                btn.removeAttribute('hidden');
+            })
+        } else { // Save mode
+            // Hide the Add button + Confirm the changes
+            addSuppInfBtn.setAttribute('hidden', '');
+            suppInfoTrashButtons.forEach((btn) => {
+                btn.setAttribute('hidden', '');
             })
         }
     }, 0);
@@ -1542,6 +1486,14 @@ newItemModal.addEventListener('hidden.bs.modal', function () {
         form.reset();
         form.classList.remove('was-validated');
     }
+});
+
+copyReqBody.addEventListener('click', () => {
+    copyToClipboard(JSON.stringify(parsed));
+});
+
+copyitemsBtn.addEventListener('click', () => {
+    copyToClipboard(JSON.stringify(getClaimResource().item ?? ""));
 });
 
 // Form Validations =========================================
@@ -2231,6 +2183,18 @@ const listBindings = [
             // buildClaimBody already returns { item: [...] } for the WHOLE array
             target.claim.item = buildClaimBody(itemsParams).item;
         }
+    },
+    {
+        type: 'SupportInfo',
+        input: newInfoTypeInput,
+        getTarget: () => {
+            const claim = getClaimResource();
+            return claim ? { claim } : null;
+        },
+        get: (target) => target.claim.supportingInfo ?? '',
+        set: (target) => {
+            target.claim.supportingInfo = getArrayOfSupportingInfo();
+        }
     }
 ];
 
@@ -2249,8 +2213,6 @@ function syncJSONToTextArea() {
 function initFieldBindings() {
     fieldBindings.forEach((binding) => {
         binding.input.addEventListener('change', () => {
-            // Refresh Timestamp & BundleID
-            refreshBundleTimestamp();
             const target = binding.getTarget();
             if (!target) {
                 showToast(
@@ -2274,10 +2236,7 @@ function initFieldBindings() {
 
 initFieldBindings();
 
-function initListsBindings(type) {
-    // Refresh Timestamp & BundleID
-    refreshBundleTimestamp();
-
+export function initListsBindings(type) {
     for (const binding of listBindings) {
         // Check if specific type is specified type.length >= 1
         // Skip this iteration if it doesn't match the requested type
@@ -2302,4 +2261,88 @@ function initListsBindings(type) {
             showToast(`Error updating JSON from "${binding.input.id}": ${e.message}`, 'danger');
         }
     }
+}
+
+// Copy to Clipboard ========================================
+document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const targetID = btn.getAttribute('data-bs-target');
+        const input = document.getElementById(targetID);
+        if (!input || typeof input.value !== 'string') {
+            showToast('Error: Unable to copy' + input, 'danger'); return;
+        }
+        copyToClipboard(input.value);
+    });
+});
+
+// Copy to clipboard - Extensions only
+claimExtensionsUL.addEventListener('click', (event) => {
+    // Check if the clicked element (or its parent, like the <i> icon) is the button
+    const btn = event.target.closest('.copy-ex-btn');
+
+    // If the click wasn't on or inside a copy button, ignore it
+    if (!btn) return;
+
+    const targetID = btn.getAttribute('data-bs-target');
+
+    // Use querySelector to find the list item by its id attribute
+    const listItem = document.querySelector(`[id="${targetID}"]`);
+
+    if (listItem) {
+        // Find the element with the class '.extension-type' inside that list item
+        const extValElement = listItem.querySelector('.extension-type');
+        try {
+            copyToClipboardExtension(parsed.entry[1].resource.extension[extValElement.textContent[1] - 1]);
+        } catch (e) {
+            showToast('Error in extension copy: ' + e.message, 'danger');
+            return;
+        }
+    }
+});
+
+benefitiaryExtensionsUL.addEventListener('click', (event) => {
+    // Check if the clicked element (or its parent, like the <i> icon) is the button
+    const btn = event.target.closest('.copy-ex-btn');
+
+    // If the click wasn't on or inside a copy button, ignore it
+    if (!btn) return;
+
+    const targetID = btn.getAttribute('data-bs-target');
+
+    // Use querySelector to find the list item by its id attribute
+    const listItem = document.querySelector(`[id="${targetID}"]`);
+
+    if (listItem && (benefEntry !== null)) {
+        // Find the element with the class '.extension-type' inside that list item
+        const extValElement = listItem.querySelector('.extension-type');
+        try {
+            copyToClipboardExtension(benefEntry.extension[extValElement.textContent[1] - 1]);
+        } catch (e) {
+            showToast('Error in extension copy: ' + e.message, 'danger');
+            console.error(e)
+            return;
+        }
+    }
+});
+
+export function copyToClipboard(val) {
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(val);
+        showToast("Copied", "success")
+    }
+}
+
+function copyToClipboardExtension(val) {
+    if (!val) {
+        showToast('Error: Unable to copy extension', 'danger'); return;
+    }
+
+    navigator.clipboard.writeText(JSON.stringify(val, null, 4))
+        .then(() => showToast("Copied extension", "success"))
+        .catch(err => showToast('Navigator copy extension failed:', 'danger'));
+}
+
+// Setters and Getters =======================================
+export function setSuppInfoTrashButtons(val) {
+    suppInfoTrashButtons = val;
 }

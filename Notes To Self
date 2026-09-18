@@ -13,18 +13,15 @@
 // ✅ Updated item ICDs in JSON when one ICD is deleted
 // ✅ Clear ICD form when closed/dismissed without submit
 // ✅ Reflect the adjusted total to the JSON
+// ✅ Add new supporting info thing (Complex)
+// ✅ Link the update Bundle & Timestamp with the submit!!!!
+// ✅ Fix the copy buttons for (Request Body + benef extensions + Total line items)
 
 // TODO: 
 
 // Complete the list of Extensions
 
-// Add new supporting info thing (Complex) >> In Progress
-
 // The submit function
-// Link the update Bundle & Timestamp with the submit!!!!
-
-// Fix the copy buttons for (Request Body + benef extensions + Total line items + Supporting Info)
-
 
 // TODO: later improvments
 // Member marital status
