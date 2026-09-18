@@ -253,37 +253,29 @@
                                 <div class="field-group" data-kind="timedValue">
                                     <div class="row g-3">
                                         <div class="col-6">
-                                            <label class="form-label" for="tv_start">Start date/time</label>
-                                            <input type="datetime-local" step="1" class="form-control" id="tv_start"
+                                            <label class="form-label" for="tv_start">Start date</label>
+                                            <input type="date" step="1" class="form-control" id="tv_start"
                                                 data-required-in-group>
                                         </div>
                                         <div class="col-6">
-                                            <label class="form-label" for="tv_end">End <small>(<a href="#"
+                                            <label class="form-label" for="tv_end">End date<small> (<a href="#"
                                                         id="tv_sameAsStart">same as start</a>)</small></label>
-                                            <input type="datetime-local" step="1" class="form-control" id="tv_end">
+                                            <input type="date" step="1" class="form-control" id="tv_end">
                                         </div>
-                                        <div class="col-8">
+                                        <div class="col">
                                             <label class="form-label" for="tv_value">Value</label>
                                             <input type="number" step="any" class="form-control" id="tv_value"
                                                 placeholder="e.g. 120" data-required-in-group>
-                                        </div>
-                                        <div class="col-4">
-                                            <label class="form-label d-block">Unit</label>
-                                            <span class="badge text-bg-secondary unit-badge" id="tv_unitBadge">–</span>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="field-group" data-kind="plainValue">
                                     <div class="row g-3">
-                                        <div class="col-8">
+                                        <div class="col">
                                             <label class="form-label" for="pv_value">Value</label>
                                             <input type="number" step="any" class="form-control" id="pv_value"
-                                                placeholder="e.g. 129" data-required-in-group>
-                                        </div>
-                                        <div class="col-4">
-                                            <label class="form-label d-block">Unit</label>
-                                            <span class="badge text-bg-secondary unit-badge" id="pv_unitBadge">–</span>
+                                                placeholder="e.g. 20" data-required-in-group>
                                         </div>
                                     </div>
                                 </div>
@@ -315,7 +307,7 @@
                                 <div class="field-group" data-kind="onset">
                                     <div class="row g-3">
                                         <div class="col-4">
-                                            <label class="form-label" for="on_code">ICD-10-AM code</label>
+                                            <label class="form-label" for="on_code">ICD code</label>
                                             <input type="text" class="form-control" id="on_code"
                                                 placeholder="e.g. R07.1" data-required-in-group>
                                         </div>
