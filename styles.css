@@ -435,13 +435,13 @@ input[type=number] {
 }
 
 .prior-badge-style {
-    background-color: rgba(18, 122, 27, 0.52) !important;
-    border: 1px solid #529c6e;
+    background-color: #81ab5c76 !important;
+    border: 1px solid #86C45F;
 }
 
 .referral-badge-style {
-    background-color: rgba(58, 35, 152, 0.52) !important;
-    border: 1px solid #523f9e;
+    background-color: rgba(92, 147, 167, 0.479) !important;
+    border: 1px solid #5FC4B8;
 }
 
 .flat-btn {

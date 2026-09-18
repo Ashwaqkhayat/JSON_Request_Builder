@@ -3,7 +3,8 @@ import { refreshBundleTimestamp } from "./retrieve.js";
 const el = val => document.getElementById(val);
 
 const LOADING_HTML = `
-  <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+  <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>
+  <span role="status">Sending...</span>
 `;
 
 function setLoading(btn, isLoading) {

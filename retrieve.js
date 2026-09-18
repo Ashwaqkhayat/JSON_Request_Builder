@@ -759,8 +759,8 @@ function addExtensionToList(el, extType, extVal, index) {
 
     li.innerHTML = `
     <p class="m-0 p-0 extension-type text-nowrap">#${index + 1}    ${formattedType}</p>
-    <div class="gap-2">
-        <p class="m-0 p-0 text-truncate extension-val">${extVal}</p>
+    <div class="gap-2 overflow-hidden">
+        <p class="m-0 p-0 text-truncate extension-val" style="max-width: 180px;">${extVal}</p>
         <button type="button" class="btn copy-ex-btn btn-sm" data-bs-target="${li.id}">
         <i class="ph-bold ph-copy phicon-container"></i>
         </button>
