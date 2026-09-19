@@ -352,18 +352,22 @@ html {
     left: 0;
     transition: opacity 0.2s ease, transform 0.2s ease;
 }
+
 #editICDBtn .icon-toggled {
     opacity: 0;
     transform: scale(0.5);
 }
+
 #editICDBtn .icon-un-toggled {
     opacity: 1;
     transform: scale(1);
 }
+
 #editICDBtn.active .icon-toggled {
     opacity: 1;
     transform: scale(1);
 }
+
 #editICDBtn.active .icon-un-toggled {
     opacity: 0;
     transform: scale(0.5);
@@ -376,18 +380,22 @@ html {
     left: 0;
     transition: opacity 0.2s ease, transform 0.2s ease;
 }
+
 #editSuppInfBtn .icon-toggled {
     opacity: 0;
     transform: scale(0.5);
 }
+
 #editSuppInfBtn .icon-un-toggled {
     opacity: 1;
     transform: scale(1);
 }
+
 #editSuppInfBtn.active .icon-toggled {
     opacity: 1;
     transform: scale(1);
 }
+
 #editSuppInfBtn.active .icon-un-toggled {
     opacity: 0;
     transform: scale(0.5);
@@ -450,6 +458,52 @@ input[type=number] {
     cursor: pointer !important;
 }
 
-.field-group{ display:none; }
+.field-group {
+    display: none;
+}
 
-.field-group.active{ display:block; }
+.field-group.active {
+    display: block;
+}
+
+
+/* Resonse Panel CSS */
+.top-panel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    /* full card-body width */
+    z-index: 5;
+    /* above the textarea and its floating label */
+    height: 120px;
+    max-height: 100%;
+    /* never grow taller than the card body */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-bottom-left-radius: 0.45rem;
+    border-bottom-right-radius: 0.45rem;
+    /* visibility has no delay when opening, so the panel appears immediately */
+    transition: height .35s ease, transform .35s ease, opacity .35s ease, visibility 0s linear 0s;
+}
+
+.top-panel.expanded {
+    height: 430px;
+}
+
+.top-panel.closed {
+    transform: translateY(-100%);
+    opacity: 0;
+    visibility: hidden;        /* removes it from tab order / screen readers */
+    pointer-events: none;
+    /* visibility flips only after the slide-up has finished */
+    transition: height .35s ease, transform .35s ease, opacity .35s ease, visibility 0s linear .35s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .top-panel,
+    .top-panel.closed {
+        transition: none;
+    }
+}

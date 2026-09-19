@@ -996,7 +996,54 @@
                             <button class="btn btn-light" type="button" id="reqSubmitBtn"><i class="ph-bold ph-paper-plane-right"></i></button>
                         </span>
                     </div>
-                    <div class="card-body p-0 overflow-x-auto" style="background-color: var(--bs-bg-deep)">
+
+                    <div class="card-body p-0 overflow-x-auto position-relative" style="background-color: var(--bs-bg-deep)">
+                        <!-- Overlay panel stuck to the top of the card body -->
+                        <div id="topPanel" class="top-panel closed bg-body p-3 border-bottom shadow-sm bg-opacity-90">
+                            <div class="d-flex justify-content-between column-gap-3 align-items-end px-2 py-2 mb-4">
+                                <div class="row">
+                                    <div class="col">
+                                        <label class="form-label text-secondary">Outcome</label>
+                                        <span class="d-flex align-items-center column-gap-2">
+                                            <div class="bg-success rounded" style="width: 16px; height: 16px;"></div>
+                                            <p id="resOutcomeInput"
+                                                class="mb-0 d-flex align-items-center text-start fw-semibold fs-4"
+                                                style="min-width: 120px; min-height: 38px;">Pended</p>
+                                    </div>
+                                    </span>
+                                    <div class="col-auto">
+                                        <label for="resAdjOutcomeInput" class="form-label text-secondary">Adjudication Outcome</label>
+                                        <input readonly id="resAdjOutcomeInput" type="text" class="form-control" placeholder="e.g., Pended">
+                                    </div>
+                                    <div class="col-auto">
+                                        <label for="resReqRefInput" class="form-label text-secondary">Preauth Reference</label>
+                                        <input readonly id="resReqRefInput" type="text" class="form-control" placeholder="e.g., 44400356">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-auto me-0 pe-0">
+                                        <button id="togglePanelBtn" type="button" class="btn btn-light shadow-sm"
+                                            aria-expanded="false" aria-controls="topPanel" title="Expand">
+                                            Full Response JSON
+                                        </button>
+                                    </div>
+                                    <div class="col">
+                                        <button id="closePanelBtn" type="button" class="btn"
+                                            aria-label="Close panel" title="Close">
+                                            <i class="ph-bold ph-x"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="px-2 py-2">
+                                <label for="floatingTextarea" class="form-label text-secondary">Response JSON</label>
+                                <div class="form-floating d-flex flex-grow-1">
+                                    <textarea readonly class="form-control h-100 font-monospace" rows="10" placeholder="JSON Response" id="floatingTextarea"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="form-floating h-100">
                             <textarea class="form-control border-0 h-100 text-nowrap font-monospace"
                                 placeholder="Leave a comment here" id="requestBodyTxtArea" spellcheck="false"

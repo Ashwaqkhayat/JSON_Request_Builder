@@ -1,6 +1,11 @@
 import { refreshBundleTimestamp } from "./retrieve.js";
 
 const el = val => document.getElementById(val);
+const submitBtn = el('reqSubmitBtn')
+const topPanel = el('topPanel');
+const toggleBtn = el('togglePanelBtn');
+const closeBtn = el('closePanelBtn');
+
 
 const LOADING_HTML = `
   <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>
@@ -17,8 +22,6 @@ function setLoading(btn, isLoading) {
         btn.disabled = false;
     }
 }
-
-const submitBtn = el('reqSubmitBtn')
 
 submitBtn.addEventListener('click', async () => {
     refreshBundleTimestamp()
@@ -41,9 +44,22 @@ submitBtn.addEventListener('click', async () => {
     // For Testing Purposes
     try {
         await new Promise(resolve => setTimeout(resolve, 3000));
+        topPanel.classList.remove('closed');
     } catch (err) {
         console.error(err);
     } finally {
         setLoading(submitBtn, false);
     }
+});
+
+toggleBtn.addEventListener('click', () => {
+    const isExpanded = topPanel.classList.toggle('expanded');
+    toggleBtn.setAttribute('aria-expanded', isExpanded);
+    toggleBtn.title = isExpanded ? 'Collapse' : 'Expand';
+});
+
+
+
+closeBtn.addEventListener('click', () => {
+    topPanel.classList.add('closed');
 });
