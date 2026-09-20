@@ -168,6 +168,7 @@ const reqPreauthRefInput = el('reqPreauthRefInput');
 const attachedPACol = el('attachedPACol');
 const newInfoTypeInput = el('newInfoTypeInput');
 const copyReqBody = el('copyReqBody');
+const reqSubmitBtn = el('reqSubmitBtn');
 const copyitemsBtn = el('copyitemsBtn');
 
 // Values Storage ====================================================
@@ -206,6 +207,8 @@ function init() {
     editItemsBtn.disabled = true;
     addSuppInfBtn.disabled = true;
     copyitemsBtn.disabled = true;
+    reqSubmitBtn.disabled = true;
+    copyReqBody.disabled = true;
     itemDelButtonSpace[0].hidden = true;
     itemDelButtonSpace[1].hidden = true;
 
@@ -228,6 +231,7 @@ function init() {
 // Extract input JSON & Data ========================================
 let userInputJSON;
 let parsed;
+export let reqType;
 let icdTrashButtons;
 let suppInfoTrashButtons;
 let lineItemsTrashButtons;
@@ -271,6 +275,8 @@ requestBodyTxtArea.addEventListener('change', () => {
     editSuppInfBtn.disabled = false;
     editItemsBtn.disabled = false;
     copyitemsBtn.disabled = false;
+    reqSubmitBtn.disabled = false;
+    copyReqBody.disabled = false;
 
     let extractedInfo;
     let entryOfInfo;
@@ -334,6 +340,9 @@ requestBodyTxtArea.addEventListener('change', () => {
     if (extractedInfo !== null) {
         priorBadge.removeAttribute('hidden', '')
         extractRelatedData(extractedInfo)
+    } else {
+        reqRelatedReqInput.value = null
+        priorBadge.setAttribute('hidden', true)
     }
 
     // Preauth Ref (if exists)
@@ -436,7 +445,6 @@ function extractRelatedData(related) {
     reqRelatedReqInput.value = related.claim.identifier?.value ?? 'Not Found';
     let searchRelatedType = RELATED_TYPES[related.relationship?.coding?.[0]?.code];
     relatedTypeInput.value = searchRelatedType.code ?? 'prior';
-    priorBadge.removeAttribute('hidden', '')
     showToast('This is a related request.', 'info');
 }
 
@@ -530,10 +538,12 @@ function extractReqCat(x) {
         if (reqCategory === 'authorization') {
             reqInput.value = 'authorization';
             requestTypeTitle.innerText = 'Preauth Request';
+            reqType = 'Preauth'
         } else if (reqCategory === 'claim') {
             reqInput.value = 'claim';
             attachedPACol.removeAttribute('hidden', '')
             requestTypeTitle.innerText = 'Claim Request';
+            reqType = 'Claim'
         } else {
             requestTypeTitle.innerText = 'Unknown Request';
             reqInput.value = '';
@@ -1887,6 +1897,32 @@ const fieldBindings = [
                 throw new Error(`"${newValue}" is not a recognized claim relationship type.`);
             }
             target.related[0].relationship.coding = [{ ...newCoding }];
+        }
+    },
+    {
+        input: reqRelatedReqInput,
+        getTarget: () => {
+            const related = getClaimResource()?.related ?? null;
+            return related ? { related } : null;
+        },
+        get: (target) => {
+            return target.related?.[0]?.claim?.identifier?.value ?? '';
+        },
+        set: (target, newValue) => {
+            target.related[0].claim.identifier.value = newValue;
+        }
+    },
+    {
+        input: reqPreauthRefInput,
+        getTarget: () => {
+            const insurance = getClaimResource()?.insurance ?? null;
+            return insurance ? { insurance } : null;
+        },
+        get: (target) => {
+            return target.insurance?.[0]?.preAuthRef?.[0] ?? '';
+        },
+        set: (target, newValue) => {
+            target.insurance[0].preAuthRef[0] = newValue;
         }
     },
 

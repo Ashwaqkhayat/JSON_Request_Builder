@@ -12,7 +12,6 @@ html {
     height: 100%;
     margin: 0;
     box-sizing: border-box;
-
     font-family: "IBM Plex Sans", sans-serif;
 }
 
@@ -489,21 +488,47 @@ input[type=number] {
 }
 
 .top-panel.expanded {
-    height: 430px;
+    height: 420px;
 }
 
 .top-panel.closed {
     transform: translateY(-100%);
     opacity: 0;
-    visibility: hidden;        /* removes it from tab order / screen readers */
+    visibility: hidden;
     pointer-events: none;
-    /* visibility flips only after the slide-up has finished */
     transition: height .35s ease, transform .35s ease, opacity .35s ease, visibility 0s linear .35s;
 }
 
 @media (prefers-reduced-motion: reduce) {
+
     .top-panel,
     .top-panel.closed {
         transition: none;
+    }
+}
+
+@media (max-width: 2230px) {
+    .top-panel {
+        height: 156px;
+    }
+
+    .top-panel.expanded {
+        height: 470px;
+    }
+}
+
+@media (max-width: 1657px) {
+    .top-panel {
+        height: 190px;
+    }
+
+    .top-panel.expanded {
+        height: 500px;
+    }
+}
+
+@media (max-width: 1317px) {
+    .top-panel {
+        height: auto;
     }
 }
