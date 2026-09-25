@@ -16,12 +16,13 @@
 // ✅ Add new supporting info thing (Complex)
 // ✅ Link the update Bundle & Timestamp with the submit!!!!
 // ✅ Fix the copy buttons for (Request Body + benef extensions + Total line items)
+// ✅ The submit function (Claim part remaining and error cases)
+// ✅ Remove related and PreAuth Ref buttons
 
 // TODO: 
 
-// The submit function (Claim part remaining and error cases)
 // Complete the list of Extensions
-// Remove related and PreAuth Ref buttons
+// ✅ Edit line items
 
 // TODO: later improvments
 // Member marital status

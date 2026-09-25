@@ -190,6 +190,8 @@ let insurerFound = false;
 let newBundle = '';
 let newTimeStamp = '';
 let itemsTotalPrice = 0.00;
+// tracked so inner listeners can trigger single-item re-renders
+let currentIsDeleteActive = false;
 
 // Init ==============================================================
 window.addEventListener('load', () => {
@@ -211,6 +213,7 @@ function init() {
     copyReqBody.disabled = true;
     itemDelButtonSpace[0].hidden = true;
     itemDelButtonSpace[1].hidden = true;
+    currentIsDeleteActive = false;
 
     // Empty the arrays
     arrayofICD = [];
@@ -849,132 +852,203 @@ function extractLineItems(x) {
     renderItemsList(false); //isDeleteActive is false
 }
 
-function renderItemsList(isDeleteActive) {
+function createAccordionItemElement(item, index, isDeleteActive, isExpanded = false) {
+    const newAccordionItem = document.createElement('div');
+    newAccordionItem.className = 'd-flex w-100 column-gap-3';
+    newAccordionItem.dataset.itemIndex = index; // used to locate/replace this node later
+
+    // Generate unique IDs for dynamic Bootstrap targeting
+    const collapseId = `collapse_${index}`;
+    const headingId = `heading_${index}`;
+
+    // item[0=seqID, 1=itemICD, 2=itemDesc, 3=itemQTY, 4=itemUnitPrice, 5=itemFactor
+    // 6=itemNetPrice, 7=itemServdDateFrom, 8=itemServdDateTo, 9=itemNphiesCode,
+    // 10= itemServiceCode, 11=itemCareTeam, 12=itemInfoSeq, 13=itemExtensions
+    // 14= itemBodySite, 15=itemQTYType]
+
+    newAccordionItem.innerHTML = `
+        <div class="accordion-item custom-item w-100">
+            <h2 class="accordion-header" ${headingId}>
+                <button class="accordion-button ${isExpanded ? "" : "collapsed"}" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#${collapseId}"
+                    aria-expanded="${isExpanded}" aria-controls="${collapseId}">
+                    <span class="row-cell">${item[0]}</span>
+                    <span class="row-cell">${item[1][1]}</span>
+                    <span class="row-cell">${item[2]}</span>
+                    <span class="row-cell">${item[3]}</span>
+                    <span class="row-cell">${item[4]}</span>
+                    <span class="row-cell">${item[5]}</span>
+                    <span class="row-cell">${item[6]}</span>
+                    <span class="row-cell">${item[7]}</span>
+                    <span class="row-cell"></span>
+                </button>
+            </h2>
+            <div id="${collapseId}" class="accordion-collapse collapse ${isExpanded ? "show" : ""}" aria-labelledby="${headingId}">
+                <div class="accordion-body container">
+                    <div class="row row-gap-3">
+                        <div class="col px-2">
+                            <label for="nphiesCode-${index}" class="form-label itemLabel">Nphies Code</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="nphiesCode-${index}" value="${item[9]}" readonly>
+                            </div>
+                        </div>
+                        <div class="col px-2">
+                            <label for="serviceCode-${index}" class="form-label itemLabel">Service Code</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="serviceCode-${index}" value="${item[10]}" readonly>
+                            </div>
+                        </div>
+                        <div class="col px-2">
+                            <label for="servFrom-${index}" class="form-label itemLabel">Serviced From</label>
+                            <div class="input-group">
+                                <input type="date" class="form-control" id="servFrom-${index}" value="${item[7]}">
+                            </div>
+                        </div>
+                        <div class="col px-2">
+                            <label for="servTo-${index}" class="form-label itemLabel">Serviced To</label>
+                            <div class="input-group">
+                                <input type="date" class="form-control" id="servTo-${index}" value="${item[8]}">
+                            </div>
+                        </div>
+                        <div class="col px-2">
+                            <label for="qty-${index}" class="form-label itemLabel">Quantity</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="qty-${index}" value="${item[3]}">
+                            </div>
+                        </div>
+                        <div class="col px-2">
+                            <label for="uprice-${index}" class="form-label itemLabel">Unit Price</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="uprice-${index}" value="${item[4]}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-gap-3 mt-2">
+                        <div class="col-auto px-2" ${checkNullOrEmpty(item[15]) ? "hidden" : ''}>
+                            <label for="QTYType-${index}" class="form-label itemLabel">QTY Type</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="QTYType-${index}" value="${item[15]}" readonly>
+                            </div>
+                        </div>
+                        <div class="col-auto px-2" ${checkNullOrEmpty(item[14]) ? "hidden" : ''}>
+                            <label for="bodySite-${index}" class="form-label itemLabel">Body Site</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="bodySite-${index}" value="${item[14]}" readonly>
+                            </div>
+                        </div>
+                        <div class="col-2 px-2">
+                            <label for="careTeam-${index}" class="form-label itemLabel">Care Team</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="careTeam-${index}" value="${item[11]}" readonly>
+                            </div>
+                        </div>
+                        <div class="col px-2">
+                            <label for="info-${index}" class="form-label itemLabel">Linked Information</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="info-${index}" value="${item[12]}">
+                            </div>
+                            <small class="form-text text-text-secondary opacity-50">Enter the sequence number of the linked supporting info, use comma for multiple values.</small>
+                        </div>
+                    </div>
+                    <div class="row row-gap-3 mt-3" style="height: fit-content;">
+                        <div class="col px-2 text-nowrap" style="flex-grow: 0;">
+                            <p class="text-secondary mb-0">Extensions</p>
+                        </div>
+                        ${generateItemExtHTML(item[13])}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button ${isDeleteActive == false ? "hidden" : ""} class="btn btn-outline-danger itemTrashbtn">
+            <i class="ph-bold ph-trash"></i>
+        </button>
+    `;
+
+    // Delete button
+    const deleteBtn = newAccordionItem.querySelector('.itemTrashbtn');
+    deleteBtn.addEventListener('click', () => {
+        if (arrayofLineItems.length <= 1) {
+            showToast('You should keep at least one item.', 'warning');
+        } else {
+            arrayofLineItems.splice(index, 1); // remove this item from the array
+            initListsBindings('Item');
+            renderItemsList(true); // indices shifted, so a full re-render is required here
+        }
+    });
+
+    const servFromIn = newAccordionItem.querySelector(`#servFrom-${index}`);
+    servFromIn.addEventListener('change', () => {
+        item[7] = servFromIn.value;
+        initListsBindings('Item');
+        renderItemsList(currentIsDeleteActive, index);
+    });
+    const servToIn = newAccordionItem.querySelector(`#servTo-${index}`);
+    servToIn.addEventListener('change', () => {
+        item[8] = servToIn.value;
+        initListsBindings('Item');
+        renderItemsList(currentIsDeleteActive, index);
+    });
+    const suppInfoIn = newAccordionItem.querySelector(`#info-${index}`);
+    suppInfoIn.addEventListener('change', () => {
+        item[12] = suppInfoIn.value;
+        initListsBindings('Item');
+        renderItemsList(currentIsDeleteActive, index);
+    });
+    const qtyIn = newAccordionItem.querySelector(`#qty-${index}`);
+    qtyIn.addEventListener('change', () => {
+        item[3] = Number(qtyIn.value);
+        item[6] = qtyIn.value * item[4] * item[5] // rcalculate net
+        initListsBindings('Item');
+        renderItemsList(currentIsDeleteActive, index);
+    });
+    const upriceIn = newAccordionItem.querySelector(`#uprice-${index}`);
+    upriceIn.addEventListener('change', () => {
+        item[4] = Number(upriceIn.value);
+        item[6] = upriceIn.value * item[3] * item[5] // rcalculate net
+        initListsBindings('Item');
+        renderItemsList(currentIsDeleteActive, index);
+    });
+
+    return newAccordionItem;
+}
+
+function renderItemsList(isDeleteActive, selectedItemIndex = -1) {
     if (!itemsAccordion) {
         showToast('Code Error: could not find the items list container.', 'danger');
         return;
     }
 
-    itemsAccordion.innerHTML = ''; // clear existing rows before re-render
+    currentIsDeleteActive = isDeleteActive;
 
+    // Always recalculate the total
     itemsTotalPrice = 0;
-    arrayofLineItems.forEach((item, index) => {
+    arrayofLineItems.forEach((item) => { itemsTotalPrice += Number(item[6]); });
 
-        // Calculate the items total price
-        itemsTotalPrice += Number(item[6])
+    if (selectedItemIndex === -1) { // Full re-render of the entire list
+        itemsAccordion.innerHTML = '';
 
-        const newAccordionItem = document.createElement('div');
-        newAccordionItem.className = 'd-flex w-100 column-gap-3'
-
-        // Generate unique IDs for dynamic Bootstrap targeting
-        const collapseId = `collapse_${index}`;
-        const headingId = `heading_${index}`;
-        const isFirst = index === 0;
-
-        // item[0=seqID, 1=itemICD, 2=itemDesc, 3=itemQTY, 4=itemUnitPrice, 5=itemFactor
-        // 6=itemNetPrice, 7=itemServdDateFrom, 8=itemServdDateTo, 9=itemNphiesCode,
-        // 10= itemServiceCode, 11=itemCareTeam, 12=itemInfoSeq, 13=itemExtensions
-        // 14= itemBodySite, 15=itemQTYType]
-
-        newAccordionItem.innerHTML = `
-            <div class="accordion-item custom-item w-100">
-                <h2 class="accordion-header" ${headingId}>
-                    <button class="accordion-button collapsed" type="button"
-                        data-bs-toggle="collapse" data-bs-target="#${collapseId}"
-                        aria-expanded="${isFirst ? 'true' : 'false'}" aria-controls="${collapseId}">
-                        <span class="row-cell">${item[0]}</span>
-                        <span class="row-cell">${item[1][1]}</span>
-                        <span class="row-cell">${item[2]}</span>
-                        <span class="row-cell">${item[3]}</span>
-                        <span class="row-cell">${item[4]}</span>
-                        <span class="row-cell">${item[5]}</span>
-                        <span class="row-cell">${item[6]}</span>
-                        <span class="row-cell">${item[7]}</span>
-                        <span class="row-cell"></span>
-                    </button>
-                </h2>
-                <div id="${collapseId}" class="accordion-collapse collapse" aria-labelledby="${headingId}">
-                    <div class="accordion-body container">
-                        <div class="row row-gap-3">
-                            <div class="col px-2">
-                                <label for="nphiesCode-${index}" class="form-label itemLabel">Nphies Code</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="nphiesCode-${index}" value="${item[9]}" readonly>
-                                </div>
-                            </div>
-                            <div class="col px-2">
-                                <label for="serviceCode-${index}" class="form-label itemLabel">Service Code</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="serviceCode-${index}" value="${item[10]}" readonly>
-                                </div>
-                            </div>
-                            <div class="col px-2">
-                                <label for="careTeam-${index}" class="form-label itemLabel">Care Team</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="careTeam-${index}" value="${item[11]}" readonly>
-                                </div>
-                            </div>
-                            <div class="col px-2">
-                                <label for="servFrom-${index}" class="form-label itemLabel">Serviced From</label>
-                                <div class="input-group">
-                                    <input type="date" class="form-control" id="servFrom-${index}" value="${item[7]}" readonly>
-                                </div>
-                            </div>
-                            <div class="col px-2">
-                                <label for="servTo-${index}" class="form-label itemLabel">Serviced To</label>
-                                <div class="input-group">
-                                    <input type="date" class="form-control" id="servTo-${index}" value="${item[8]}" readonly>
-                                </div>
-                            </div>
-                            <div class="col-3 px-2">
-                                <label for="info-${index}" class="form-label itemLabel">Information</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="info-${index}" value="${item[12]}" readonly>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row row-gap-3 mt-2" ${(checkNullOrEmpty(item[14]) && checkNullOrEmpty(item[15])) ? "hidden" : ''}>
-                            <div class="col-auto px-2" ${checkNullOrEmpty(item[15]) ? "hidden" : ''}>
-                                <label for="QTYType-${index}" class="form-label itemLabel">QTY Type</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="QTYType-${index}" value="${item[15]}" readonly>
-                                </div>
-                            </div>
-                            <div class="col-auto px-2" ${checkNullOrEmpty(item[14]) ? "hidden" : ''}>
-                                <label for="bodySite-${index}" class="form-label itemLabel">Body Site</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="bodySite-${index}" value="${item[14]}" readonly>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row row-gap-3 mt-3" style="height: fit-content;">
-                            <div class="col px-2 text-nowrap" style="flex-grow: 0;">
-                                <p class="text-secondary mb-0">Extensions</p>
-                            </div>
-                            ${generateItemExtHTML(item[13])}
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <button ${isDeleteActive == false ? "hidden" : ""} class="btn btn-outline-danger itemTrashbtn">
-                <i class="ph-bold ph-trash"></i>
-            </button>
-        `;
-
-        // Delete button
-        const deleteBtn = newAccordionItem.querySelector('.itemTrashbtn');
-        deleteBtn.addEventListener('click', () => {
-            if (arrayofLineItems.length <= 1) {
-                showToast('You should keep at least one item.', 'warning');
-            } else {
-                arrayofLineItems.splice(index, 1); // remove this item from the array
-                initListsBindings('Item');
-                renderItemsList(true);
-            }
+        arrayofLineItems.forEach((item, index) => {
+            const newAccordionItem = createAccordionItemElement(item, index, isDeleteActive);
+            itemsAccordion.appendChild(newAccordionItem);
         });
+    } else { // Re-render only the specific item
+        const item = arrayofLineItems[selectedItemIndex];
 
-        itemsAccordion.appendChild(newAccordionItem);
-    });
+        if (!item) {
+            showToast('Code Error: item not found for the given index.', 'danger');
+            return;
+        }
+
+        const newAccordionItem = createAccordionItemElement(item, selectedItemIndex, isDeleteActive, true);
+        const oldAccordionItem = itemsAccordion.querySelector(`[data-item-index="${selectedItemIndex}"]`);
+
+        if (oldAccordionItem) {
+            oldAccordionItem.replaceWith(newAccordionItem);
+        } else {
+            // Item wasn't rendered yet for some reason — just append it
+            itemsAccordion.appendChild(newAccordionItem);
+        }
+    }
 
     // Update the total price field
     extractItemsTotal(true);
@@ -1476,6 +1550,7 @@ editItemsBtn.addEventListener('click', () => {
         } else { // Save mode
             itemDelButtonSpace[0].hidden = true;
             itemDelButtonSpace[1].hidden = true;
+            currentIsDeleteActive = false;
             // Hide the Add button + Confirm the changes
             if (arrayofICD.length < 1) {
                 showToast('Items list is empty, add at least one line item to update the JSON request.', 'warning');
