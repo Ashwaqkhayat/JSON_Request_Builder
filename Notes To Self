@@ -18,11 +18,11 @@
 // ✅ Fix the copy buttons for (Request Body + benef extensions + Total line items)
 // ✅ The submit function (Claim part remaining and error cases)
 // ✅ Remove related and PreAuth Ref buttons
+// ✅ Edit line items
+// ✅ Edit provider license
+// ✅ Complete the list of Extensions
 
 // TODO: 
-
-// Complete the list of Extensions
-// ✅ Edit line items
 
 // TODO: later improvments
 // Member marital status

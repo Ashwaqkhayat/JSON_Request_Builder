@@ -170,6 +170,7 @@ const newInfoTypeInput = el('newInfoTypeInput');
 const copyReqBody = el('copyReqBody');
 const reqSubmitBtn = el('reqSubmitBtn');
 const copyitemsBtn = el('copyitemsBtn');
+const providerNHICInput = el('providerNHICInput');
 
 // Values Storage ====================================================
 // To store all the extracted values
@@ -493,33 +494,24 @@ function splitString(str) {
     }
 }
 
-function findResource(entriesList, resourceName, resourceVal) {
+function findResource(entriesList, resourceName, resourceVal = null) {
     // recourceVal = the number after resourceName
-
-    let entURL;
-    let segment;
+    let entryType;
+    let entryID;
     if (entriesList == undefined || entriesList == null || entriesList.length == 0) {
         showToast('Error: Could not find the Entries list to extract the resource.', 'danger');
     } else {
         for (let index = 0; index < entriesList.length; index++) {
             const entry = entriesList[index];
-            const entURL = entry.fullUrl;
-            if (!entURL || entURL === '') {
-                showToast(`Error in findResource: Unable to find the entry [${resourceName}]`, 'danger');
-                continue;
-            }
+            entryType = entry.resource.resourceType
+            entryID = entry.resource.id
+            if (checkNullOrEmpty(entryType)) { showToast(`Error in findResource: Unable to find the Resource Type [${resourceName}]`, 'danger'); continue; }
+            if (checkNullOrEmpty(entryID)) { showToast(`Error in findResource: Unable to find the Resource ID [${resourceName}]`, 'danger'); continue; }
 
-            const splittedURL = new URL(entURL).pathname.split("/");
-            // length-1 = the value, length-2 = the resource type
-            const segment = [splittedURL[splittedURL.length - 2], splittedURL[splittedURL.length - 1]];
             if (resourceVal && resourceVal !== '') {
-                if (segment[0] == resourceName && segment[1] == resourceVal) {
-                    return entriesList[index];
-                }
+                if (entryType == resourceName && entryID == resourceVal) { return entriesList[index] }
             } else {
-                if (segment[0] == resourceName) {
-                    return entriesList[index];
-                }
+                if (entryType == resourceName) { return entriesList[index] }
             }
         }
     }
@@ -644,25 +636,6 @@ function extractClaimID(x) {
     reqClaimIDInput.value = x.value;
 }
 
-// TODO: Complete this list
-// {
-//     "preauth-extensions": {
-//         "extension-priorauthresponse": "valueIdentifier"."identifier"."value",
-//         "extension-transfer": "valueBoolean",
-//         "extension-maternity": "valueBoolean",
-//         "extension-package": "valueBoolean",
-//         ""
-//     },
-//     "claim-extensions": {
-//         "extension-batch-identifier": "valueIdentifier"."value",
-//         "extension-batch-number": "valuePositiveInt",
-//         "extension-batch-period": "valuePeriod"."start" &."end",
-//         "extension-authorization-offline-date": "valueDateTime",
-//         "extension-episode": "valueIdentifier"."value",
-//     }
-// }
-
-// TODO: Complete claim extensions
 function extractClaimExtensions(x, el, extensionOf) {
     // extractedInfo = benefEntry?.extension ?? null;
     // extractClaimExtensions(extractedInfo, benefitiaryExtensionsUL, EXTENSION_CATEGORIES.Beneficiary);
@@ -707,8 +680,26 @@ function extractClaimExtensions(x, el, extensionOf) {
                     case "extension-priorauthresponse":
                         extensionValue = ex.valueIdentifier?.identifier?.value ?? 'Not Defined';
                         break;
+                    case "extension-maternity":
+                        extensionValue = ex.valueBoolean ?? 'Not Defined';
+                        break;
+                    case "extension-package":
+                        extensionValue = ex.valueBoolean ?? 'Not Defined';
+                        break;
+                    case "extension-batch-identifier":
+                        extensionValue = ex.valueIdentifier?.value ?? 'Not Defined';
+                        break;
+                    case "extension-batch-number":
+                        extensionValue = ex.valuePositiveInt ?? 'Not Defined';
+                        break;
+                    case "extension-batch-period":
+                        extensionValue = ex.valuePeriod?.start ?? null + " To " + ex.valuePeriod?.end ?? null;
+                        break;
+                    case "extension-authorization-offline-date":
+                        extensionValue = ex.valueDateTime ?? null;
+                        break;
                     default:
-                        extensionValue = "In Progress"
+                        extensionValue = "To be extracted..."
                 }
             } else { // extensionOf == 'benefitiary'
                 switch (extensionType) {
@@ -1059,7 +1050,7 @@ function renderItemsList(isDeleteActive, selectedItemIndex = -1) {
 }
 
 function checkNullOrEmpty(x) {
-    return (x == null || x == '' || x.length < 1)
+    return (x == null || x == '' || x.length < 1 || x == undefined)
 }
 
 function extractItemExtension(ex, extracted) {
@@ -1388,6 +1379,7 @@ function extractProviderData(resource) {
             providerCountryInput.value = resource.address?.[0].country ?? 'Not Defined';
             let searchProvType = PROVIDER_TYPES[resource.extension?.[0].valueCodeableConcept?.coding?.[0].code];
             providerTypeInput.value = searchProvType?.code ?? 'other';
+            providerNHICInput.value = resource.identifier?.[0]?.value ?? null;
         } catch (e) {
             showToast('Error: something went wrong during Provider data extraction, open the log for more details.', 'danger');
             console.warn(e);
@@ -1839,6 +1831,10 @@ function getProviderResource() {
     }
 }
 
+function getMessageHeaderResource() {
+    return findResource(parsed.entry, 'MessageHeader')
+}
+
 /**
  * Declarative list of "field bindings": one entry per extracted-value input.
  * - input:     the HTML input element the user edits
@@ -2194,6 +2190,24 @@ const fieldBindings = [
                 throw new Error('Provider resource has no extension to update.');
             }
             target.resource.extension = [{ ...newCoding }];
+        }
+    },
+    {
+        input: providerNHICInput,
+        getTarget: () => {
+            const provResource = getProviderResource()
+            const msgHeader = findResource(parsed.entry, 'MessageHeader').resource
+            return [provResource, msgHeader] ? [provResource, msgHeader] : null
+        },
+        get: (target) => {
+            return target.resource.identifier?.[0]?.value
+        },
+        set: (target, newValue) => {
+            // [0] = provider resource
+            // [1] = message header resource
+            console.log("target ", target)
+            target[0].identifier[0].value = newValue
+            target[1].sender.identifier.value = newValue
         }
     }
 ];
